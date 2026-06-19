@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
 <meta name="theme-color" content="#0B0B14">
 <title>Gestión de Operaciones II — CTP Vázquez de Coronado</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#0B0B14;--bg-soft:#121220;--surface:#1A1A2A;--line:rgba(255,255,255,.08);
@@ -14,7 +13,7 @@
   --good:#2BD576;--bad:#FF5470;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;height:100dvh;display:flex;justify-content:center;align-items:center}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;height:100dvh;display:flex;justify-content:center;align-items:center}
 #app{width:100%;max-width:480px;height:100dvh;position:relative;overflow:hidden;background:var(--bg)}
 @media(min-width:540px){#app{border:1px solid var(--line);border-radius:24px;box-shadow:0 0 80px rgba(0,229,200,.08)}}
 
@@ -24,25 +23,25 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;heigh
 /* HOME */
 #home{background:var(--bg);padding:24px 20px 40px}
 .home-header{text-align:center;padding:32px 0 24px}
-.home-header h1{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;line-height:1.2}
+.home-header h1{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;letter-spacing:-0.01em;font-size:22px;font-weight:700;line-height:1.2}
 .home-header p{color:var(--text-dim);font-size:13px;margin-top:8px}
-.tag{display:inline-block;background:rgba(0,229,200,.12);color:var(--t1);border:1px solid rgba(0,229,200,.3);border-radius:20px;font-size:11px;padding:3px 10px;margin-bottom:12px;font-family:'JetBrains Mono',monospace}
+.tag{display:inline-block;background:rgba(0,229,200,.12);color:var(--t1);border:1px solid rgba(0,229,200,.3);border-radius:20px;font-size:11px;padding:3px 10px;margin-bottom:12px;font-family:ui-monospace,SFMono-Regular,'Roboto Mono','SF Mono',Menlo,Consolas,monospace}
 .tema-card{background:var(--surface);border-radius:16px;padding:16px;margin-bottom:12px;border:1px solid var(--line);cursor:pointer;transition:.15s}
 .tema-card:hover{transform:translateY(-2px)}
 .tema-card-top{display:flex;align-items:center;gap:12px}
 .tema-icon{font-size:28px}
-.tema-info h3{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600}
+.tema-info h3{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;letter-spacing:-0.01em;font-size:15px;font-weight:600}
 .tema-info p{font-size:12px;color:var(--text-dim);margin-top:2px}
 .tema-bar{height:3px;border-radius:2px;margin-top:12px;background:var(--line)}
 .tema-bar-fill{height:100%;border-radius:2px;width:0;transition:.4s}
 .home-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px}
-.btn{border:none;border-radius:12px;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;cursor:pointer;padding:14px 20px;transition:.15s}
+.btn{border:none;border-radius:12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;letter-spacing:-0.01em;font-size:14px;font-weight:600;cursor:pointer;padding:14px 20px;transition:.15s}
 .btn:focus-visible{outline:3px solid var(--t1);outline-offset:2px}
 .btn-primary{background:var(--t1);color:#0B0B14}
 .btn-secondary{background:var(--surface);color:var(--text);border:1px solid var(--line)}
 .btn:hover{opacity:.88}
 .btn-full{grid-column:1/-1}
-.subarea-label{font-size:11px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.08em;margin:20px 0 10px;padding:0 2px}
+.subarea-label{font-size:11px;color:var(--text-dim);font-family:ui-monospace,SFMono-Regular,'Roboto Mono','SF Mono',Menlo,Consolas,monospace;text-transform:uppercase;letter-spacing:.08em;margin:20px 0 10px;padding:0 2px}
 
 /* STUDY */
 #study{overflow:hidden;height:100dvh}
@@ -56,36 +55,36 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;heigh
 .card{height:100dvh;scroll-snap-align:start;display:flex;flex-direction:column;justify-content:center;padding:40px 24px 32px;position:relative;overflow-y:auto;scroll-snap-stop:always}
 .card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at top right,var(--card-color,#0B0B14) 0%,transparent 60%);opacity:.12;pointer-events:none;z-index:0}
 .card>*{position:relative;z-index:1}
-.card-type{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}
+.card-type{font-size:11px;font-family:ui-monospace,SFMono-Regular,'Roboto Mono','SF Mono',Menlo,Consolas,monospace;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}
 .card-emoji{font-size:52px;margin-bottom:16px}
-.card-title{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;line-height:1.2;margin-bottom:10px}
+.card-title{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;letter-spacing:-0.01em;font-size:22px;font-weight:700;line-height:1.2;margin-bottom:10px}
 .card-habilidad{font-size:13px;color:var(--text-dim);line-height:1.5;margin-bottom:20px;padding:10px 12px;background:var(--surface);border-radius:8px;border-left:3px solid var(--card-color)}
 .card-body{font-size:14px;line-height:1.65;color:var(--text)}
-.card-body h4{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;color:var(--card-color);margin:16px 0 5px;text-transform:uppercase;letter-spacing:.04em}
+.card-body h4{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;letter-spacing:-0.01em;font-size:13px;font-weight:600;color:var(--card-color);margin:16px 0 5px;text-transform:uppercase;letter-spacing:.04em}
 .card-body ul{padding-left:18px}
 .card-body li{margin-bottom:5px}
 .card-body p{margin-bottom:8px}
-.formula{background:var(--bg-soft);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--card-color);margin:12px 0;line-height:1.7;white-space:pre-wrap}
+.formula{background:var(--bg-soft);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-family:ui-monospace,SFMono-Regular,'Roboto Mono','SF Mono',Menlo,Consolas,monospace;font-size:13px;color:var(--card-color);margin:12px 0;line-height:1.7;white-space:pre-wrap}
 .example{background:rgba(0,0,0,.3);border-radius:10px;padding:12px 14px;margin:10px 0;font-size:13px;line-height:1.65;border-left:3px solid var(--card-color)}
 .example strong{color:var(--card-color)}
-.badge-special{display:inline-block;background:rgba(255,180,32,.15);color:var(--t4);border:1px solid rgba(255,180,32,.3);border-radius:6px;font-size:11px;padding:2px 8px;font-family:'JetBrains Mono',monospace;margin-bottom:10px}
+.badge-special{display:inline-block;background:rgba(255,180,32,.15);color:var(--t4);border:1px solid rgba(255,180,32,.3);border-radius:6px;font-size:11px;padding:2px 8px;font-family:ui-monospace,SFMono-Regular,'Roboto Mono','SF Mono',Menlo,Consolas,monospace;margin-bottom:10px}
 .card-nav{display:flex;justify-content:space-between;align-items:center;margin-top:20px;padding-top:14px;border-top:1px solid var(--line);flex-shrink:0}
-.card-counter{font-size:12px;color:var(--text-dim);font-family:'JetBrains Mono',monospace}
-.norma-table{width:100%;border-collapse:collapse;font-size:12px;font-family:'JetBrains Mono',monospace;margin-top:10px}
+.card-counter{font-size:12px;color:var(--text-dim);font-family:ui-monospace,SFMono-Regular,'Roboto Mono','SF Mono',Menlo,Consolas,monospace}
+.norma-table{width:100%;border-collapse:collapse;font-size:12px;font-family:ui-monospace,SFMono-Regular,'Roboto Mono','SF Mono',Menlo,Consolas,monospace;margin-top:10px}
 .norma-table th{padding:6px;text-align:left;color:var(--card-color);border-bottom:1px solid var(--line)}
 .norma-table td{padding:6px;border-bottom:1px solid var(--line);color:var(--text-dim)}
 .norma-table tr:last-child td{border-bottom:none}
 
 /* QUIZ */
-#quiz{padding:0;height:100dvh;display:flex;flex-direction:column}
+#quiz{padding:0;height:100dvh;flex-direction:column}
 .quiz-top{padding:14px 20px 0;flex-shrink:0}
 .quiz-progress-bar{height:4px;background:var(--line);border-radius:2px;overflow:hidden;margin-bottom:10px}
 .quiz-progress-fill{height:100%;background:var(--t2);border-radius:2px;transition:.3s}
 .quiz-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
-.quiz-meta span{font-size:12px;color:var(--text-dim);font-family:'JetBrains Mono',monospace}
+.quiz-meta span{font-size:12px;color:var(--text-dim);font-family:ui-monospace,SFMono-Regular,'Roboto Mono','SF Mono',Menlo,Consolas,monospace}
 .quiz-exit{background:none;border:none;color:var(--text-dim);font-size:20px;cursor:pointer;padding:0}
 .quiz-body{flex:1;overflow-y:auto;padding:4px 20px 24px}
-.quiz-q{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:600;line-height:1.45;margin:14px 0 20px}
+.quiz-q{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;letter-spacing:-0.01em;font-size:17px;font-weight:600;line-height:1.45;margin:14px 0 20px}
 .quiz-opts{display:flex;flex-direction:column;gap:10px}
 .opt{background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;font-size:14px;line-height:1.4;cursor:pointer;transition:.15s;text-align:left;color:var(--text);width:100%}
 .opt:hover:not([disabled]){border-color:var(--t2);background:rgba(255,61,138,.07)}
@@ -95,23 +94,23 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;heigh
 .opt[disabled]{cursor:default}
 .quiz-exp{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-top:12px;font-size:13px;line-height:1.55;display:none}
 .quiz-exp.show{display:block}
-.quiz-exp-label{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--t1);margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em}
-.btn-next{width:100%;margin-top:12px;padding:15px;background:var(--t2);color:#fff;border-radius:12px;font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;border:none;cursor:pointer;display:none}
+.quiz-exp-label{font-size:10px;font-family:ui-monospace,SFMono-Regular,'Roboto Mono','SF Mono',Menlo,Consolas,monospace;color:var(--t1);margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em}
+.btn-next{width:100%;margin-top:12px;padding:15px;background:var(--t2);color:#fff;border-radius:12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;letter-spacing:-0.01em;font-size:15px;font-weight:600;border:none;cursor:pointer;display:none}
 .btn-next.show{display:block}
 .btn-next:focus-visible{outline:3px solid var(--t2);outline-offset:2px}
 
 /* RESULTS */
 #results{padding:24px 20px 40px}
 .results-header{text-align:center;padding:8px 0 20px}
-.results-header h2{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700}
+.results-header h2{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;letter-spacing:-0.01em;font-size:20px;font-weight:700}
 .gauge-container{position:relative;width:160px;height:160px;margin:0 auto 16px}
 .gauge-svg{transform:rotate(-90deg)}
 .gauge-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
-.gauge-nota{font-family:'Space Grotesk',sans-serif;font-size:42px;font-weight:700}
+.gauge-nota{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;letter-spacing:-0.01em;font-size:42px;font-weight:700}
 .gauge-label{font-size:12px;color:var(--text-dim)}
 .results-feedback{text-align:center;font-size:14px;margin:0 0 24px;padding:12px 16px;border-radius:12px;background:var(--surface);border-left:3px solid var(--t1);line-height:1.5}
 .tema-breakdown{margin-bottom:24px}
-.tema-breakdown h3,.failed-section h3{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;margin-bottom:14px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em}
+.tema-breakdown h3,.failed-section h3{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;letter-spacing:-0.01em;font-size:14px;font-weight:600;margin-bottom:14px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em}
 .breakdown-row{margin-bottom:12px}
 .breakdown-row-top{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px}
 .breakdown-bar-bg{background:var(--line);border-radius:2px;height:5px}
@@ -122,6 +121,50 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;heigh
 .results-actions{display:grid;gap:10px;margin-top:24px}
 
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ── Tipografía fluida ── */
+.home-header h1{font-size:clamp(18px,5vw,24px)}
+.card-title{font-size:clamp(17px,4.5vw,22px)}
+.quiz-q{font-size:clamp(15px,4vw,18px)}
+.gauge-nota{font-size:clamp(34px,9vw,46px)}
+.results-header h2{font-size:clamp(17px,4.5vw,22px)}
+
+/* ── Safe-area (notch en horizontal) ── */
+#app{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+
+/* ── Celular angosto ≤374px ── */
+@media(max-width:374px){
+  .card{padding:36px 14px 24px}
+  #home{padding:16px 14px 32px}
+  .home-actions{grid-template-columns:1fr}
+  .btn{padding:12px 16px;font-size:13px}
+  .opt{padding:11px 13px;font-size:13px}
+}
+
+/* ── Pantalla baja ≤560px (landscape o teclado abierto) ── */
+@media(max-height:560px){
+  .card{padding:28px 20px 16px;padding-top:44px}
+  .card-emoji{font-size:32px;margin-bottom:8px}
+  .gauge-container{width:110px;height:110px}
+  .gauge-svg{width:110px;height:110px}
+  .gauge-nota{font-size:clamp(26px,7vw,34px)}
+}
+
+/* ── Botones de navegación táctil/teclado en modo Estudiar ── */
+.study-nav{position:absolute;right:12px;bottom:72px;z-index:10;display:flex;flex-direction:column;gap:8px}
+.study-nav-btn{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:rgba(18,18,32,.88);backdrop-filter:blur(8px);color:var(--text);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s}
+.study-nav-btn:disabled{opacity:.25;cursor:default}
+.study-nav-btn:not(:disabled):hover{border-color:var(--t1);color:var(--t1)}
+.study-nav-btn:focus-visible{outline:3px solid var(--t1);outline-offset:2px}
+
+/* ── Feedback de intentos en quiz ── */
+.quiz-attempt-msg{display:none;font-size:13px;padding:10px 14px;border-radius:10px;margin-top:10px;border:1px solid var(--bad);background:rgba(255,84,112,.08);color:var(--bad);line-height:1.4}
+.quiz-attempt-msg.show{display:block}
+.quiz-review-card{display:none;background:var(--surface);border:1px solid rgba(0,229,200,.25);border-radius:12px;padding:14px 16px;margin-top:10px;font-size:13px;line-height:1.6}
+.quiz-review-card.show{display:block}
+.quiz-review-title{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--t1);font-family:ui-monospace,SFMono-Regular,'Roboto Mono','SF Mono',Menlo,Consolas,monospace;margin-bottom:8px}
+.opt.wrong-flash{animation:flash-red .5s ease}
+@keyframes flash-red{0%{border-color:var(--bad);background:rgba(255,84,112,.15)}100%{border-color:var(--line);background:var(--surface)}}
 </style>
 </head>
 <body>
@@ -145,6 +188,10 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;heigh
 <div id="study" class="view">
   <div class="study-bar" id="study-bar"></div>
   <button class="study-exit" onclick="goHome()" title="Salir">✕</button>
+  <div class="study-nav">
+    <button class="study-nav-btn" id="btn-card-up" onclick="navCard(-1)" title="Tarjeta anterior" disabled>↑</button>
+    <button class="study-nav-btn" id="btn-card-down" onclick="navCard(1)" title="Tarjeta siguiente">↓</button>
+  </div>
   <div class="cards-container" id="cards-container"></div>
 </div>
 
@@ -157,13 +204,19 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;heigh
     </div>
     <div class="quiz-meta" style="margin-top:2px">
       <span></span>
-      <span id="quiz-counter" style="font-size:12px;color:var(--text-dim);font-family:'JetBrains Mono',monospace"></span>
+      <span id="quiz-counter" style="font-size:12px;color:var(--text-dim);font-family:ui-monospace,SFMono-Regular,'Roboto Mono','SF Mono',Menlo,Consolas,monospace"></span>
     </div>
     <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="quiz-prog"></div></div>
   </div>
   <div class="quiz-body">
     <div id="quiz-q" class="quiz-q"></div>
     <div id="quiz-opts" class="quiz-opts"></div>
+    <div id="quiz-attempt-msg" class="quiz-attempt-msg"></div>
+    <div id="quiz-review-card" class="quiz-review-card">
+      <div class="quiz-review-title">💡 Repaso rápido</div>
+      <div id="quiz-review-content"></div>
+      <button class="btn btn-secondary" id="btn-go-study" style="width:100%;margin-top:10px;padding:10px;font-size:13px">📚 Ir a estudiar este tema</button>
+    </div>
     <div id="quiz-exp" class="quiz-exp">
       <div class="quiz-exp-label">💡 Explicación</div>
       <div id="quiz-exp-text"></div>
@@ -845,16 +898,36 @@ function buildStudyView(cards) {
     </div>`;
   }).join('');
 
+  const total = cards.length;
+  updateStudyNav(0, total);
+
   cont.addEventListener('scroll', () => {
     const h = cont.clientHeight || 1;
     const idx = Math.round(cont.scrollTop / h);
     document.querySelectorAll('.study-seg').forEach((s, i) => s.classList.toggle('done', i <= idx));
+    updateStudyNav(idx, total);
   }, { passive: true });
 }
 
 function scrollCard(idx) {
   const cont = document.getElementById('cards-container');
   cont.scrollTo({ top: idx * cont.clientHeight, behavior: 'smooth' });
+}
+
+function navCard(dir) {
+  const cont = document.getElementById('cards-container');
+  const total = cont.querySelectorAll('.card').length;
+  const current = Math.round(cont.scrollTop / (cont.clientHeight || 1));
+  const next = Math.max(0, Math.min(total - 1, current + dir));
+  cont.scrollTo({ top: next * cont.clientHeight, behavior: 'smooth' });
+  updateStudyNav(next, total);
+}
+
+function updateStudyNav(idx, total) {
+  const up = document.getElementById('btn-card-up');
+  const dn = document.getElementById('btn-card-down');
+  if (up) up.disabled = idx <= 0;
+  if (dn) dn.disabled = idx >= total - 1;
 }
 
 /* ============================================================
@@ -878,7 +951,18 @@ function setupQuiz(pool) {
   renderQ();
 }
 
+/* Seguimiento de intentos por pregunta */
+const qa = { n: 0, recorded: false, locked: false };
+
+function initQA() {
+  qa.n = 0; qa.recorded = false; qa.locked = false;
+  document.getElementById('quiz-attempt-msg').classList.remove('show');
+  document.getElementById('quiz-review-card').classList.remove('show');
+  document.getElementById('quiz-exp').classList.remove('show');
+}
+
 function renderQ() {
+  initQA();
   const q = state.quizQ[state.quizIdx];
   const t = TEMAS.find(t => t.id === q.temaId);
   const total = state.quizQ.length;
@@ -892,30 +976,90 @@ function renderQ() {
     `<button class="opt" onclick="pickOpt(${i})">${o}</button>`
   ).join('');
 
-  document.getElementById('quiz-exp').classList.remove('show');
   const btnNext = document.getElementById('btn-next');
   btnNext.classList.remove('show');
   btnNext.textContent = state.quizIdx < total - 1 ? 'Siguiente →' : 'Ver resultados';
 }
 
 function pickOpt(i) {
+  if (qa.locked) return;
   const q = state.quizQ[state.quizIdx];
+  qa.n++;
+  const correct = i === q.c;
+
+  /* Registrar PRIMER intento para la nota — nunca sobreescribir */
+  if (!qa.recorded) {
+    qa.recorded = true;
+    state.quizAnswers.push({
+      temaId: q.temaId, correct,
+      q: q.q, exp: q.exp, chosen: q.opts[i], answer: q.opts[q.c]
+    });
+  }
+
   const opts = document.querySelectorAll('.opt');
-  opts.forEach(o => o.setAttribute('disabled', ''));
-  opts[q.c].classList.add('correct');
-  if (i !== q.c) opts[i].classList.add('wrong');
-  opts.forEach((o, j) => { if (j !== q.c && j !== i) o.classList.add('reveal'); });
 
-  state.quizAnswers.push({
-    temaId: q.temaId, correct: i === q.c,
-    q: q.q, exp: q.exp, chosen: q.opts[i], answer: q.opts[q.c]
-  });
+  if (correct) {
+    qa.locked = true;
+    opts.forEach((o, j) => { o.setAttribute('disabled', ''); if (j !== i) o.classList.add('reveal'); });
+    opts[i].classList.add('correct');
+    document.getElementById('quiz-attempt-msg').classList.remove('show');
+    document.getElementById('quiz-review-card').classList.remove('show');
+    showQuizExp(q.exp, true);
+    document.getElementById('btn-next').classList.add('show');
+  } else {
+    /* Flash rojo breve en la opción elegida */
+    opts[i].classList.add('wrong-flash');
+    setTimeout(() => opts[i].classList.remove('wrong-flash'), 520);
 
-  const expEl = document.getElementById('quiz-exp');
-  document.getElementById('quiz-exp-text').textContent = q.exp;
-  expEl.classList.add('show');
-  expEl.style.borderColor = i === q.c ? 'var(--good)' : 'var(--bad)';
-  document.getElementById('btn-next').classList.add('show');
+    if (qa.n >= 4) {
+      /* 4.º fallo: revelar y bloquear */
+      qa.locked = true;
+      opts.forEach((o, j) => {
+        o.setAttribute('disabled', '');
+        if (j === q.c) o.classList.add('correct'); else o.classList.add('reveal');
+      });
+      document.getElementById('quiz-attempt-msg').classList.remove('show');
+      document.getElementById('quiz-review-card').classList.remove('show');
+      showQuizExp(q.exp, false);
+      document.getElementById('btn-next').classList.add('show');
+    } else if (qa.n === 3) {
+      /* 3.er fallo: mostrar tarjeta de repaso */
+      const left = 4 - qa.n;
+      showAttemptMsg(`❌ Incorrecto — ${left} intento más. Repasá el concepto:`);
+      showReviewCard(q.temaId);
+    } else {
+      /* 1.er o 2.º fallo */
+      const left = 4 - qa.n;
+      showAttemptMsg(`❌ Incorrecto — ${left} intentos restantes`);
+      document.getElementById('quiz-review-card').classList.remove('show');
+    }
+  }
+}
+
+function showAttemptMsg(msg) {
+  const el = document.getElementById('quiz-attempt-msg');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+
+function showReviewCard(temaId) {
+  const t = TEMAS.find(t => t.id === temaId);
+  const card = STUDY.find(s => s.temaId === temaId && s.tipo !== 'portada');
+  const col = t ? `var(${t.color})` : 'var(--t1)';
+  let html = '';
+  if (card) {
+    html = `<div style="font-size:12px;color:${col};font-weight:700;margin-bottom:6px">${card.titulo}</div>${card.cuerpo}`;
+  }
+  document.getElementById('quiz-review-content').innerHTML = html;
+  document.getElementById('btn-go-study').onclick = () => startStudyTema(temaId);
+  document.getElementById('quiz-review-card').classList.add('show');
+}
+
+function showQuizExp(exp, correct) {
+  const el = document.getElementById('quiz-exp');
+  document.getElementById('quiz-exp-text').textContent = exp;
+  el.style.borderColor = correct ? 'var(--good)' : 'var(--bad)';
+  el.classList.add('show');
 }
 
 function nextQ() {
@@ -988,10 +1132,26 @@ function showResults() {
    UTILS
    ============================================================ */
 function showView(id) {
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  document.getElementById(id).scrollTop = 0;
+  document.querySelectorAll('.view').forEach(v => {
+    v.classList.remove('active');
+    v.style.display = '';
+  });
+  const el = document.getElementById(id);
+  el.classList.add('active');
+  /* El quiz necesita display:flex — se lo damos por inline style para ganar
+     la cascada sin depender de especificidad de selectores */
+  if (id === 'quiz') el.style.display = 'flex';
+  el.scrollTop = 0;
 }
+
+/* ============================================================
+   TECLADO — modo Estudiar
+   ============================================================ */
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('study').classList.contains('active')) return;
+  if (e.key === 'ArrowDown' || e.key === 'PageDown') { e.preventDefault(); navCard(1); }
+  if (e.key === 'ArrowUp'   || e.key === 'PageUp')   { e.preventDefault(); navCard(-1); }
+});
 
 /* ============================================================
    INIT
