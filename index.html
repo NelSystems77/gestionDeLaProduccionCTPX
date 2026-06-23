@@ -1,1162 +1,905 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
-<meta name="theme-color" content="#0B0B14">
-<title>Gestión de Operaciones II — CTP Vázquez de Coronado</title>
-<style>
-:root{
-  --bg:#0B0B14;--bg-soft:#121220;--surface:#1A1A2A;--line:rgba(255,255,255,.08);
-  --text:#F4F4F8;--text-dim:#9B9BB0;
-  --t1:#00E5C8;--t2:#FF3D8A;--t3:#8B5CF6;--t4:#FFB020;--t5:#00B4FF;--t6:#FF6B35;--t7:#F43F5E;--t8:#34D399;
-  --good:#2BD576;--bad:#FF5470;
-}
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;height:100dvh;display:flex;justify-content:center;align-items:center}
-#app{width:100%;max-width:480px;height:100dvh;position:relative;overflow:hidden;background:var(--bg)}
-@media(min-width:540px){#app{border:1px solid var(--line);border-radius:24px;box-shadow:0 0 80px rgba(0,229,200,.08)}}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Quiz: Gestión de la Producción y Comercio Internacional</title>
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-accent: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --emerald-accent: #10b981;
+            --blue-accent: #3b82f6;
+            --amber-accent: #f59e0b;
+            --purple-accent: #a855f7;
+            --border-color: #475569;
+        }
 
-.view{position:absolute;inset:0;overflow-y:auto;display:none}
-.view.active{display:block}
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
 
-/* HOME */
-#home{background:var(--bg);padding:24px 20px 40px}
-.home-header{text-align:center;padding:32px 0 24px}
-.home-header h1{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;letter-spacing:-0.01em;font-size:22px;font-weight:700;line-height:1.2}
-.home-header p{color:var(--text-dim);font-size:13px;margin-top:8px}
-.tag{display:inline-block;background:rgba(0,229,200,.12);color:var(--t1);border:1px solid rgba(0,229,200,.3);border-radius:20px;font-size:11px;padding:3px 10px;margin-bottom:12px;font-family:ui-monospace,SFMono-Regular,'Roboto Mono','SF Mono',Menlo,Consolas,monospace}
-.tema-card{background:var(--surface);border-radius:16px;padding:16px;margin-bottom:12px;border:1px solid var(--line);cursor:pointer;transition:.15s}
-.tema-card:hover{transform:translateY(-2px)}
-.tema-card-top{display:flex;align-items:center;gap:12px}
-.tema-icon{font-size:28px}
-.tema-info h3{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;letter-spacing:-0.01em;font-size:15px;font-weight:600}
-.tema-info p{font-size:12px;color:var(--text-dim);margin-top:2px}
-.tema-bar{height:3px;border-radius:2px;margin-top:12px;background:var(--line)}
-.tema-bar-fill{height:100%;border-radius:2px;width:0;transition:.4s}
-.home-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px}
-.btn{border:none;border-radius:12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;letter-spacing:-0.01em;font-size:14px;font-weight:600;cursor:pointer;padding:14px 20px;transition:.15s}
-.btn:focus-visible{outline:3px solid var(--t1);outline-offset:2px}
-.btn-primary{background:var(--t1);color:#0B0B14}
-.btn-secondary{background:var(--surface);color:var(--text);border:1px solid var(--line)}
-.btn:hover{opacity:.88}
-.btn-full{grid-column:1/-1}
-.subarea-label{font-size:11px;color:var(--text-dim);font-family:ui-monospace,SFMono-Regular,'Roboto Mono','SF Mono',Menlo,Consolas,monospace;text-transform:uppercase;letter-spacing:.08em;margin:20px 0 10px;padding:0 2px}
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+        }
 
-/* STUDY */
-#study{overflow:hidden;height:100dvh}
-.study-bar{height:4px;background:var(--line);position:absolute;top:0;left:0;right:0;z-index:10;display:flex;gap:2px;padding:0 16px}
-.study-seg{flex:1;background:var(--line);border-radius:2px;transition:.3s}
-.study-seg.done{background:var(--t1)}
-.study-exit{position:absolute;top:12px;right:16px;z-index:10;background:rgba(0,0,0,.5);border:none;color:var(--text-dim);width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.study-exit:focus-visible{outline:3px solid var(--t1)}
-.cards-container{height:100dvh;overflow-y:scroll;scroll-snap-type:y mandatory;scrollbar-width:none}
-.cards-container::-webkit-scrollbar{display:none}
-.card{height:100dvh;scroll-snap-align:start;display:flex;flex-direction:column;justify-content:center;padding:40px 24px 32px;position:relative;overflow-y:auto;scroll-snap-stop:always}
-.card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at top right,var(--card-color,#0B0B14) 0%,transparent 60%);opacity:.12;pointer-events:none;z-index:0}
-.card>*{position:relative;z-index:1}
-.card-type{font-size:11px;font-family:ui-monospace,SFMono-Regular,'Roboto Mono','SF Mono',Menlo,Consolas,monospace;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}
-.card-emoji{font-size:52px;margin-bottom:16px}
-.card-title{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;letter-spacing:-0.01em;font-size:22px;font-weight:700;line-height:1.2;margin-bottom:10px}
-.card-habilidad{font-size:13px;color:var(--text-dim);line-height:1.5;margin-bottom:20px;padding:10px 12px;background:var(--surface);border-radius:8px;border-left:3px solid var(--card-color)}
-.card-body{font-size:14px;line-height:1.65;color:var(--text)}
-.card-body h4{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;letter-spacing:-0.01em;font-size:13px;font-weight:600;color:var(--card-color);margin:16px 0 5px;text-transform:uppercase;letter-spacing:.04em}
-.card-body ul{padding-left:18px}
-.card-body li{margin-bottom:5px}
-.card-body p{margin-bottom:8px}
-.formula{background:var(--bg-soft);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-family:ui-monospace,SFMono-Regular,'Roboto Mono','SF Mono',Menlo,Consolas,monospace;font-size:13px;color:var(--card-color);margin:12px 0;line-height:1.7;white-space:pre-wrap}
-.example{background:rgba(0,0,0,.3);border-radius:10px;padding:12px 14px;margin:10px 0;font-size:13px;line-height:1.65;border-left:3px solid var(--card-color)}
-.example strong{color:var(--card-color)}
-.badge-special{display:inline-block;background:rgba(255,180,32,.15);color:var(--t4);border:1px solid rgba(255,180,32,.3);border-radius:6px;font-size:11px;padding:2px 8px;font-family:ui-monospace,SFMono-Regular,'Roboto Mono','SF Mono',Menlo,Consolas,monospace;margin-bottom:10px}
-.card-nav{display:flex;justify-content:space-between;align-items:center;margin-top:20px;padding-top:14px;border-top:1px solid var(--line);flex-shrink:0}
-.card-counter{font-size:12px;color:var(--text-dim);font-family:ui-monospace,SFMono-Regular,'Roboto Mono','SF Mono',Menlo,Consolas,monospace}
-.norma-table{width:100%;border-collapse:collapse;font-size:12px;font-family:ui-monospace,SFMono-Regular,'Roboto Mono','SF Mono',Menlo,Consolas,monospace;margin-top:10px}
-.norma-table th{padding:6px;text-align:left;color:var(--card-color);border-bottom:1px solid var(--line)}
-.norma-table td{padding:6px;border-bottom:1px solid var(--line);color:var(--text-dim)}
-.norma-table tr:last-child td{border-bottom:none}
+        .container {
+            max-width: 1050px;
+            margin: 0 auto;
+        }
 
-/* QUIZ */
-#quiz{padding:0;height:100dvh;flex-direction:column}
-.quiz-top{padding:14px 20px 0;flex-shrink:0}
-.quiz-progress-bar{height:4px;background:var(--line);border-radius:2px;overflow:hidden;margin-bottom:10px}
-.quiz-progress-fill{height:100%;background:var(--t2);border-radius:2px;transition:.3s}
-.quiz-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
-.quiz-meta span{font-size:12px;color:var(--text-dim);font-family:ui-monospace,SFMono-Regular,'Roboto Mono','SF Mono',Menlo,Consolas,monospace}
-.quiz-exit{background:none;border:none;color:var(--text-dim);font-size:20px;cursor:pointer;padding:0}
-.quiz-body{flex:1;overflow-y:auto;padding:4px 20px 24px}
-.quiz-q{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;letter-spacing:-0.01em;font-size:17px;font-weight:600;line-height:1.45;margin:14px 0 20px}
-.quiz-opts{display:flex;flex-direction:column;gap:10px}
-.opt{background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;font-size:14px;line-height:1.4;cursor:pointer;transition:.15s;text-align:left;color:var(--text);width:100%}
-.opt:hover:not([disabled]){border-color:var(--t2);background:rgba(255,61,138,.07)}
-.opt.correct{border-color:var(--good);background:rgba(43,213,118,.1);color:var(--good)}
-.opt.wrong{border-color:var(--bad);background:rgba(255,84,112,.1);color:var(--bad)}
-.opt.reveal{opacity:.45}
-.opt[disabled]{cursor:default}
-.quiz-exp{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-top:12px;font-size:13px;line-height:1.55;display:none}
-.quiz-exp.show{display:block}
-.quiz-exp-label{font-size:10px;font-family:ui-monospace,SFMono-Regular,'Roboto Mono','SF Mono',Menlo,Consolas,monospace;color:var(--t1);margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em}
-.btn-next{width:100%;margin-top:12px;padding:15px;background:var(--t2);color:#fff;border-radius:12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;letter-spacing:-0.01em;font-size:15px;font-weight:600;border:none;cursor:pointer;display:none}
-.btn-next.show{display:block}
-.btn-next:focus-visible{outline:3px solid var(--t2);outline-offset:2px}
+        header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
+            padding: 35px 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 25px;
+            text-align: center;
+        }
 
-/* RESULTS */
-#results{padding:24px 20px 40px}
-.results-header{text-align:center;padding:8px 0 20px}
-.results-header h2{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;letter-spacing:-0.01em;font-size:20px;font-weight:700}
-.gauge-container{position:relative;width:160px;height:160px;margin:0 auto 16px}
-.gauge-svg{transform:rotate(-90deg)}
-.gauge-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
-.gauge-nota{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;letter-spacing:-0.01em;font-size:42px;font-weight:700}
-.gauge-label{font-size:12px;color:var(--text-dim)}
-.results-feedback{text-align:center;font-size:14px;margin:0 0 24px;padding:12px 16px;border-radius:12px;background:var(--surface);border-left:3px solid var(--t1);line-height:1.5}
-.tema-breakdown{margin-bottom:24px}
-.tema-breakdown h3,.failed-section h3{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;letter-spacing:-0.01em;font-size:14px;font-weight:600;margin-bottom:14px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em}
-.breakdown-row{margin-bottom:12px}
-.breakdown-row-top{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px}
-.breakdown-bar-bg{background:var(--line);border-radius:2px;height:5px}
-.breakdown-bar-fill{height:100%;border-radius:2px;transition:.7s}
-.failed-item{background:var(--surface);border-radius:10px;padding:12px 14px;margin-bottom:10px;border-left:3px solid var(--bad)}
-.failed-item p{font-size:13px;line-height:1.5;margin-bottom:4px}
-.failed-exp{font-size:12px;color:var(--text-dim);line-height:1.5;margin-top:6px;padding-top:6px;border-top:1px solid var(--line)}
-.results-actions{display:grid;gap:10px;margin-top:24px}
+        header h1 {
+            font-size: 2rem;
+            color: #ffffff;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
 
-@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+        header p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+        }
 
-/* ── Tipografía fluida ── */
-.home-header h1{font-size:clamp(18px,5vw,24px)}
-.card-title{font-size:clamp(17px,4.5vw,22px)}
-.quiz-q{font-size:clamp(15px,4vw,18px)}
-.gauge-nota{font-size:clamp(34px,9vw,46px)}
-.results-header h2{font-size:clamp(17px,4.5vw,22px)}
+        .stats-bar {
+            display: flex;
+            justify-content: space-around;
+            background-color: var(--bg-secondary);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border-color);
+            font-weight: bold;
+        }
 
-/* ── Safe-area (notch en horizontal) ── */
-#app{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+        .stat-item {
+            text-align: center;
+        }
 
-/* ── Celular angosto ≤374px ── */
-@media(max-width:374px){
-  .card{padding:36px 14px 24px}
-  #home{padding:16px 14px 32px}
-  .home-actions{grid-template-columns:1fr}
-  .btn{padding:12px 16px;font-size:13px}
-  .opt{padding:11px 13px;font-size:13px}
-}
+        .stat-item span {
+            display: block;
+            font-size: 1.4rem;
+            color: var(--blue-accent);
+        }
 
-/* ── Pantalla baja ≤560px (landscape o teclado abierto) ── */
-@media(max-height:560px){
-  .card{padding:28px 20px 16px;padding-top:44px}
-  .card-emoji{font-size:32px;margin-bottom:8px}
-  .gauge-container{width:110px;height:110px}
-  .gauge-svg{width:110px;height:110px}
-  .gauge-nota{font-size:clamp(26px,7vw,34px)}
-}
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
 
-/* ── Botones de navegación táctil/teclado en modo Estudiar ── */
-.study-nav{position:absolute;right:12px;bottom:72px;z-index:10;display:flex;flex-direction:column;gap:8px}
-.study-nav-btn{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:rgba(18,18,32,.88);backdrop-filter:blur(8px);color:var(--text);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s}
-.study-nav-btn:disabled{opacity:.25;cursor:default}
-.study-nav-btn:not(:disabled):hover{border-color:var(--t1);color:var(--t1)}
-.study-nav-btn:focus-visible{outline:3px solid var(--t1);outline-offset:2px}
+        .tab-btn {
+            flex: 1;
+            background-color: var(--bg-secondary);
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            padding: 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
 
-/* ── Feedback de intentos en quiz ── */
-.quiz-attempt-msg{display:none;font-size:13px;padding:10px 14px;border-radius:10px;margin-top:10px;border:1px solid var(--bad);background:rgba(255,84,112,.08);color:var(--bad);line-height:1.4}
-.quiz-attempt-msg.show{display:block}
-.quiz-review-card{display:none;background:var(--surface);border:1px solid rgba(0,229,200,.25);border-radius:12px;padding:14px 16px;margin-top:10px;font-size:13px;line-height:1.6}
-.quiz-review-card.show{display:block}
-.quiz-review-title{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--t1);font-family:ui-monospace,SFMono-Regular,'Roboto Mono','SF Mono',Menlo,Consolas,monospace;margin-bottom:8px}
-.opt.wrong-flash{animation:flash-red .5s ease}
-@keyframes flash-red{0%{border-color:var(--bad);background:rgba(255,84,112,.15)}100%{border-color:var(--line);background:var(--surface)}}
-</style>
+        .tab-btn.active {
+            color: #ffffff;
+        }
+        .tab-btn.btn-render.active { background-color: var(--blue-accent); border-color: var(--blue-accent); }
+        .tab-btn.btn-comercio.active { background-color: var(--amber-accent); border-color: var(--amber-accent); }
+        .tab-btn.btn-aduanas.active { background-color: var(--purple-accent); border-color: var(--purple-accent); }
+
+        .section-panel {
+            display: none;
+        }
+
+        .section-panel.active {
+            display: block;
+        }
+
+        .intro-card {
+            background-color: var(--bg-secondary);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .question-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: transform 0.15s ease;
+        }
+
+        .question-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .question-meta {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .meta-render { color: var(--blue-accent); }
+        .meta-comercio { color: var(--amber-accent); }
+        .meta-aduanas { color: var(--purple-accent); }
+
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .options-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-item {
+            background-color: var(--bg-accent);
+            border: 1px solid var(--border-color);
+            padding: 12px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .option-item:hover {
+            background-color: #475569;
+            border-color: #64748b;
+        }
+
+        .option-item input[type="radio"] {
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            accent-color: var(--blue-accent);
+        }
+
+        .question-card.correct {
+            border-color: var(--emerald-accent);
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.2);
+        }
+
+        .question-card.incorrect {
+            border-color: #ef4444;
+            box-shadow: 0 0 8px rgba(239, 68, 68, 0.2);
+        }
+
+        .feedback-box {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            display: none;
+        }
+
+        .question-card.correct .feedback-box {
+            display: block;
+            background-color: rgba(16, 185, 129, 0.1);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .question-card.incorrect .feedback-box {
+            display: block;
+            background-color: rgba(239, 68, 68, 0.1);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .action-bar {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            margin-bottom: 5px;
+        }
+
+        .btn {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            flex: 1;
+            text-align: center;
+        }
+
+        .btn-submit {
+            background-color: var(--emerald-accent);
+            color: #ffffff;
+        }
+
+        .btn-submit:hover {
+            background-color: #059669;
+        }
+
+        .btn-reset {
+            background-color: var(--bg-accent);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-reset:hover {
+            background-color: #475569;
+        }
+
+        .score-display {
+            background: linear-gradient(135deg, #064e3b 0%, #022c22 100%);
+            border: 2px solid var(--emerald-accent);
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 30px;
+            display: none;
+        }
+
+        .score-display h2 {
+            font-size: 2rem;
+            color: #34d399;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .tabs { flex-direction: column; }
+            .stats-bar { flex-direction: column; gap: 10px; }
+            .action-bar { flex-direction: column; }
+        }
+    </style>
 </head>
 <body>
-<div id="app">
 
-<!-- HOME -->
-<div id="home" class="view active">
-  <div class="home-header">
-    <div class="tag">CTP Vázquez de Coronado · 2026</div>
-    <h1>Gestión de la<br>Producción — II Examen</h1>
-    <p>Ing. Dinia Navarro Blanco · 8 temas · 64 preguntas</p>
-  </div>
-  <div id="home-temas"></div>
-  <div class="home-actions">
-    <button class="btn btn-primary" onclick="startStudy()">📚 Estudiar todo</button>
-    <button class="btn btn-secondary" onclick="startQuiz()">🎯 Quiz completo</button>
-  </div>
+<div class="container">
+    <header>
+        <h1>Simulador Integral de Examen</h1>
+        <p>Gestión de la Producción, Operaciones Globales y Guía Aduanera Completa</p>
+    </header>
+
+    <div class="stats-bar">
+        <div class="stat-item">Preguntas Totales: <span>40</span></div>
+        <div class="stat-item">Respondidas: <span id="answered-count">0</span>/40</div>
+        <div class="stat-item">Estado: <span id="status-text" style="color: var(--amber-accent);">En Progreso</span></div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn btn-render active" onclick="switchTab('render')">Módulo 1: Barry Render (Cap. 2)</button>
+        <button class="tab-btn btn-comercio" onclick="switchTab('comercio')">Módulo 2: Import / Export Básicos</button>
+        <button class="tab-btn btn-aduanas" onclick="switchTab('aduanas')">Módulo 3: Presentaciones y Técnica Aduanera</button>
+    </div>
+
+    <form id="quiz-form" onsubmit="evaluateQuiz(event)">
+        
+        <!-- MÓDULO 1: BARRY RENDER -->
+        <div id="panel-render" class="section-panel active">
+            <div class="intro-card" style="border-left: 4px solid var(--blue-accent);">
+                <h3>Estrategia de Operaciones en un Entorno Global</h3>
+                <p>Análisis de competitividad, decisiones de la AO y las directrices globales de administración empresarial.</p>
+            </div>
+
+            <!-- Q1 -->
+            <div class="question-card" data-correct="b">
+                <div class="question-meta meta-render">Pregunta 1 • Cadena de Suministro Moderna</div>
+                <div class="question-text">¿Qué aprendizaje estratégico clave deja el perfil de Boeing respecto a la fabricación de aeronaves complejas como el 787?</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q1" value="a"> Las empresas líderes deben centralizar sus manufacturas en un solo taller para controlar la calidad.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q1" value="b"> La producción moderna está atomizada globalmente; los componentes se diseñan y fabrican en distintos países según especialización técnica.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q1" value="c"> La subcontratación internacional es ineficiente y eleva el riesgo aduanero a niveles inmanejables.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: B.</b> Refleja la dispersión geográfica y la integración multinacional de las cadenas de valor de hoy.</div>
+            </div>
+
+            <!-- Q2 -->
+            <div class="question-card" data-correct="a">
+                <div class="question-meta meta-render">Pregunta 2 • Globalización de Operaciones</div>
+                <div class="question-text">¿Cuáles son motivos de peso para que una corporación decida internacionalizar u otorgar un enfoque global a sus plantas productivas?</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q2" value="a"> Reducir costos de mano de obra/aranceles, optimizar la cadena de suministro, comprender mercados locales y captar talento global.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q2" value="b"> Evitar auditorías contables locales y centralizar las utilidades en paraísos fiscales de forma opaca.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q2" value="c"> Incrementar los tiempos de entrega (lead times) para saturar los almacenes fiscales en puertos.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: A.</b> Render destaca 6 razones clave para globalizarse, todas orientadas a la eficiencia, costos y mercados.</div>
+            </div>
+
+            <!-- Q3 -->
+            <div class="question-card" data-correct="c">
+                <div class="question-meta meta-render">Pregunta 3 • Cultura y Ética</div>
+                <div class="question-text">¿Por qué las diferencias culturales y de ética impactan directamente la Administración de Operaciones (AO) internacional?</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q3" value="a"> Porque el comercio internacional prohíbe trabajar con culturas ajenas a la occidental.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q3" value="b"> Porque la automatización elimina todo tipo de factor humano o cultural de los procesos.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q3" value="c"> Porque varían los estándares de puntualidad, la cultura laboral, visiones sobre el soborno y regulaciones ambientales entre países.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: C.</b> Los gerentes de operaciones deben operar bajo marcos culturales y legales disímiles sin comprometer la responsabilidad social corporativa.</div>
+            </div>
+
+            <!-- Q4 -->
+            <div class="question-card" data-correct="b">
+                <div class="question-meta meta-render">Pregunta 4 • Planeación Estratégica</div>
+                <div class="question-text">¿Qué establece formalmente la "Misión" de una organización?</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q4" value="a"> El plan de distribución de planta o layout para los próximos dos meses.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q4" value="b"> El propósito fundamental de la organización, definiendo qué va a aportar a la sociedad y hacia dónde se dirige.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q4" value="c"> El cálculo de costos variables por contenedor de mercancías importadas.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: B.</b> La misión es el norte corporativo; la razón de ser de la compañía.</div>
+            </div>
+
+            <!-- Q5 -->
+            <div class="question-card" data-correct="a">
+                <div class="question-meta meta-render">Pregunta 5 • Estrategia</div>
+                <div class="question-text">¿Qué es una "Estrategia" en el ámbito operativo?</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q5" value="a"> El mapa de ruta o plan de acción diseñado para alcanzar los objetivos de la misión corporativa.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q5" value="b"> La secuencia rígida de programación de una máquina CNC.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q5" value="c"> Un reporte de auditoría sobre mermas e inventarios obsoletos.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: A.</b> Las estrategias transforman los enunciados filosóficos de la misión en planes de ejecución y operaciones reales.</div>
+            </div>
+
+            <!-- Q6 -->
+            <div class="question-card" data-correct="b">
+                <div class="question-meta meta-render">Pregunta 6 • Ventaja Competitiva</div>
+                <div class="question-text">¿Cuáles son las tres opciones estratégicas puras para construir una ventaja competitiva en AO?</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q6" value="a"> Tercerización, Monopolización y Financiamiento.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q6" value="b"> Diferenciación, Liderazgo en Costos y Respuesta Rápida.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q6" value="c"> Automatización, Inspección final y Almacenamiento.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: B.</b> A través de estas tres palancas (Diferenciación, Costo y Respuesta), las operaciones generan valor superior e inimitable para el cliente.</div>
+            </div>
+
+            <!-- Q7 -->
+            <div class="question-card" data-correct="c">
+                <div class="question-meta meta-render">Pregunta 7 • Liderazgo en Costo</div>
+                <div class="question-text">Lograr una ventaja basada en "Costo" implica fundamentalmente:</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q7" value="a"> Sacrificar las propiedades y especificaciones técnicas de calidad del producto final.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q7" value="b"> Establecer precios predatorios ilegales en los mercados de destino.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q7" value="c"> Alcanzar la máxima eficiencia en los procesos operativos eliminando desperdicios y optimizando la capacidad instalada.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: C.</b> Competir en costo significa operar de manera esbelta (lean), no fabricar bienes de mala calidad.</div>
+            </div>
+
+            <!-- Q8 -->
+            <div class="question-card" data-correct="a">
+                <div class="question-meta meta-render">Pregunta 8 • Competencia en Respuesta</div>
+                <div class="question-text">¿Qué dimensiones componen la ventaja competitiva en "Respuesta"?</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q8" value="a"> Flexibilidad operativa (volumen/diseño), confiabilidad en los tiempos comprometidos y rapidez en la ejecución.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q8" value="b"> Capacidad de contestar llamadas de soporte técnico en menos de 5 minutos.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q8" value="c"> Habilidad para apelar multas arancelarias en aduanas terrestres de forma legal.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: A.</b> Involucra velocidad del mercado, cumplimiento de itinerarios y adaptación a cambios inesperados de la demanda.</div>
+            </div>
+
+            <!-- Q9 -->
+            <div class="question-card" data-correct="c">
+                <div class="question-meta meta-render">Pregunta 9 • Decisiones AO</div>
+                <div class="question-text">¿A qué grupo pertenecen las llamadas "10 decisiones estratégicas de la Administración de Operaciones"?</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q9" value="a"> Contratación de seguros marítimos, consolidación bancaria y mercadeo digital.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q9" value="b"> Cabildeo gubernamental, fijación de aranceles y devaluación monetaria.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q9" value="c"> Diseño del producto, calidad, diseño de procesos, localización, layout, RRHH, cadena de suministro, inventario, programación y mantenimiento.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: C.</b> Estas 10 áreas abarcan las competencias clave que un administrador de operaciones debe coordinar estratégicamente.</div>
+            </div>
+
+            <!-- Q10 -->
+            <div class="question-card" data-correct="b">
+                <div class="question-meta meta-render">Pregunta 10 • Estrategia e Implementación</div>
+                <div class="question-text">¿Qué es un Factor Crítico de Éxito (FCE) para las operaciones de una firma?</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q10" value="a"> Una patente exclusiva que no posee ningún otro competidor industrial.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q10" value="b"> Aquellas actividades o procesos operativos indispensables que la empresa debe ejecutar de forma excelente para poder competir y sobrevivir.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q10" value="c"> El margen neto consolidado dictado por la gerencia financiera.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: B.</b> Los FCE marcan las pautas que la organización tiene que dominar obligatoriamente para no quedar fuera del mercado.</div>
+            </div>
+
+            <!-- Q11 -->
+            <div class="question-card" data-correct="a">
+                <div class="question-meta meta-render">Pregunta 11 • Competencias Centrales</div>
+                <div class="question-text">¿Qué define a una "Competencia Central"?</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q11" value="a"> El conjunto de habilidades, conocimientos o tecnologías únicas en las cuales la empresa destaca con creces por encima de su competencia.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q11" value="b"> Las normativas de seguridad impuestas obligatoriamente por el Ministerio de Trabajo.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q11" value="c"> Los procesos automatizados básicos que se compran en un software comercial genérico.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: A.</b> Es el núcleo duro de ventajas de la firma; lo que sabe hacer mejor que nadie y sustenta su valor a largo plazo.</div>
+            </div>
+
+            <!-- Q12 -->
+            <div class="question-card" data-correct="c">
+                <div class="question-meta meta-render">Pregunta 12 • Estrategia Internacional</div>
+                <div class="question-text">¿Cómo opera una organización bajo la "Estrategia Internacional"?</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q12" value="a"> Centraliza todas sus actividades críticas e ignora los controles fronterizos.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q12" value="b"> Adapta detalladamente sus productos a cada cultura municipal de exportación.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q12" value="c"> Extiende sus mercados internos mediante el uso de exportaciones o contratos de licencias en el exterior, con presiones bajas en costos y en adaptación local.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: C.</b> Es la estrategia global de menor complejidad y riesgo operativo inicial para expandir ventas.</div>
+            </div>
+
+            <!-- Q13 -->
+            <div class="question-card" data-correct="a">
+                <div class="question-meta meta-render">Pregunta 13 • Estrategia Multidoméstica</div>
+                <div class="question-text">La característica principal de la "Estrategia Multidoméstica" en AO es:</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q13" value="a"> Máxima descentralización operativa dando amplia autonomía a cada filial nacional para adaptar el bien a las necesidades del mercado local.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q13" value="b"> Rigidizar la estandarización técnica de componentes para abaratar el inventario global.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q13" value="c"> Fabricar en un solo país un único bien genérico empaquetado al vacío.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: A.</b> Prioriza la respuesta y la adaptación local por encima del ahorro en costos que otorgan las economías de escala.</div>
+            </div>
+
+            <!-- Q14 -->
+            <div class="question-card" data-correct="b">
+                <div class="question-meta meta-render">Pregunta 14 • Estrategia Global</div>
+                <div class="question-text">¿Qué busca una firma al implementar una "Estrategia Global" en sus operaciones?</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q14" value="a"> Trasladar las oficinas de relaciones públicas a todos los países del mundo.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q14" value="b"> Una fuerte centralización con productos altamente estandarizados para generar economías de escala masivas (alta presión en costos, baja respuesta local).</label></li>
+                    <li class="option-item"><label><input type="radio" name="q14" value="c"> Eliminar el uso de aduanas y depender del comercio informal de trueque marítimo.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: B.</b> Considera al planeta entero como un mercado unificado, maximizando la estandarización fabril.</div>
+            </div>
+
+            <!-- Q15 -->
+            <div class="question-card" data-correct="c">
+                <div class="question-meta meta-render">Pregunta 15 • Estrategia Trasnacional</div>
+                <div class="question-text">¿Por qué la "Estrategia Trasnacional" es la más compleja para un administrador de plantas?</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q17" value="a"> Porque requiere operar sin sistemas informáticos de manufactura.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q17" value="b"> Porque el pago de aranceles duplica el costo de las licencias comerciales de la casa matriz.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q17" value="c"> Porque busca simultáneamente alta eficiencia en costos globales y alta respuesta/adaptación local, compartiendo talentos y competencias cross-border.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: C.</b> Combina los beneficios de escala global con la flexibilidad de personalización en cada destino aduanero.</div>
+            </div>
+        </div>
+
+        <!-- MÓDULO 2: IMPORTACIONES Y EXPORTACIONES BÁSICAS -->
+        <div id="panel-comercio" class="section-panel">
+            <div class="intro-card" style="border-left: 4px solid var(--amber-accent);">
+                <h3>Fundamentos de Comercio Internacional</h3>
+                <p>Análisis de flujos básicos comerciales, balanza comercial, valor agregado en origen y clasificaciones de oferta exportable.</p>
+            </div>
+
+            <!-- Q16 -->
+            <div class="question-card" data-correct="a">
+                <div class="question-meta meta-comercio">Pregunta 16 • El Trueque Histórico</div>
+                <div class="question-text">¿Cuál es la ineficiencia intrínseca del Trueque que obligó a formalizar el Comercio Internacional monetario?</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q18" value="a"> Requiere una doble coincidencia de necesidades y carece de una unidad de valor común para medir costos de producción de manera exacta.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q18" value="b"> Está penalizado criminalmente por todos los tratados internacionales vigentes.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q18" value="c"> Limita el transporte terrestre exclusivamente a tracción animal.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: A.</b> Sin una divisa y un sistema cambiario, calcular costos marginales y fijar precios logísticos a gran escala es inviable.</div>
+            </div>
+
+            <!-- Q17 -->
+            <div class="question-card" data-correct="b">
+                <div class="question-meta meta-comercio">Pregunta 17 • Exportación Tradicional</div>
+                <div class="question-text">¿Qué representa una Exportación Tradicional para una economía en desarrollo?</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q19" value="a"> Venta de servicios tecnológicos en la nube desarrollados localmente.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q19" value="b"> El envío al exterior de commodities o materias primas básicas con escaso procesamiento industrial, históricamente dominantes en sus ventas externas.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q19" value="c"> Envío temporal de maquinaria pesada para reparación mecánica.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: B.</b> Ejemplos clásicos incluyen recursos minerales extraídos, petróleo crudo, café en grano sin tostar o frutas frescas sin procesar.</div>
+            </div>
+
+            <!-- Q18 -->
+            <div class="question-card" data-correct="c">
+                <div class="question-meta meta-comercio">Pregunta 18 • Exportación No Tradicional</div>
+                <div class="question-text">¿Qué caracteriza operativamente a los productos de Exportación No Tradicional?</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q20" value="a"> Bienes que ingresan de contrabando sin registros fiscales en puertos nacionales.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q20" value="b"> Productos obsoletos que se donan a fundaciones internacionales libres de impuestos.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q20" value="c"> Bienes con un grado de industrialización, tecnología incorporada o valor agregado que diversifican la oferta exportable histórica del país.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: C.</b> Dispositivos médicos complejos, circuitos electrónicos, software especializado o alimentos gourmet procesados entran en esta categoría de alta rentabilidad operativa.</div>
+            </div>
+
+            <!-- Q19 -->
+            <div class="question-card" data-correct="a">
+                <div class="question-meta meta-comercio">Pregunta 19 • Logística de Importación</div>
+                <div class="question-text">¿Cuál es la función crítica de los procesos de Importación para el administrador de planta moderno?</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q21" value="a"> Abastecer la línea productiva con materias primas, insumos y bienes de capital avanzados que no están disponibles localmente o son más eficientes en costo.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q21" value="b"> Retener mercancía defectuosa en almacenes portuarios indefinidamente para evitar multas comerciales.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q21" value="c"> Reducir de manera artificial el Producto Interno Bruto del país receptor de la carga.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: A.</b> Sin una importación fluida de componentes clave, es imposible implementar esquemas de manufactura flexible o Just-In-Time a nivel global.</div>
+            </div>
+
+            <!-- Q20 -->
+            <div class="question-card" data-correct="b">
+                <div class="question-meta meta-comercio">Pregunta 20 • Balanza Comercial</div>
+                <div class="question-text">¿Cuándo se dice que una nación presenta un Superávit Comercial en su balanza operativa?</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q22" value="a"> Cuando el valor monetario de sus importaciones supera al de sus exportaciones totales.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q22" value="b"> Cuando el valor total de las exportaciones de bienes y servicios supera al valor de sus importaciones en un lapso de tiempo.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q22" value="c"> Cuando las aduanas perdonan el cobro de aranceles ad-valorem a todas las empresas de zona franca.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: B.</b> Representa una inyección neta de divisas a la economía del país exportador, fortaleciendo sus reservas operacionales.</div>
+            </div>
+        </div>
+
+        <!-- MÓDULO 3: PRESENTACIONES Y TÉCNICA ADUANERA AVANZADA -->
+        <div id="panel-aduanas" class="section-panel">
+            <div class="intro-card" style="border-left: 4px solid var(--purple-accent);">
+                <h3>Técnica Aduanera, Regímenes, Incoterms y Documentación</h3>
+                <p>Evaluación detallada de la Guía Aduanera, marcos legales en fronteras, responsabilidades de entrega de mercancías y trámites logísticos obligatorios.</p>
+            </div>
+
+            <!-- Q21 -->
+            <div class="question-card" data-correct="c">
+                <div class="question-meta meta-aduanas">Pregunta 21 • Rol Aduanero</div>
+                <div class="question-text">¿Cuál es el propósito legal y fiscal primordial de una Aduana en puertos de entrada o salida terrestres, marítimos y aéreos?</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q23" value="a"> Dictar las estrategias de marketing de los importadores privados.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q23" value="b"> Almacenar de forma gratuita la carga de los transportistas internacionales.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q23" value="c"> Controlar y fiscalizar el paso transfronterizo de bienes, recaudar tributos arancelarios y velar por la seguridad nacional y biológica.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: C.</b> Las aduanas actúan como filtros institucionales obligatorios para la legalidad, trazabilidad y tributación del comercio exterior.</div>
+            </div>
+
+            <!-- Q22 -->
+            <div class="question-card" data-correct="b">
+                <div class="question-meta meta-aduanas">Pregunta 22 • Régimen Definitivo</div>
+                <div class="question-text">El "Régimen Aduanero de Importación Definitiva" se define operativamente como:</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q24" value="a"> El ingreso de carga para exhibición en ferias de manufactura que saldrá del país en un mes.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q24" value="b"> La entrada de mercancías procedentes del extranjero destinadas a permanecer en el territorio nacional de manera ilimitada, previo pago de tributos.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q24" value="c"> El paso express de contenedores sellados que cruzan un país con destino a un tercer estado.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: B.</b> Es el trámite regular por el cual un insumo o producto nacionaliza su condición legal y se incorpora formalmente al comercio nacional.</div>
+            </div>
+
+            <!-- Q23 -->
+            <div class="question-card" data-correct="a">
+                <div class="question-meta meta-aduanas">Pregunta 23 • Perfeccionamiento Activo</div>
+                <div class="question-text">¿Por qué el Régimen de "Perfeccionamiento Activo" (Maquila o Zonas Francas) es vital para plantas de ensamble globales?</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q25" value="a"> Permite importar materias primas o componentes suspendiendo temporalmente los aranceles, para ser procesados, ensamblados y luego reexportados.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q25" value="b"> Exime a las empresas de implementar sistemas de gestión de la calidad o auditorías de procesos.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q25" value="c"> Obliga al importador a vender toda su producción manufacturada en el mercado interno minorista.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: A.</b> Es una palanca competitiva enorme en costos que evita la doble tributación de insumos en cadenas de ensamble multinacionales.</div>
+            </div>
+
+            <!-- Q24 -->
+            <div class="question-card" data-correct="c">
+                <div class="question-meta meta-aduanas">Pregunta 24 • Tránsito Aduanero</div>
+                <div class="question-text">¿Qué función cumple el régimen de "Tránsito Aduanero"?</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q26" value="a"> El cobro de peajes viales a camiones articulados en autopistas nacionales.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q26" value="b"> Almacenar carga decomisada por contrabando de alto riesgo.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q26" value="c"> Permitir el transporte de mercancías bajo control de una aduana de partida a una aduana de destino, cruzando fronteras intermedias suspendiendo aranceles.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: C.</b> Garantiza que la carga llegue intacta y con sellos oficiales desde el puerto de entrada hasta el almacén fiscal interior o frontera de salida sin nacionalizarse en el trayecto.</div>
+            </div>
+
+            <!-- Q25 -->
+            <div class="question-card" data-correct="b">
+                <div class="question-meta meta-aduanas">Pregunta 25 • Incoterms</div>
+                <div class="question-text">¿Qué regulan internacionalmente los "Incoterms" creados por la Cámara de Comercio Internacional (CCI)?</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q27" value="a"> Los montos arancelarios e impuestos directos fijos que impone el Ministerio de Hacienda.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q27" value="b"> El punto exacto de entrega de los bienes, la transferencia de riesgos de daño y la distribución de costos de transporte y aduanas entre comprador y vendedor.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q27" value="c"> La tasa de cambio oficial entre divisas como el dólar, euro o colones.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: B.</b> Los Incoterms estandarizan las responsabilidades contractuales de la logística de distribución física internacional (DFI).</div>
+            </div>
+
+            <!-- Q26 -->
+            <div class="question-card" data-correct="a">
+                <div class="question-meta meta-aduanas">Pregunta 26 • Incoterm EXW (Ex Works)</div>
+                <div class="question-text">Bajo el Incoterm "EXW" (En Fábrica), ¿dónde terminan las obligaciones y costes del vendedor/exportador?</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q28" value="a"> En sus propias instalaciones (fábrica o almacén), poniendo la carga a disposición del comprador sin cargarla en el vehículo de recogida.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q28" value="b"> Al colocar el contenedor de manera segura sobre la cubierta del buque en el puerto de origen.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q28" value="c"> En la puerta de la bodega del comprador en el país de destino con impuestos pagados.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: A.</b> Representa el grado de obligación mínimo para el vendedor; todo el riesgo y costo logístico posterior corre por cuenta del importador.</div>
+            </div>
+
+            <!-- Q27 -->
+            <div class="question-card" data-correct="c">
+                <div class="question-meta meta-aduanas">Pregunta 27 • Incoterm FOB (Free On Board)</div>
+                <div class="question-text">En un contrato bajo términos de venta marítimos "FOB", el vendedor transfiere el riesgo al comprador cuando:</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q29" value="a"> El camión logístico sale de los portones perimetrales de la fábrica de origen.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q29" value="b"> La mercancía llega sin novedades a la aduana destino.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q29" value="c"> La mercancía es colocada a bordo del buque designado por el comprador en el puerto de embarque acordado.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: C.</b> El vendedor corre con los costos y trámites de exportación locales hasta que el contenedor descansa en la cubierta o bodegas del barco.</div>
+            </div>
+
+            <!-- Q28 -->
+            <div class="question-card" data-correct="b">
+                <div class="question-meta meta-aduanas">Pregunta 28 • Incoterm CIF</div>
+                <div class="question-text">¿Qué costos adicionales e importantes asume obligatoriamente el exportador bajo el término "CIF" (Cost, Insurance and Freight)?</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q30" value="a"> El pago de los impuestos de nacionalización en la aduana de entrada destino.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q30" value="b"> El pago del flete marítimo principal internacional y la contratación de una póliza de seguro de transporte contra riesgos de pérdida o daño para el comprador.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q30" value="c"> El transporte de última milla terrestre desde el puerto destino hasta la fábrica final.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: B.</b> El vendedor paga flete internacional y seguro básico, aunque el riesgo se transfiere al comprador una vez cargado el buque en origen.</div>
+            </div>
+
+            <!-- Q29 -->
+            <div class="question-card" data-correct="a">
+                <div class="question-meta meta-aduanas">Pregunta 29 • Incoterm DDP</div>
+                <div class="question-text">El Incoterm "DDP" (Delivered Duty Paid) representa:</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q31" value="a"> La máxima obligación para el vendedor, quien entrega la mercancía en destino habiendo pagado el flete internacional, seguros y los trámites e impuestos aduaneros de importación.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q31" value="b"> Un término exclusivo para envíos urgentes de mensajería aérea libre de revisiones de aduana.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q31" value="c"> Una modalidad donde el comprador realiza el trámite de exportación en origen por su cuenta.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: A.</b> DDP implica una entrega llave en mano en las bodegas del importador con todo coste cubierto por el proveedor.</div>
+            </div>
+
+            <!-- Q30 -->
+            <div class="question-card" data-correct="c">
+                <div class="question-meta meta-aduanas">Pregunta 30 • Conocimiento de Embarque</div>
+                <div class="question-text">¿Qué es el "Conocimiento de Embarque" (Bill of Lading / B/L o Guía Aérea / AWB)?</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q32" value="a"> Un inventario de activos fijos del operador de montacargas del puerto.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q32" value="b"> El folleto publicitario con los itinerarios anuales de las navieras comerciales.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q32" value="c"> El contrato de transporte internacional de las mercancías, que funge como recibo de carga a bordo y título representativo de propiedad de los bienes.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: C.</b> Documento legal y logístico neurálgico en comercio exterior; sin su presentación original o liberación electrónica, no se entrega la carga.</div>
+            </div>
+
+            <!-- Q31 -->
+            <div class="question-card" data-correct="a">
+                <div class="question-meta meta-aduanas">Pregunta 31 • Factura Comercial Internacional</div>
+                <div class="question-text">¿Cuál es el rol jurídico y tributario de la Factura Comercial en el proceso aduanero?</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q33" value="a"> Servir de base legal para la declaración del valor aduanero de las mercancías sobre el cual se calcularán los impuestos arancelarios de importación.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q33" value="b"> Listar únicamente las dimensiones físicas y pesos brutos de los palets del contenedor.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q33" value="c"> Desglosar el catálogo de mantenimiento preventivo de la maquinaria adquirida.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: A.</b> Es el documento comercial probatorio que detalla el precio pagado o por pagar, las partes y las condiciones de venta (Incoterm).</div>
+            </div>
+
+            <!-- Q32 -->
+            <div class="question-card" data-correct="b">
+                <div class="question-meta meta-aduanas">Pregunta 32 • Lista de Empaque</div>
+                <div class="question-text">¿Qué información crítica aporta la "Lista de Empaque" (Packing List) a los inspectores de aduana en puerto?</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q34" value="a"> Los datos bancarios y líneas de crédito abiertas para financiar la transacción comercial.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q34" value="b"> El desglose detallado del contenido del contenedor, describiendo bultos, pesos netos, pesos brutos, volúmenes y numeración de empaque.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q34" value="c"> El registro consolidado de horas extra del operario que cargó la mercancía.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: B.</b> Facilita enormemente las labores de muestreo, aforo o revisión física selectiva de los bultos por parte de la autoridad aduanera.</div>
+            </div>
+
+            <!-- Q33 -->
+            <div class="question-card" data-correct="c">
+                <div class="question-meta meta-aduanas">Pregunta 33 • DUA / DTI</div>
+                <div class="question-text">La DUA (Declaración Única Aduanera) o documento equivalente de despacho aduanero representa:</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q35" value="a"> Un permiso ambiental optativo aplicable únicamente al desecho de cartón.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q35" value="b"> El contrato privado firmado entre el transportista interno y el almacén fiscal.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q35" value="c"> El documento oficial y declaración jurada mediante la cual el importador/exportador solicita asignar un régimen aduanero formal a las mercancías.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: C.</b> Consolida toda la información comercial, clasificación arancelaria, datos de transporte y liquidación de impuestos del embarque.</div>
+            </div>
+
+            <!-- Q34 -->
+            <div class="question-card" data-correct="a">
+                <div class="question-meta meta-aduanas">Pregunta 34 • Certificado de Origen</div>
+                <div class="question-text">¿Para qué sirve el "Certificado de Origen" dentro de un Tratado de Libre Comercio (TLC)?</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q36" value="a"> Para probar legalmente el país de fabricación del bien y acogerse a preferencias arancelarias o exenciones fiscales contempladas en los TLC.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q36" value="b"> Para rastrear la ubicación satelital GPS de la carga marítima en tiempo real.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q36" value="c"> Para certificar que la empresa cumple con las normas ISO de mantenimiento industrial.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: A.</b> Es el instrumento legal habilitante para reducir o eliminar aranceles de importación legítimamente entre naciones socias.</div>
+            </div>
+
+            <!-- Q35 -->
+            <div class="question-card" data-correct="b">
+                <div class="question-meta meta-aduanas">Pregunta 35 • Clasificación Arancelaria</div>
+                <div class="question-text">¿Qué es el Sistema Armonizado (Código o Partida Arancelaria)?</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q37" value="a"> El número secuencial asignado al contenedor de acero de forma internacional.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q37" value="b"> Una nomenclatura numérica internacional estandarizada de dígitos que identifica universalmente las mercancías para fijar sus aranceles y controles.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q37" value="c"> El registro nacional de licencias de conducir para personal logístico pesado.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: B.</b> Permite que una aduana en América y otra en Asia entiendan exactamente de qué producto se trata sin ambigüedades lingüísticas.</div>
+            </div>
+
+            <!-- Q36 -->
+            <div class="question-card" data-correct="c">
+                <div class="question-meta meta-aduanas">Pregunta 36 • Barreras No Arancelarias</div>
+                <div class="question-text">¿A qué corresponden las denominadas Barreras No Arancelarias en comercio internacional?</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q38" value="a"> Al cobro exclusivo de impuestos específicos por volumen excesivo.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q38" value="b"> Al muro físico o vallas perimetrales construidas en las fronteras terrestres de aduana.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q38" value="c"> A regulaciones técnicas, requisitos fitosanitarios, normas de etiquetado y permisos previos que restringen o regulan la entrada de mercancías.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: C.</b> Tienen justificaciones de salud, calidad o seguridad, pero su incumplimiento frena por completo el flujo logístico.</div>
+            </div>
+
+            <!-- Q37 -->
+            <div class="question-card" data-correct="a">
+                <div class="question-meta meta-aduanas">Pregunta 37 • Valor en Aduana</div>
+                <div class="question-text">En la gran mayoría de aduanas del mundo, la base imponible para calcular los impuestos de importación es el Valor CIF. Este se compone de:</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q39" value="a"> El valor de la mercancía (FOB) + el costo del flete internacional + la prima del seguro internacional.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q39" value="b"> El costo de fabricación de la planta de origen - la depreciación contable de maquinaria.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q39" value="c"> Únicamente el precio estipulado en la factura de compra de fábrica sin cargos adicionales.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: A.</b> Sobre la suma de estos tres componentes logísticos se tasan los porcentajes impositivos nacionales de entrada.</div>
+            </div>
+
+            <!-- Q38 -->
+            <div class="question-card" data-correct="b">
+                <div class="question-meta meta-aduanas">Pregunta 38 • Agente de Aduana</div>
+                <div class="question-text">¿Cuál es el rol operativo y legal de un "Agente o Corredor de Aduana"?</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q40" value="a"> Transportar físicamente los palets desde los patios de contenedores a las líneas de ensamble.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q40" value="b"> Actuar como un auxiliar autorizado de la función pública, asesorando y gestionando el despacho de mercancías en nombre del importador/exportador.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q40" value="c"> Fijar y recaudar las tasas de interés de los créditos comerciales internacionales.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: B.</b> Es un especialista técnico encargado de clasificar la carga, confeccionar la DUA y canalizar el trámite aduanero sin errores legales.</div>
+            </div>
+
+            <!-- Q39 -->
+            <div class="question-card" data-correct="c">
+                <div class="question-meta meta-aduanas">Pregunta 39 • Almacén Fiscal</div>
+                <div class="question-text">Un "Almacén Fiscal o Depósito Aduanero Autorizado" sirve a la Gestión de la Producción para:</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q41" value="a"> Almacenar los residuos tóxicos o chatarras finales de la manufactura para siempre.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q41" value="b"> Evitar que la policía nacional fiscalice el contenido logístico de un embarque comercial.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q41" value="c"> Custodiar de manera temporal mercancías importadas suspendiendo el pago de impuestos, permitiendo nacionalizarlas de forma parcial según los requerimientos de planta.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: C.</b> Da un respiro financiero enorme al flujo de caja, permitiendo retirar y pagar aranceles solo de los insumos que se usarán en la semana de producción.</div>
+            </div>
+
+            <!-- Q40 -->
+            <div class="question-card" data-correct="a">
+                <div class="question-meta meta-aduanas">Pregunta 40 • Despacho Just-In-Time</div>
+                <div class="question-text">Para sostener una producción esbelta "Justo a Tiempo (JIT)", un retraso prolongado por aforo (inspección física) en aduana representa:</div>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="q42" value="a"> Un desperdicio crítico en forma de paros de línea productiva, incremento de costos por demoras en puerto e incumplimiento de despachos al cliente final.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q42" value="b"> Un aumento positivo en los niveles de inventarios de reserva (MRO) de la planta.</label></li>
+                    <li class="option-item"><label><input type="radio" name="q42" value="c"> Un proceso administrativo ordinario que no afecta los planes de las celdas de manufactura.</label></li>
+                </ul>
+                <div class="feedback-box"><b>Correcto: A.</b> Los retrasos en frontera quiebran la confiabilidad logística y elevan el lead time, obligando a coordinar aduanas anticipadas o predictivas.</div>
+            </div>
+        </div>
+
+        <div class="action-bar">
+            <button type="button" class="btn btn-reset" onclick="resetQuiz()">Reiniciar Simulador</button>
+            <button type="submit" class="btn btn-submit">Calificar Todo el Examen</button>
+        </div>
+    </form>
+
+    <div id="score-board" class="score-display">
+        <h2>Resultado Global</h2>
+        <p id="score-text" style="font-size: 1.3rem;">Has obtenido 0 de 40 puntos (0%)</p>
+    </div>
 </div>
-
-<!-- STUDY -->
-<div id="study" class="view">
-  <div class="study-bar" id="study-bar"></div>
-  <button class="study-exit" onclick="goHome()" title="Salir">✕</button>
-  <div class="study-nav">
-    <button class="study-nav-btn" id="btn-card-up" onclick="navCard(-1)" title="Tarjeta anterior" disabled>↑</button>
-    <button class="study-nav-btn" id="btn-card-down" onclick="navCard(1)" title="Tarjeta siguiente">↓</button>
-  </div>
-  <div class="cards-container" id="cards-container"></div>
-</div>
-
-<!-- QUIZ -->
-<div id="quiz" class="view">
-  <div class="quiz-top">
-    <div class="quiz-meta">
-      <span id="quiz-tema-label"></span>
-      <button class="quiz-exit" onclick="goHome()">✕</button>
-    </div>
-    <div class="quiz-meta" style="margin-top:2px">
-      <span></span>
-      <span id="quiz-counter" style="font-size:12px;color:var(--text-dim);font-family:ui-monospace,SFMono-Regular,'Roboto Mono','SF Mono',Menlo,Consolas,monospace"></span>
-    </div>
-    <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="quiz-prog"></div></div>
-  </div>
-  <div class="quiz-body">
-    <div id="quiz-q" class="quiz-q"></div>
-    <div id="quiz-opts" class="quiz-opts"></div>
-    <div id="quiz-attempt-msg" class="quiz-attempt-msg"></div>
-    <div id="quiz-review-card" class="quiz-review-card">
-      <div class="quiz-review-title">💡 Repaso rápido</div>
-      <div id="quiz-review-content"></div>
-      <button class="btn btn-secondary" id="btn-go-study" style="width:100%;margin-top:10px;padding:10px;font-size:13px">📚 Ir a estudiar este tema</button>
-    </div>
-    <div id="quiz-exp" class="quiz-exp">
-      <div class="quiz-exp-label">💡 Explicación</div>
-      <div id="quiz-exp-text"></div>
-    </div>
-    <button id="btn-next" class="btn-next" onclick="nextQ()">Siguiente →</button>
-  </div>
-</div>
-
-<!-- RESULTS -->
-<div id="results" class="view">
-  <div class="results-header"><h2>Resultados del Quiz</h2></div>
-  <div class="gauge-container">
-    <svg class="gauge-svg" width="160" height="160" viewBox="0 0 160 160">
-      <circle cx="80" cy="80" r="64" fill="none" stroke="var(--line)" stroke-width="14"/>
-      <circle id="gauge-arc" cx="80" cy="80" r="64" fill="none" stroke="var(--t1)" stroke-width="14"
-              stroke-linecap="round" stroke-dasharray="402.1" stroke-dashoffset="402.1"
-              style="transition:stroke-dashoffset 1.2s ease"/>
-    </svg>
-    <div class="gauge-text">
-      <div class="gauge-nota" id="gauge-nota">0</div>
-      <div class="gauge-label">/ 100</div>
-    </div>
-  </div>
-  <div class="results-feedback" id="results-feedback"></div>
-  <div class="tema-breakdown"><h3>Desglose por tema</h3><div id="breakdown-list"></div></div>
-  <div class="failed-section" id="failed-section"><h3>Preguntas falladas</h3><div id="failed-list"></div></div>
-  <div class="results-actions">
-    <button class="btn btn-primary" onclick="startQuiz()">🔁 Repetir quiz</button>
-    <button class="btn btn-secondary" onclick="goHome()">🏠 Inicio</button>
-  </div>
-</div>
-
-</div><!-- /app -->
 
 <script>
-/* ============================================================
-   DATA
-   ============================================================ */
-const TEMAS = [
-  {id:1, emoji:'🌐', nombre:'Estrategia de Operaciones Global', subarea:'Gestión de la Producción',
-   habilidad:'Analizar la estrategia de operaciones en un entorno global (Cap. 2, Barry Render)',
-   contenido:'Misión, estrategia, ventaja competitiva (diferenciación, costo, respuesta), 10 decisiones de AO, estrategias globales (internacional, multidoméstica, global, transnacional)', color:'--t1'},
-  {id:2, emoji:'🚢', nombre:'Importaciones y Exportaciones', subarea:'Gestión de la Producción',
-   habilidad:'Analizar principios básicos de importaciones y exportaciones, ligados a los procesos productivos',
-   contenido:'Trueque, exportación, importación, productos tradicionales y no tradicionales, comercio internacional (definición, importancia, historia), guía aduanera', color:'--t2'},
-  {id:3, emoji:'📦', nombre:'Stock de Seguridad', subarea:'Planeación y Control de la Producción',
-   habilidad:'Calcular los stocks de seguridad, la determinación de las fechas de entrega y el cálculo de necesidades según las nuevas tendencias',
-   contenido:'Stock de seguridad, proporciones, porcentajes, fórmula SS = Z × σD × √LT, punto de reorden (ROP)', color:'--t3'},
-  {id:4, emoji:'⚡', nombre:'Just In Time (JIT)', subarea:'Planeación y Control de la Producción',
-   habilidad:'Explicar en qué consiste el Sistema Just in Time (JIT)',
-   contenido:'Origen Toyota, producción jalada vs empujada, 7 desperdicios (mudas), Kanban, Jidoka, Kaizen, ventajas y desventajas', color:'--t4'},
-  {id:5, emoji:'🔩', nombre:'Teoría de las Limitaciones (TOC)', subarea:'Planeación y Control de la Producción',
-   habilidad:'Identificar y aplicar la Teoría de las Limitaciones',
-   contenido:'BUILDNET, SERVE, SPLIT, OPT, cuello de botella, 5 pasos de la TOC (Goldratt)', color:'--t5'},
-  {id:6, emoji:'🎨', nombre:'Economía Naranja', subarea:'Planeación y Control de la Producción',
-   habilidad:'Identificar escenarios de desarrollo sostenible en materia de la Economía Naranja',
-   contenido:'Definición (BID 2013), sectores creativos, relación con ODS, ejemplos en Costa Rica', color:'--t6'},
-  {id:7, emoji:'⚠️', nombre:'Riesgos del Trabajo', subarea:'Mantenimiento y Seguridad de las Operaciones',
-   habilidad:'Distinguir los tipos de riesgos del trabajo',
-   contenido:'Código de Trabajo Título IV Art. 193, accidentes de trabajo, póliza INS, tipos: físicos, químicos, biológicos', color:'--t7'},
-  {id:8, emoji:'📋', nombre:'Normas ISO y OHSAS', subarea:'Mantenimiento y Seguridad de las Operaciones',
-   habilidad:'Comparar normas de seguridad y calidad: OHSAS 18001, ISO 45001, ISO 9001 e ISO 14001',
-   contenido:'OHSAS 18001 vs ISO 45001:2018, ISO 9001:2015 (calidad), ISO 14001:2015 (ambiental), cuadro comparativo, ciclo PHVA', color:'--t8'},
-];
+    function switchTab(tab) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.section-panel').forEach(panel => panel.classList.remove('active'));
 
-const STUDY = [
-  /* ── TEMA 1 ── */
-  {temaId:1, tipo:'portada', titulo:'Estrategia de Operaciones Global', cuerpo:''},
-  {temaId:1, tipo:'concepto', titulo:'Misión y Estrategia', cuerpo:`
-    <p>La <strong>misión</strong> define el propósito de la organización: qué hace, para quién y cómo crea valor.</p>
-    <div class="formula">Misión → el PORQUÉ de la empresa
-Estrategia → el CÓMO alcanzar esa misión</div>
-    <p>La <strong>estrategia de operaciones</strong> debe alinearse con las metas corporativas y generar ventaja competitiva real.</p>
-    <div class="example"><strong>Boeing:</strong> Su misión es ser líder mundial en aviación comercial y defensa. Su estrategia de AO incluye manufactura en múltiples países, alianzas globales y personalización de aeronaves para cada cliente.</div>
-  `},
-  {temaId:1, tipo:'concepto', titulo:'3 Formas de Ventaja Competitiva', cuerpo:`
-    <h4>1. Diferenciación</h4>
-    <p>El producto/servicio es único o superior. El cliente paga más porque percibe mayor valor.</p>
-    <div class="example"><strong>Ejemplo:</strong> Apple diferencia por diseño y ecosistema → cobra precio premium.</div>
-    <h4>2. Liderazgo en Costo</h4>
-    <p>Producir con el menor costo posible para ofrecer precios bajos o mayor margen de ganancia.</p>
-    <div class="example"><strong>Ejemplo:</strong> Walmart optimiza su cadena logística para vender más barato que cualquier competidor.</div>
-    <h4>3. Respuesta</h4>
-    <p>Ser ágil, confiable y flexible. Entregar rápido y adaptarse a cambios del mercado.</p>
-    <div class="example"><strong>Ejemplo:</strong> Zara renueva sus colecciones en 2 semanas → respuesta ultrarrápida a las tendencias.</div>
-  `},
-  {temaId:1, tipo:'concepto', titulo:'10 Decisiones Estratégicas de AO', cuerpo:`
-    <p>Render identifica <strong>10 decisiones</strong> que los gerentes de operaciones deben gestionar:</p>
-    <ul>
-      <li>1. Diseño de bienes y servicios</li>
-      <li>2. Gestión de la calidad</li>
-      <li>3. Diseño del proceso y capacidad</li>
-      <li>4. Selección de localización</li>
-      <li>5. Diseño de la distribución de instalaciones</li>
-      <li>6. Recursos humanos y diseño del trabajo</li>
-      <li>7. Gestión de la cadena de suministro</li>
-      <li>8. Inventario y planificación de requerimientos</li>
-      <li>9. Programación (producción y personal)</li>
-      <li>10. Mantenimiento</li>
-    </ul>
-    <div class="formula">Cada decisión impacta: costo · calidad · velocidad · flexibilidad</div>
-  `},
-  {temaId:1, tipo:'concepto', titulo:'4 Estrategias de Operaciones Globales', cuerpo:`
-    <h4>Internacional</h4>
-    <p>Exporta usando competencias internas. Poca adaptación al mercado local.</p>
-    <h4>Multidoméstica</h4>
-    <p>Descentraliza decisiones. Cada subsidiaria se adapta completamente al país local.</p>
-    <h4>Global</h4>
-    <p>Alta estandarización del producto. Un solo producto para todo el mundo. Reduce costos.</p>
-    <h4>Transnacional</h4>
-    <p>Combina escala global + adaptación local. La más compleja de gestionar.</p>
-    <div class="example"><strong>Transnacional:</strong> McDonald's usa el mismo sistema de franquicia global pero en Costa Rica ofrece el "Gallo Pinto Breakfast" adaptado al gusto tico.</div>
-  `},
-  {temaId:1, tipo:'especial', titulo:'Aspectos Culturales, Éticos y Trampas de Examen', cuerpo:`
-    <div class="badge-special">⚠️ Caso especial / trampa de examen</div>
-    <p>Las operaciones globales enfrentan desafíos culturales y éticos:</p>
-    <ul>
-      <li><strong>Corrupción</strong> — sobornos en algunos mercados vs. ética corporativa.</li>
-      <li><strong>Condiciones laborales</strong> — estándares distintos entre países.</li>
-      <li><strong>Propiedad intelectual</strong> — piratería de diseños y marcas.</li>
-      <li><strong>Medio ambiente</strong> — regulaciones ambientales diferentes por país.</li>
-    </ul>
-    <div class="formula">Trampa: "Global" = estandarización y centralización.
-"Internacional" = exportar sin adaptación local.
-NO son lo mismo.</div>
-  `},
-
-  /* ── TEMA 2 ── */
-  {temaId:2, tipo:'portada', titulo:'Importaciones y Exportaciones', cuerpo:''},
-  {temaId:2, tipo:'concepto', titulo:'Trueque, Exportación e Importación', cuerpo:`
-    <h4>Trueque</h4>
-    <p>Intercambio directo de bienes o servicios <strong>sin uso de dinero</strong>. Forma más antigua de comercio.</p>
-    <div class="example"><strong>Ejemplo:</strong> Costa Rica intercambia café por maquinaria agrícola alemana sin usar dólares.</div>
-    <h4>Exportación</h4>
-    <p>Venta de bienes o servicios producidos en el país a compradores en el <strong>extranjero</strong>.</p>
-    <h4>Importación</h4>
-    <p>Compra de bienes o servicios producidos en el <strong>extranjero</strong> para consumo nacional.</p>
-    <div class="formula">Balanza comercial = Exportaciones − Importaciones
-Positiva → Superávit | Negativa → Déficit</div>
-  `},
-  {temaId:2, tipo:'concepto', titulo:'Productos Tradicionales y No Tradicionales', cuerpo:`
-    <h4>Exportaciones Tradicionales de Costa Rica</h4>
-    <p>Históricamente dominantes en la balanza comercial:</p>
-    <ul>
-      <li>Café ☕</li>
-      <li>Banano 🍌</li>
-      <li>Azúcar</li>
-      <li>Cacao</li>
-    </ul>
-    <h4>Exportaciones No Tradicionales</h4>
-    <p>Más recientes, con mayor valor agregado:</p>
-    <ul>
-      <li>Dispositivos médicos (Costa Rica es líder per cápita mundial)</li>
-      <li>Software y servicios tecnológicos</li>
-      <li>Piña, melón, plantas ornamentales</li>
-      <li>Servicios turísticos de alto valor</li>
-    </ul>
-    <div class="example"><strong>Dato histórico:</strong> Intel operó en Costa Rica (1997–2014) y fue la mayor exportación no tradicional del país durante ese período.</div>
-  `},
-  {temaId:2, tipo:'concepto', titulo:'Comercio Internacional', cuerpo:`
-    <h4>Definición</h4>
-    <p>Intercambio de bienes, servicios y capital entre países, regulado por acuerdos internacionales.</p>
-    <h4>Importancia</h4>
-    <ul>
-      <li>Permite especialización según <strong>ventaja comparativa</strong>.</li>
-      <li>Genera empleo y crecimiento económico.</li>
-      <li>Acceso a bienes que no se producen localmente.</li>
-    </ul>
-    <h4>Historia</h4>
-    <p>Ruta de la Seda (siglo II a.C.) → Colonialismo → GATT (1947) → OMC (1995). Costa Rica tiene TLC con EE.UU., Unión Europea, China y otros.</p>
-    <div class="formula">OMC = Organización Mundial del Comercio
-Fundada en 1995 · Regula el comercio global</div>
-  `},
-  {temaId:2, tipo:'concepto', titulo:'Guía Aduanera', cuerpo:`
-    <h4>¿Qué es la Aduana?</h4>
-    <p>Entidad gubernamental que controla el ingreso y salida de mercancías, cobra aranceles y verifica documentos. Costa Rica usa el <strong>CAUCA</strong> (Código Aduanero Uniforme Centroamericano).</p>
-    <h4>Documentos clave</h4>
-    <ul>
-      <li><strong>Factura comercial</strong> — precio y descripción de la mercancía.</li>
-      <li><strong>Declaración aduanera (DUA)</strong> — documento oficial ante la aduana.</li>
-      <li><strong>Certificado de origen</strong> — dónde se fabricó el producto.</li>
-      <li><strong>Conocimiento de embarque (B/L)</strong> — contrato de transporte marítimo.</li>
-      <li><strong>Packing list</strong> — lista detallada del contenido del envío.</li>
-    </ul>
-    <div class="formula">Arancel = impuesto que cobra el país importador
-Subsidio = ayuda económica al exportador nacional</div>
-  `},
-  {temaId:2, tipo:'especial', titulo:'Diferencias Clave para el Examen', cuerpo:`
-    <div class="badge-special">⚠️ Trampas de examen</div>
-    <ul>
-      <li><strong>Trueque ≠ descuento</strong> — el trueque es sin dinero de por medio.</li>
-      <li><strong>Tradicional ≠ artesanal</strong> — tradicional = históricamente dominante en la balanza.</li>
-      <li><strong>Arancel ≠ subsidio</strong> — el arancel cobra al importador; el subsidio ayuda al exportador nacional.</li>
-      <li><strong>Exportación directa</strong> = tú vendes directamente al extranjero. <strong>Exportación indirecta</strong> = a través de un intermediario.</li>
-      <li><strong>Superávit</strong> = exportamos más de lo que importamos (favorable).</li>
-    </ul>
-  `},
-
-  /* ── TEMA 3 ── */
-  {temaId:3, tipo:'portada', titulo:'Stock de Seguridad', cuerpo:''},
-  {temaId:3, tipo:'concepto', titulo:'¿Qué es y para qué sirve?', cuerpo:`
-    <p>El <strong>stock de seguridad (SS)</strong> es un inventario adicional que protege contra variaciones imprevistas en la <em>demanda</em> o en el <em>tiempo de entrega</em> del proveedor.</p>
-    <h4>Fórmula principal</h4>
-    <div class="formula">SS = Z × σD × √LT
-
-Z   = factor de nivel de servicio (z-score)
-σD  = desviación estándar de la demanda diaria
-LT  = lead time (días de entrega del proveedor)</div>
-    <h4>Valores de Z según nivel de servicio</h4>
-    <ul>
-      <li>90% de servicio → Z = 1.28</li>
-      <li>95% de servicio → Z = 1.645</li>
-      <li>99% de servicio → Z = 2.326</li>
-    </ul>
-  `},
-  {temaId:3, tipo:'concepto', titulo:'Ejemplos Resueltos de SS', cuerpo:`
-    <div class="example">
-      <strong>Ejemplo 1 (95% de servicio):</strong><br>
-      σD = 10 unidades/día · LT = 4 días · Z = 1.645<br><br>
-      SS = 1.645 × 10 × √4<br>
-      SS = 1.645 × 10 × 2<br>
-      SS = <strong>32.9 ≈ 33 unidades</strong>
-    </div>
-    <div class="example">
-      <strong>Ejemplo 2 (99% de servicio):</strong><br>
-      σD = 5 unidades/día · LT = 9 días · Z = 2.326<br><br>
-      SS = 2.326 × 5 × √9<br>
-      SS = 2.326 × 5 × 3<br>
-      SS = <strong>34.89 ≈ 35 unidades</strong>
-    </div>
-    <p style="font-size:12px;color:var(--text-dim);margin-top:8px">A mayor nivel de servicio → mayor Z → mayor SS. Siempre redondear hacia arriba.</p>
-  `},
-  {temaId:3, tipo:'concepto', titulo:'Punto de Reorden (ROP)', cuerpo:`
-    <h4>¿Qué es el ROP?</h4>
-    <p>El nivel de inventario en el que se debe lanzar el pedido al proveedor para no quedarse sin stock.</p>
-    <div class="formula">ROP = (Demanda promedio diaria × LT) + SS</div>
-    <div class="example">
-      <strong>Ejemplo:</strong><br>
-      Demanda promedio = 20 unidades/día<br>
-      LT = 4 días · SS = 33 unidades<br><br>
-      ROP = (20 × 4) + 33<br>
-      ROP = 80 + 33 = <strong>113 unidades</strong><br><br>
-      Cuando el inventario baje a 113 unidades → hacer el pedido.
-    </div>
-    <h4>Fecha de entrega esperada</h4>
-    <div class="formula">Fecha de entrega = Fecha de pedido + LT (días hábiles)</div>
-  `},
-  {temaId:3, tipo:'especial', titulo:'Proporciones y Porcentajes', cuerpo:`
-    <div class="badge-special">⚠️ Contenido de examen</div>
-    <h4>% de variación de la demanda</h4>
-    <div class="formula">% variación = (|Real − Estimado| / Estimado) × 100</div>
-    <div class="example">
-      Estimado: 200 · Real: 230<br>
-      % = (|230-200|/200) × 100 = (30/200) × 100 = <strong>15%</strong>
-    </div>
-    <h4>Proporción SS respecto al inventario total</h4>
-    <div class="formula">Proporción = SS / (Stock normal + SS)</div>
-    <div class="example">
-      Stock normal = 80 · SS = 33<br>
-      Proporción = 33/(80+33) = 33/113 ≈ <strong>29.2%</strong>
-    </div>
-  `},
-
-  /* ── TEMA 4 ── */
-  {temaId:4, tipo:'portada', titulo:'Sistema Just In Time (JIT)', cuerpo:''},
-  {temaId:4, tipo:'concepto', titulo:'¿Qué es el JIT?', cuerpo:`
-    <p>Sistema de producción creado por <strong>Taiichi Ohno en Toyota</strong> (años 70). Principio: <em>producir solo lo que se necesita, cuando se necesita, en la cantidad que se necesita</em>.</p>
-    <h4>Producción Empujada vs. Jalada</h4>
-    <ul>
-      <li><strong>Push (empujada):</strong> Se produce según pronósticos → puede generar exceso de inventario.</li>
-      <li><strong>Pull (jalada):</strong> Se produce solo cuando el cliente lo demanda → sin sobreproducción. El JIT usa Pull.</li>
-    </ul>
-    <div class="formula">JIT = Producción jalada + Entregas frecuentes + Cero desperdicio</div>
-  `},
-  {temaId:4, tipo:'concepto', titulo:'Los 7 Desperdicios (Mudas)', cuerpo:`
-    <p>El JIT identifica y elimina 7 tipos de desperdicio:</p>
-    <ul>
-      <li>1. <strong>Sobreproducción</strong> — fabricar más de lo necesario.</li>
-      <li>2. <strong>Tiempo de espera</strong> — máquinas o personas ociosas.</li>
-      <li>3. <strong>Transporte innecesario</strong> — mover materiales sin agregar valor.</li>
-      <li>4. <strong>Sobreprocesamiento</strong> — pasos innecesarios en el proceso.</li>
-      <li>5. <strong>Exceso de inventario</strong> — almacenar más de lo que se consume.</li>
-      <li>6. <strong>Movimiento innecesario</strong> — operarios que se mueven sin productividad.</li>
-      <li>7. <strong>Defectos</strong> — producción que requiere retrabajo o descarte.</li>
-    </ul>
-    <div class="formula">La sobreproducción es el peor desperdicio →
-genera todos los demás.</div>
-  `},
-  {temaId:4, tipo:'concepto', titulo:'Herramientas del JIT', cuerpo:`
-    <h4>Kanban</h4>
-    <p>Tarjeta o señal visual que <em>autoriza</em> la producción o el movimiento de materiales. Es el mecanismo del sistema jalado.</p>
-    <div class="example"><strong>Ejemplo:</strong> Cuando se vacía una caja de piezas, la tarjeta kanban "jala" la producción de más en la estación anterior.</div>
-    <h4>Jidoka (autonomización)</h4>
-    <p>La línea se <strong>detiene automáticamente</strong> cuando se detecta un defecto. Mejor parar que producir defectuoso.</p>
-    <h4>Kaizen (mejora continua)</h4>
-    <p>Mejoras pequeñas y diarias por todos los empleados. No grandes cambios esporádicos.</p>
-    <h4>Proveedores JIT</h4>
-    <p>Pocos proveedores, muy confiables, que entregan frecuentemente y sin defectos.</p>
-  `},
-  {temaId:4, tipo:'especial', titulo:'Ventajas, Desventajas y Trampas', cuerpo:`
-    <div class="badge-special">⚠️ Para el examen</div>
-    <h4>Ventajas del JIT</h4>
-    <ul>
-      <li>Reduce inventarios → menor costo de almacenamiento.</li>
-      <li>Detecta defectos de calidad más rápido.</li>
-      <li>Mayor flexibilidad ante cambios de demanda.</li>
-    </ul>
-    <h4>Desventajas del JIT</h4>
-    <ul>
-      <li>Muy vulnerable a interrupciones (huelgas, desastres naturales, pandemias).</li>
-      <li>Requiere proveedores extremadamente confiables.</li>
-      <li>No es apto para demanda muy impredecible.</li>
-    </ul>
-    <div class="formula">TRAMPA: El JIT NO elimina todo inventario →
-lo reduce al mínimo necesario, no a cero.</div>
-  `},
-
-  /* ── TEMA 5 ── */
-  {temaId:5, tipo:'portada', titulo:'Teoría de las Limitaciones (TOC)', cuerpo:''},
-  {temaId:5, tipo:'concepto', titulo:'¿Qué es la TOC y el cuello de botella?', cuerpo:`
-    <p>La <strong>Teoría de las Limitaciones</strong> fue desarrollada por <strong>Eliyahu Goldratt</strong> en su novela "La Meta" (1984). Premisa: <em>una cadena es tan fuerte como su eslabón más débil</em>.</p>
-    <h4>Cuello de botella</h4>
-    <p>El recurso o proceso con <strong>menor capacidad</strong> en el sistema. Define la velocidad máxima de toda la operación.</p>
-    <div class="example">
-      <strong>Ejemplo:</strong> Empaque: 100 und/h · Ensamble: 80 und/h · Pintura: 120 und/h<br><br>
-      El cuello de botella es <strong>Ensamble (80 und/h)</strong>.<br>
-      La fábrica NUNCA producirá más de 80 und/h.
-    </div>
-    <div class="formula">Throughput = velocidad a la que el sistema
-genera dinero mediante ventas</div>
-  `},
-  {temaId:5, tipo:'concepto', titulo:'Los 5 Pasos de la TOC', cuerpo:`
-    <ul>
-      <li>1. <strong>IDENTIFICAR</strong> la limitación del sistema.</li>
-      <li>2. <strong>EXPLOTAR</strong> al máximo la limitación (sin inversión extra, sacarle todo el provecho).</li>
-      <li>3. <strong>SUBORDINAR</strong> todo lo demás a la limitación (el sistema entero trabaja al ritmo del cuello de botella).</li>
-      <li>4. <strong>ELEVAR</strong> la limitación (invertir para aumentar su capacidad).</li>
-      <li>5. <strong>VOLVER AL PASO 1</strong> — al resolver una limitación, aparece una nueva.</li>
-    </ul>
-    <div class="formula">TOC = proceso de mejora continua.
-Siempre habrá una nueva limitación.</div>
-    <div class="example"><strong>Regla de oro:</strong> Nunca dejar ocioso el cuello de botella. Una hora perdida ahí = una hora perdida en todo el sistema.</div>
-  `},
-  {temaId:5, tipo:'concepto', titulo:'OPT, BUILDNET, SERVE y SPLIT', cuerpo:`
-    <h4>OPT (Optimized Production Technology)</h4>
-    <p>Software de planificación de producción desarrollado con la TOC. Optimiza el flujo concentrándose en los cuellos de botella.</p>
-    <h4>BUILDNET</h4>
-    <p>Red de construcción del programa de producción. Visualiza la red de operaciones y sus dependencias para identificar dónde están las limitaciones.</p>
-    <h4>SERVE</h4>
-    <p>Proceso de atender la demanda del cliente a través del sistema, priorizando los recursos según la limitación.</p>
-    <h4>SPLIT</h4>
-    <p>División del lote de producción en <strong>sublotes más pequeños</strong> para reducir el tiempo de espera y acelerar el flujo.</p>
-    <div class="formula">Lote de transferencia < Lote de proceso
-→ reduce el tiempo de ciclo total</div>
-  `},
-  {temaId:5, tipo:'especial', titulo:'Errores comunes sobre cuellos de botella', cuerpo:`
-    <div class="badge-special">⚠️ Trampas de examen</div>
-    <ul>
-      <li><strong>Error 1:</strong> Mejorar un proceso que NO es cuello de botella mejora el sistema. <em>FALSO</em> — solo mejora su eficiencia local; la producción total no cambia.</li>
-      <li><strong>Error 2:</strong> El cuello de botella siempre es la máquina más antigua. <em>FALSO</em> — puede ser un trabajador, un proveedor, o un proceso administrativo.</li>
-      <li><strong>Error 3:</strong> El cuello de botella no cambia. <em>FALSO</em> — al mejorarlo, aparece el siguiente (paso 5 de TOC).</li>
-    </ul>
-    <div class="formula">Diferencia SPLIT vs BUILDNET:
-SPLIT = divide lotes para acelerar flujo.
-BUILDNET = visualiza la red de operaciones.</div>
-  `},
-
-  /* ── TEMA 6 ── */
-  {temaId:6, tipo:'portada', titulo:'Economía Naranja', cuerpo:''},
-  {temaId:6, tipo:'concepto', titulo:'¿Qué es la Economía Naranja?', cuerpo:`
-    <p>El conjunto de actividades que transforman la <strong>creatividad, el talento y la propiedad intelectual</strong> en bienes y servicios con valor económico y cultural.</p>
-    <p>Término popularizado por <strong>Felipe Buitrago e Iván Duque</strong> para el BID en 2013.</p>
-    <div class="formula">Economía Naranja = Creatividad + Herencia Cultural + Tecnología</div>
-    <h4>¿Por qué naranja?</h4>
-    <p>El color naranja representa creatividad, calor y vitalidad cultural. No tiene relación con frutas ni banderas.</p>
-    <h4>Sectores</h4>
-    <ul>
-      <li>🎭 Artes y Patrimonio (museos, teatro, artesanías)</li>
-      <li>🎵 Industrias Culturales (música, cine, libros, videojuegos)</li>
-      <li>💻 Creaciones Funcionales (software, diseño, arquitectura)</li>
-      <li>🌐 Economía Digital (apps, plataformas, e-commerce creativo)</li>
-    </ul>
-  `},
-  {temaId:6, tipo:'concepto', titulo:'Economía Naranja y Desarrollo Sostenible', cuerpo:`
-    <p>La Economía Naranja se vincula al desarrollo sostenible en 3 dimensiones:</p>
-    <h4>Económica</h4>
-    <p>Genera ingresos y empleo de alta calidad, especialmente para jóvenes y mujeres, sin depender de recursos naturales agotables.</p>
-    <h4>Social</h4>
-    <p>Preserva la identidad cultural, la inclusión y la diversidad. Los artesanos y artistas locales se benefician directamente.</p>
-    <h4>Ambiental</h4>
-    <p>Produce con huella ambiental baja. El software no contamina ríos; el diseño no tala bosques.</p>
-    <div class="formula">ODS 8 (Trabajo decente) + ODS 11 (Ciudades sostenibles)
-+ ODS 17 (Alianzas) → alineados con Economía Naranja</div>
-    <div class="example"><strong>Costa Rica:</strong> Animación digital, software, turismo cultural, artesanías indígenas, música folclórica, diseño gráfico digital.</div>
-  `},
-
-  /* ── TEMA 7 ── */
-  {temaId:7, tipo:'portada', titulo:'Riesgos del Trabajo', cuerpo:''},
-  {temaId:7, tipo:'concepto', titulo:'Código de Trabajo — Título IV', cuerpo:`
-    <p>El <strong>Título IV del Código de Trabajo de Costa Rica</strong>, Art. 193 y siguientes, establece el Régimen de Seguridad Social y la protección contra riesgos del trabajo.</p>
-    <h4>Accidente de Trabajo</h4>
-    <p>Evento <strong>súbito, violento e imprevisto</strong> que ocurre con ocasión del trabajo o en el trayecto al trabajo, que produce lesión corporal, perturbación funcional o muerte.</p>
-    <h4>Previsión de accidentes</h4>
-    <p>Las empresas deben implementar: capacitación, equipos de protección personal (EPP), señalización y revisiones periódicas.</p>
-    <div class="formula">Accidente = súbito y violento
-Enfermedad profesional = gradual por exposición prolongada</div>
-  `},
-  {temaId:7, tipo:'concepto', titulo:'Seguro de Riesgos del Trabajo (INS)', cuerpo:`
-    <h4>Póliza obligatoria</h4>
-    <p>Todo empleador en Costa Rica está <strong>obligado por ley</strong> a asegurar a sus trabajadores en el <strong>INS (Instituto Nacional de Seguros)</strong> contra riesgos del trabajo.</p>
-    <h4>¿Qué cubre?</h4>
-    <ul>
-      <li>Atención médica y hospitalaria.</li>
-      <li>Incapacidades temporales (pago del salario mientras no puede trabajar).</li>
-      <li>Indemnización por incapacidad permanente.</li>
-      <li>Pensión a beneficiarios en caso de muerte del trabajador.</li>
-    </ul>
-    <div class="formula">Empleador sin póliza → responsable directo
-de todos los daños al trabajador accidentado</div>
-  `},
-  {temaId:7, tipo:'concepto', titulo:'3 Tipos de Riesgos del Trabajo', cuerpo:`
-    <h4>Riesgos Físicos</h4>
-    <p>Energías del ambiente que afectan el cuerpo:</p>
-    <ul>
-      <li>Ruido excesivo → daño auditivo.</li>
-      <li>Vibraciones → daño músculo-esquelético.</li>
-      <li>Temperatura extrema → golpe de calor o hipotermia.</li>
-      <li>Radiación (UV, ionizante) → quemaduras, cáncer.</li>
-    </ul>
-    <h4>Riesgos Químicos</h4>
-    <p>Sustancias que ingresan por inhalación, contacto o ingestión:</p>
-    <ul>
-      <li>Gases, vapores tóxicos, solventes.</li>
-      <li>Polvos (polvo de sílice → silicosis).</li>
-      <li>Plaguicidas y pesticidas.</li>
-    </ul>
-    <h4>Riesgos Biológicos</h4>
-    <p>Seres vivos o sus derivados: bacterias, virus, hongos. Afectan principalmente a trabajadores de la salud, agricultura y saneamiento.</p>
-  `},
-  {temaId:7, tipo:'especial', titulo:'Diferencias Clave para el Examen', cuerpo:`
-    <div class="badge-special">⚠️ Trampas de examen</div>
-    <ul>
-      <li><strong>Físico ≠ Mecánico:</strong> Los riesgos mecánicos (cortes con máquinas, golpes) son una categoría diferente. El físico = energía ambiental.</li>
-      <li><strong>Biológico ≠ Químico:</strong> Un virus es biológico. Un pesticida es químico.</li>
-      <li><strong>Accidente ≠ Enfermedad profesional:</strong> el accidente es súbito; la enfermedad es gradual.</li>
-      <li><strong>CCSS ≠ INS:</strong> Los riesgos del trabajo los cubre el INS, no la CCSS. La CCSS cubre seguro de salud y pensión general.</li>
-    </ul>
-    <div class="formula">Silicosis (polvo de sílice) → QUÍMICO, no físico.
-El polvo es una sustancia química particulada.</div>
-  `},
-
-  /* ── TEMA 8 ── */
-  {temaId:8, tipo:'portada', titulo:'Normas ISO y OHSAS', cuerpo:''},
-  {temaId:8, tipo:'concepto', titulo:'OHSAS 18001 vs ISO 45001', cuerpo:`
-    <h4>OHSAS 18001 (antigua)</h4>
-    <ul>
-      <li>Publicada en 1999, actualizada en 2007.</li>
-      <li>Enfoque <strong>reactivo</strong>: gestionar riesgos ya identificados.</li>
-      <li>Desarrollada por organismos de certificación privados, no por ISO.</li>
-      <li><strong>Reemplazada por ISO 45001 en 2018</strong>. Transición completada en 2021.</li>
-    </ul>
-    <h4>ISO 45001:2018 (actual)</h4>
-    <ul>
-      <li>Primera norma de ISO para Seguridad y Salud Ocupacional (SSO).</li>
-      <li>Enfoque <strong>proactivo</strong>: prevención y mejora continua.</li>
-      <li>Incluye <strong>participación de los trabajadores</strong> como requisito formal.</li>
-      <li>Compatible con ISO 9001 e ISO 14001 (misma estructura de alto nivel).</li>
-    </ul>
-    <div class="formula">ISO 45001 reemplaza a OHSAS 18001.
-OHSAS 18001 ya NO existe como norma vigente.</div>
-  `},
-  {temaId:8, tipo:'concepto', titulo:'ISO 9001 — Gestión de Calidad', cuerpo:`
-    <p><strong>ISO 9001</strong> es la norma más certificada del mundo. Establece los requisitos para un Sistema de Gestión de Calidad (SGC).</p>
-    <h4>Principios clave</h4>
-    <ul>
-      <li>Enfoque al cliente.</li>
-      <li>Liderazgo de la alta dirección.</li>
-      <li>Enfoque basado en procesos.</li>
-      <li>Mejora continua (ciclo PHVA).</li>
-      <li>Toma de decisiones basada en evidencia.</li>
-    </ul>
-    <div class="formula">Ciclo PHVA: Planificar → Hacer → Verificar → Actuar
-(Plan → Do → Check → Act — ciclo de Deming)</div>
-    <div class="example"><strong>Aplicación:</strong> Un hospital con ISO 9001 garantiza procesos de atención documentados, consistentes y en mejora continua.</div>
-  `},
-  {temaId:8, tipo:'concepto', titulo:'ISO 14001 — Gestión Ambiental', cuerpo:`
-    <p><strong>ISO 14001:2015</strong> establece los requisitos para un Sistema de Gestión Ambiental (SGA). Ayuda a identificar, gestionar y reducir el impacto ambiental.</p>
-    <h4>Puntos clave</h4>
-    <ul>
-      <li>Identificación de aspectos e impactos ambientales significativos.</li>
-      <li>Cumplimiento con legislación ambiental vigente.</li>
-      <li>Reducción de residuos, emisiones y consumo de recursos.</li>
-      <li>Mejora continua del desempeño ambiental.</li>
-    </ul>
-    <div class="example"><strong>Ejemplo:</strong> Una empresa de café que certifica ISO 14001 gestiona el tratamiento de las aguas de lavado del café, reduciendo la contaminación de ríos locales.</div>
-    <div class="formula">ISO 9001 + ISO 14001 + ISO 45001 = Sistema Integrado de Gestión (SIG)</div>
-  `},
-  {temaId:8, tipo:'especial', titulo:'Cuadro Comparativo de Normas', cuerpo:`
-    <div class="badge-special">⚠️ Para el examen — cuadro comparativo</div>
-    <table class="norma-table">
-      <tr><th>Aspecto</th><th>ISO 9001</th><th>ISO 14001</th><th>ISO 45001</th></tr>
-      <tr><td>Enfoque</td><td>Calidad</td><td>Ambiental</td><td>SSO</td></tr>
-      <tr><td>Beneficiario</td><td>Cliente</td><td>Sociedad/Planeta</td><td>Trabajador</td></tr>
-      <tr><td>Versión actual</td><td>2015</td><td>2015</td><td>2018</td></tr>
-      <tr><td>Ciclo base</td><td>PHVA</td><td>PHVA</td><td>PHVA</td></tr>
-      <tr><td>Reemplaza a</td><td>ISO 9001:2008</td><td>ISO 14001:2004</td><td>OHSAS 18001</td></tr>
-    </table>
-    <div class="formula" style="margin-top:12px">TRAMPA: No mezclar OHSAS 18001 (seguridad)
-con ISO 9001 (calidad) → son ámbitos distintos.</div>
-  `},
-];
-
-const QUIZ = [
-  /* ── TEMA 1 ── */
-  {temaId:1, q:'¿Cuál es la diferencia fundamental entre misión y estrategia según Render?', opts:['La misión es el plan de acción; la estrategia define el propósito','La misión define el propósito de la organización; la estrategia es el plan para lograrlo','Ambas son equivalentes, solo cambia el contexto de uso','La estrategia define los valores; la misión define los clientes'], c:1, exp:'La misión establece QUÉ es y para quién existe la empresa. La estrategia es el CÓMO alcanzar esa misión competitivamente en el mercado.'},
-  {temaId:1, q:'¿Cuál de las siguientes NO es una de las 3 formas de ventaja competitiva de Render?', opts:['Diferenciación','Costo','Respuesta','Monopolio'], c:3, exp:'Render plantea solo 3: diferenciación, liderazgo en costo y respuesta. El monopolio es una estructura de mercado, no una estrategia competitiva.'},
-  {temaId:1, q:'Una empresa estandariza su producto para todo el mundo y centraliza todas las decisiones. ¿Qué estrategia global usa?', opts:['Multidoméstica','Internacional','Global','Transnacional'], c:2, exp:'La estrategia global = alta estandarización + centralización de decisiones. La multidoméstica descentraliza y adapta completamente al mercado local.'},
-  {temaId:1, q:'¿Cuántas decisiones estratégicas de Administración de Operaciones identifica Render?', opts:['5','8','10','12'], c:2, exp:'Render identifica exactamente 10 decisiones estratégicas de AO, que cubren desde el diseño de bienes hasta el mantenimiento de instalaciones.'},
-  {temaId:1, q:'McDonald\'s aplica el mismo sistema operativo globalmente pero adapta el menú a cada país. ¿Qué estrategia usa?', opts:['Global','Internacional','Multidoméstica','Transnacional'], c:3, exp:'La estrategia transnacional combina escala global (mismo sistema) con adaptación local (menú diferente por país). Es la más compleja de gestionar.'},
-  {temaId:1, q:'¿Qué estrategia global usa las competencias internas para exportar con mínima adaptación al mercado local?', opts:['Global','Internacional','Multidoméstica','Transnacional'], c:1, exp:'La estrategia internacional exporta aprovechando las capacidades del país de origen, con poca o ninguna adaptación al mercado extranjero.'},
-  {temaId:1, q:'Zara renueva sus colecciones cada 2 semanas siguiendo tendencias. ¿Qué tipo de ventaja competitiva usa principalmente?', opts:['Diferenciación','Costo','Respuesta','Calidad total'], c:2, exp:'Zara compite por respuesta: velocidad, agilidad y flexibilidad para adaptarse al mercado. No es diferenciación (no cobra precio premium) ni liderazgo en costo.'},
-  {temaId:1, q:'Los aspectos culturales y éticos en AO global incluyen principalmente problemas de:', opts:['Exceso de inventario y sobreproducción','Corrupción, condiciones laborales y propiedad intelectual','Diseño de procesos y capacidad instalada','Mantenimiento preventivo de maquinaria'], c:1, exp:'Los desafíos éticos globales incluyen: corrupción, estándares laborales distintos entre países, piratería de propiedad intelectual y diferencias en regulaciones ambientales.'},
-
-  /* ── TEMA 2 ── */
-  {temaId:2, q:'¿Qué caracteriza al trueque como forma de comercio?', opts:['Usa moneda digital entre países','Es intercambio de bienes sin uso de dinero','Requiere intermediación bancaria obligatoria','Solo aplica entre países con acuerdos bilaterales'], c:1, exp:'El trueque es intercambio directo de bienes o servicios sin mediación de dinero. Es la forma más antigua de comercio.'},
-  {temaId:2, q:'¿Cuál de los siguientes es un ejemplo de exportación TRADICIONAL de Costa Rica?', opts:['Dispositivos médicos','Software y tecnología','Café','Turismo médico'], c:2, exp:'El café es una exportación tradicional de Costa Rica (históricamente dominante). Los dispositivos médicos y el software son exportaciones no tradicionales de mayor valor agregado.'},
-  {temaId:2, q:'La diferencia entre exportaciones e importaciones de un país se denomina:', opts:['Producto Interno Bruto','Balanza comercial','Reservas monetarias internacionales','Déficit fiscal'], c:1, exp:'Balanza comercial = Exportaciones − Importaciones. Si es positiva hay superávit; si es negativa hay déficit comercial.'},
-  {temaId:2, q:'¿Qué organismo internacional regula el comercio mundial desde 1995?', opts:['FMI (Fondo Monetario Internacional)','BID (Banco Interamericano de Desarrollo)','OMC (Organización Mundial del Comercio)','ONU (Organización de Naciones Unidas)'], c:2, exp:'La OMC fue fundada en 1995 para regular y facilitar el comercio internacional entre países, sustituyendo al GATT (1947).'},
-  {temaId:2, q:'El documento que funciona como contrato de transporte marítimo en comercio internacional se llama:', opts:['Factura comercial','Conocimiento de embarque (B/L)','Declaración aduanera (DUA)','Packing list'], c:1, exp:'El Bill of Lading (B/L) o conocimiento de embarque es el contrato entre el exportador y la naviera. La factura comercial describe precio y productos.'},
-  {temaId:2, q:'¿Qué es un arancel en el comercio internacional?', opts:['Un subsidio que recibe el exportador nacional','Un impuesto que se cobra al importar un producto','Un permiso especial para exportar','Un acuerdo comercial entre dos países'], c:1, exp:'El arancel es un impuesto que cobra el gobierno del país importador sobre los productos que entran. El subsidio, en cambio, es una ayuda al exportador nacional.'},
-  {temaId:2, q:'La ventaja comparativa en comercio internacional significa que los países deben:', opts:['Producir todo internamente para no depender de nadie','Especializarse en lo que producen con menor costo relativo e intercambiar con otros','Exportar la mayor cantidad posible de todos sus productos','Imponer aranceles altos para proteger toda la industria local'], c:1, exp:'La ventaja comparativa (David Ricardo) establece que cada país debe especializarse en producir lo que hace más eficientemente en términos relativos, e intercambiar con otros.'},
-  {temaId:2, q:'Piña, melón y plantas ornamentales exportadas por Costa Rica son ejemplos de:', opts:['Exportaciones tradicionales','Exportaciones no tradicionales','Exportaciones de servicios','Exportaciones de capital financiero'], c:1, exp:'Piña, melón y plantas ornamentales son exportaciones no tradicionales. Las exportaciones tradicionales de Costa Rica son café, banano, azúcar y cacao.'},
-
-  /* ── TEMA 3 ── */
-  {temaId:3, q:'¿Para qué sirve el stock de seguridad en la gestión de inventarios?', opts:['Para aumentar las ventas en temporadas altas','Para protegerse contra variaciones imprevistas en la demanda o el tiempo de entrega','Para reducir el precio de compra negociando con proveedores','Para eliminar la necesidad de hacer pronósticos de demanda'], c:1, exp:'El stock de seguridad es un inventario extra (colchón) que cubre variaciones imprevistas en la demanda del cliente o retrasos del proveedor.'},
-  {temaId:3, q:'En la fórmula SS = Z × σD × √LT, ¿qué representa la variable LT?', opts:['El nivel de servicio deseado por la empresa','La desviación estándar de la demanda diaria','El lead time o tiempo de entrega del proveedor','El lote de pedido económico óptimo'], c:2, exp:'LT = Lead Time: el tiempo en días que tarda el proveedor en entregar el pedido después de realizarlo. Se usa bajo raíz cuadrada porque el riesgo acumula de forma proporcional a ella.'},
-  {temaId:3, q:'Si σD = 20 unidades, LT = 9 días y Z = 1.645, ¿cuál es el stock de seguridad?', opts:['29.6 unidades','98.7 unidades','60 unidades','180 unidades'], c:1, exp:'SS = 1.645 × 20 × √9 = 1.645 × 20 × 3 = 98.7 ≈ 99 unidades. La raíz cuadrada de 9 es 3.'},
-  {temaId:3, q:'¿Qué nivel de servicio corresponde a Z = 2.326?', opts:['90%','95%','98%','99%'], c:3, exp:'Z = 2.326 corresponde al 99% de nivel de servicio. A mayor nivel de servicio, mayor Z y por tanto mayor stock de seguridad necesario.'},
-  {temaId:3, q:'Un negocio tiene demanda promedio de 50 unidades/día, LT de 3 días y SS de 40 unidades. ¿Cuál es el Punto de Reorden (ROP)?', opts:['150 unidades','190 unidades','40 unidades','90 unidades'], c:1, exp:'ROP = (Demanda promedio × LT) + SS = (50 × 3) + 40 = 150 + 40 = 190 unidades. Cuando el inventario baje a 190, se hace el pedido.'},
-  {temaId:3, q:'Si la demanda estimada era 100 unidades y la real fue 115, ¿cuál es el porcentaje de variación?', opts:['15%','85%','13%','1.15%'], c:0, exp:'% variación = (|115 − 100| / 100) × 100 = (15/100) × 100 = 15%. Se usa el valor absoluto de la diferencia.'},
-  {temaId:3, q:'¿Qué sucede con el stock de seguridad si se aumenta el nivel de servicio del 90% al 99%?', opts:['Disminuye porque hay más control','Se mantiene igual','Aumenta porque Z aumenta de 1.28 a 2.326','Se vuelve cero porque el proveedor es más confiable'], c:2, exp:'Al aumentar el nivel de servicio, Z aumenta (de 1.28 a 2.326), lo que incrementa directamente el resultado de la fórmula SS = Z × σD × √LT.'},
-  {temaId:3, q:'¿Qué indica el Punto de Reorden (ROP)?', opts:['El máximo de inventario permitido en el almacén','El nivel de inventario en el que se debe hacer el pedido al proveedor','El costo óptimo de hacer un pedido','La cantidad máxima a pedir por orden'], c:1, exp:'El ROP es el nivel de inventario que, cuando se alcanza, indica que es momento de lanzar un nuevo pedido al proveedor, considerando el tiempo de entrega y el stock de seguridad.'},
-
-  /* ── TEMA 4 ── */
-  {temaId:4, q:'¿Quién desarrolló el sistema Just In Time y en qué empresa?', opts:['Frederick Taylor en Ford Motors','Taiichi Ohno en Toyota','Henry Ford en Ford Motors','Eliyahu Goldratt en General Motors'], c:1, exp:'Taiichi Ohno desarrolló el JIT en Toyota (Japón) en los años 1970, como respuesta a la escasez de recursos y espacio disponible en Japón tras la Segunda Guerra Mundial.'},
-  {temaId:4, q:'En el JIT, el sistema de producción utilizado es:', opts:['Empujado (Push): se produce basado en pronósticos','Jalado (Pull): se produce solo cuando el cliente demanda','Mixto: mitad empujado, mitad jalado según temporada','Aleatorio: según disponibilidad de materiales y máquinas'], c:1, exp:'El JIT usa producción jalada (Pull): nada se produce hasta que el cliente o la siguiente etapa del proceso lo "jala". Así se evita la sobreproducción.'},
-  {temaId:4, q:'¿Cuál de los siguientes NO es uno de los 7 desperdicios (mudas) del JIT?', opts:['Sobreproducción','Tiempo de espera','Certificación de calidad ISO','Defectos y retrabajo'], c:2, exp:'Los 7 desperdicios son: sobreproducción, espera, transporte, sobreprocesamiento, exceso de inventario, movimiento innecesario y defectos. La certificación ISO no es un desperdicio.'},
-  {temaId:4, q:'En el JIT, ¿qué es el Kanban?', opts:['Un tipo de inventario de seguridad','Una señal o tarjeta que autoriza la producción o movimiento de materiales','Un software de planificación de recursos empresariales','Un tipo de máquina automatizada japonesa'], c:1, exp:'Kanban es el mecanismo visual (tarjeta o señal) del JIT que "jala" la producción: cuando se vacía un contenedor, la tarjeta kanban autoriza producir más en la estación anterior.'},
-  {temaId:4, q:'¿Cuál es la principal desventaja del sistema JIT?', opts:['Genera demasiado inventario de productos terminados','Es extremadamente costoso de implementar en cualquier tipo de empresa','Es muy vulnerable a interrupciones en la cadena de suministro','No se puede aplicar en empresas de manufactura moderna'], c:2, exp:'El JIT mantiene inventarios mínimos, por lo que cualquier interrupción (huelgas, desastres, pandemias) puede detener toda la producción. La pandemia COVID-19 evidenció esta vulnerabilidad a nivel global.'},
-  {temaId:4, q:'El Jidoka en el contexto del JIT significa:', opts:['Producir la mayor cantidad posible en el menor tiempo','Detener la línea de producción cuando se detecta un defecto','Aumentar la velocidad de la línea para cumplir pedidos','Eliminar todos los proveedores externos y autoabastecerse'], c:1, exp:'Jidoka = "autonomización". Permite que máquinas o trabajadores detengan la línea al detectar un problema. Es preferible parar que continuar produciendo con defectos.'},
-  {temaId:4, q:'El Kaizen en el contexto del JIT se refiere a:', opts:['Un tipo de desperdicio específico que hay que eliminar','Mejora grande y radical que se hace una vez al año','Mejora pequeña y continua que hacen todos los empleados todos los días','Un sistema japonés de control de inventario por lotes'], c:2, exp:'Kaizen = "cambio para mejor" en japonés. Representa mejoras pequeñas e incrementales hechas continuamente por todos los empleados, en oposición a grandes cambios esporádicos.'},
-  {temaId:4, q:'¿Cuál afirmación sobre el JIT es CORRECTA?', opts:['El JIT elimina completamente todo el inventario de la empresa','El JIT solo puede aplicarse en empresas japonesas con cultura Toyota','El JIT reduce el inventario al mínimo necesario, pero no a cero','El JIT aumenta el número de proveedores para mayor seguridad ante fallas'], c:2, exp:'El JIT reduce inventarios al mínimo necesario pero no los elimina totalmente. También tiende a usar MENOS proveedores pero más confiables, no más proveedores.'},
-
-  /* ── TEMA 5 ── */
-  {temaId:5, q:'¿Quién desarrolló la Teoría de las Limitaciones (TOC)?', opts:['Frederick Taylor (administración científica)','Taiichi Ohno (Toyota Production System)','Eliyahu Goldratt (La Meta, 1984)','Peter Drucker (gestión por objetivos)'], c:2, exp:'Eliyahu Goldratt presentó la TOC en su novela "La Meta" (1984). Es una metodología de gestión que busca identificar y gestionar sistemáticamente los cuellos de botella del sistema.'},
-  {temaId:5, q:'Empaque: 100 und/h · Ensamble: 60 und/h · Pintura: 110 und/h. ¿Cuál es el cuello de botella?', opts:['Empaque (100 und/h)','Ensamble (60 und/h)','Pintura (110 und/h)','No hay cuello de botella en este sistema'], c:1, exp:'El cuello de botella es el proceso con menor capacidad: Ensamble (60 und/h). El sistema NUNCA producirá más de 60 und/h, sin importar qué tan rápidos sean los otros procesos.'},
-  {temaId:5, q:'¿Cuál es el orden correcto de los 5 pasos de la TOC?', opts:['Elevar → Identificar → Subordinar → Explotar → Volver al inicio','Identificar → Explotar → Subordinar → Elevar → Volver al inicio','Subordinar → Identificar → Explotar → Elevar → Finalizar','Explotar → Identificar → Elevar → Subordinar → Terminar el proceso'], c:1, exp:'Los 5 pasos son: 1-Identificar, 2-Explotar (sin inversión), 3-Subordinar (el resto al ritmo del cuello), 4-Elevar (invertir para aumentar capacidad), 5-Volver al paso 1.'},
-  {temaId:5, q:'En la TOC, "explotar la limitación" (paso 2) significa:', opts:['Eliminar el cuello de botella comprando maquinaria nueva inmediatamente','Sacar el máximo provecho posible del cuello de botella sin inversión extra','Mover el cuello de botella a otra parte del proceso productivo','Dividir el cuello de botella en dos estaciones paralelas'], c:1, exp:'Explotar = maximizar el uso del recurso limitante SIN gastar dinero adicional. Ejemplo: no dejar inactivo el cuello de botella nunca, eliminar su tiempo de parada innecesario.'},
-  {temaId:5, q:'¿Qué significa el principio SPLIT en la TOC/OPT?', opts:['Dividir la empresa en varias subsidiarias independientes','Dividir los lotes de producción en sublotes más pequeños para acelerar el flujo','Separar al personal en equipos especializados por función','Dividir el presupuesto entre múltiples proyectos de mejora'], c:1, exp:'SPLIT = dividir el lote de proceso en lotes de transferencia más pequeños. Así las piezas fluyen más rápido al siguiente proceso sin esperar que termine todo el lote.'},
-  {temaId:5, q:'OPT en el contexto de la Teoría de las Limitaciones es:', opts:['Un tipo de cuello de botella específico de la industria','Software de planificación que optimiza la producción concentrándose en los cuellos de botella','Una norma ISO para la gestión de la producción industrial','Un sistema de inventario similar al JIT pero más avanzado'], c:1, exp:'OPT (Optimized Production Technology) es el software de planificación desarrollado junto a la TOC para gestionar la producción concentrándose en los recursos limitantes.'},
-  {temaId:5, q:'¿Cuál afirmación sobre los cuellos de botella es CORRECTA según la TOC?', opts:['Una vez resuelto el cuello de botella, el sistema no tendrá más limitaciones jamás','El cuello de botella siempre es la máquina más antigua y desgastada','Al mejorar un cuello de botella, aparece uno nuevo en otra parte del sistema','El cuello de botella solo puede ser una máquina, nunca un proceso humano o administrativo'], c:2, exp:'La TOC establece que siempre existe una limitación. Al resolver una, el sistema mejora y otra parte se convierte en el nuevo cuello de botella → por eso el paso 5 es "volver al inicio".'},
-  {temaId:5, q:'Si el cuello de botella procesa 50 piezas/hora y los demás procesos 120 piezas/hora, ¿cuál es la producción máxima del sistema?', opts:['120 piezas/hora (el proceso más rápido determina el techo)','50 piezas/hora sin importar la velocidad de los demás procesos','85 piezas/hora (promedio de todos los procesos)','Ilimitada si se trabaja 24 horas al día, 7 días a la semana'], c:1, exp:'El cuello de botella determina la velocidad máxima de todo el sistema. Aunque los demás procesen 120/hora, el sistema nunca producirá más de 50/hora (la velocidad del cuello de botella).'},
-
-  /* ── TEMA 6 ── */
-  {temaId:6, q:'¿Qué es la Economía Naranja?', opts:['La economía basada en la exportación de cítricos y frutas tropicales','El conjunto de actividades que transforman la creatividad y el talento en bienes con valor económico','La economía de los países latinoamericanos con bandera naranja','Un modelo económico de liberalización total del comercio'], c:1, exp:'La Economía Naranja (o Creativa) convierte creatividad, talento y propiedad intelectual en bienes y servicios con valor económico y cultural. El BID la definió en 2013.'},
-  {temaId:6, q:'¿Quiénes popularizaron el término Economía Naranja?', opts:['Adam Smith y David Ricardo (1776)','Felipe Buitrago e Iván Duque para el BID (2013)','Steve Jobs y Bill Gates (1980s)','Barry Render y Jay Heizer (Administración de Operaciones)'], c:1, exp:'Felipe Buitrago e Iván Duque publicaron "La Economía Naranja: una oportunidad infinita" para el BID en 2013, popularizando el concepto a nivel latinoamericano.'},
-  {temaId:6, q:'¿Cuál de los siguientes SÍ es un sector de la Economía Naranja?', opts:['Minería de oro y minerales preciosos','Exportación de piña y banano','Desarrollo de videojuegos e industria del entretenimiento digital','Producción de cemento y materiales de construcción'], c:2, exp:'El desarrollo de videojuegos pertenece a las Creaciones Funcionales de la Economía Naranja. Los otros son sectores de la economía extractiva o agrícola tradicional.'},
-  {temaId:6, q:'¿Con cuál ODS se vincula principalmente la Economía Naranja?', opts:['ODS 1 (Fin de la pobreza extrema)','ODS 8 (Trabajo decente y crecimiento económico)','ODS 13 (Acción climática urgente)','ODS 6 (Agua limpia y saneamiento)'], c:1, exp:'La Economía Naranja se vincula principalmente al ODS 8 al generar empleos creativos de calidad, especialmente para jóvenes y mujeres, sin depender de recursos no renovables.'},
-  {temaId:6, q:'¿Cuál es una ventaja ambiental de la Economía Naranja frente a industrias tradicionales?', opts:['Requiere grandes extensiones de tierra para sus instalaciones','Genera emisiones de CO2 similares a la industria pesada','Produce con huella ambiental baja comparada con industrias extractivas','Necesita grandes cantidades de agua para sus procesos industriales'], c:2, exp:'La economía creativa (diseño, música, software, arte) produce bienes inmateriales o de muy bajo impacto ambiental, a diferencia de la minería, ganadería o industria pesada.'},
-  {temaId:6, q:'Un artesano indígena que vende sus creaciones en línea a compradores internacionales participa en la Economía Naranja porque:', opts:['Exporta bienes agrícolas tradicionales a mercados externos','Transforma herencia cultural y creatividad en valor económico','Trabaja para una empresa multinacional de tecnología','Usa maquinaria industrial avanzada de fabricación en serie'], c:1, exp:'Las artesanías indígenas combinan herencia cultural + creatividad = núcleo de la Economía Naranja. La venta en línea es la capa digital que amplifica su alcance global.'},
-  {temaId:6, q:'¿Por qué se eligió el color NARANJA para representar esta economía?', opts:['Porque los principales países impulsores tienen ese color en su bandera','Porque representa creatividad, calor y vitalidad cultural','Porque los productos creativos se empacan en cajas de color naranja','Porque deriva de las exportaciones citrícolas de los años 1950'], c:1, exp:'El naranja fue elegido por representar creatividad, calor, vitalidad y la cultura viva. No tiene relación con banderas, empaques ni productos agrícolas.'},
-  {temaId:6, q:'¿Cuál ejemplo costarricense pertenece claramente a la Economía Naranja?', opts:['Exportación de banano a mercados europeos','Refinería de petróleo de RECOPE','Producción de software y animación digital para exportación','Ganadería extensiva en la zona norte del país'], c:2, exp:'El software y la animación digital son industrias creativas = Economía Naranja. El banano es exportación agrícola tradicional; la refinería y ganadería son economías convencionales.'},
-
-  /* ── TEMA 7 ── */
-  {temaId:7, q:'¿Qué establece el Título IV del Código de Trabajo de Costa Rica?', opts:['Los derechos sindicales y de huelga de los trabajadores','El régimen de seguridad social y la protección contra riesgos del trabajo','Las vacaciones anuales y días feriados pagados','Las normas de contratación colectiva entre empresas y sindicatos'], c:1, exp:'El Título IV del Código de Trabajo (Art. 193 y siguientes) establece el Régimen de Seguridad Social, incluyendo la protección contra riesgos del trabajo y el seguro obligatorio.'},
-  {temaId:7, q:'¿Qué caracteriza jurídicamente a un accidente de trabajo?', opts:['Es un evento gradual que se desarrolla con los años de trabajo','Es súbito, violento e imprevisto, y ocurre con ocasión del trabajo','Solo aplica a accidentes dentro de las instalaciones de la empresa','Solo afecta a trabajadores en sectores de manufactura e industria'], c:1, exp:'Un accidente de trabajo es súbito (repentino), violento e imprevisto. Ocurre durante el trabajo o en el trayecto. Contrario a la enfermedad profesional, que es gradual por exposición.'},
-  {temaId:7, q:'¿Qué institución emite la póliza de Riesgos del Trabajo en Costa Rica?', opts:['La CCSS (Caja Costarricense del Seguro Social)','El Ministerio de Trabajo y Seguridad Social','El INS (Instituto Nacional de Seguros)','El Banco Central de Costa Rica (BCCR)'], c:2, exp:'El INS (Instituto Nacional de Seguros) emite y administra la póliza de Riesgos del Trabajo. Todo empleador está obligado por ley a contratarla para proteger a sus trabajadores.'},
-  {temaId:7, q:'El ruido excesivo en el trabajo que produce daño auditivo permanente es un riesgo de tipo:', opts:['Químico (sustancias tóxicas)','Biológico (agentes infecciosos)','Físico (energía del ambiente)','Ergonómico (postura y movimiento)'], c:2, exp:'El ruido es una forma de energía mecánica/sonora del ambiente → riesgo físico. Los riesgos físicos incluyen: ruido, vibraciones, temperatura extrema, radiación e iluminación deficiente.'},
-  {temaId:7, q:'Un trabajador agrícola expuesto diariamente a plaguicidas enfrenta principalmente riesgos de tipo:', opts:['Físico (energía del ambiente)','Químico (sustancias que ingresan al organismo)','Biológico (microorganismos vivos)','Psicosocial (estrés laboral)'], c:1, exp:'Los plaguicidas son sustancias químicas. Su exposición por inhalación, contacto dérmico o ingestión representa un riesgo químico. También lo es el polvo de sílice que causa silicosis.'},
-  {temaId:7, q:'Una enfermera que se contagia de una bacteria resistente en el hospital sufre un riesgo de tipo:', opts:['Físico (energía ambiental)','Químico (sustancias tóxicas)','Biológico (seres vivos patógenos)','Ergonómico (movimientos repetitivos)'], c:2, exp:'Los seres vivos patógenos (bacterias, virus, hongos) que causan enfermedades en el trabajo son riesgos biológicos. El personal de salud, agricultura y saneamiento son los más expuestos.'},
-  {temaId:7, q:'¿Cuál es la diferencia entre accidente de trabajo y enfermedad profesional?', opts:['Son términos equivalentes que se usan indistintamente en el Código de Trabajo','El accidente es súbito; la enfermedad profesional es gradual por exposición prolongada al riesgo','El accidente siempre resulta en muerte; la enfermedad no','Solo los accidentes están cubiertos por la póliza del INS'], c:1, exp:'Accidente = súbito y violento. Enfermedad profesional = se desarrolla gradualmente por exposición repetida (ej. silicosis por inhalar polvo de sílice durante años de trabajo).'},
-  {temaId:7, q:'¿Qué cubre la póliza de Riesgos del Trabajo del INS?', opts:['Solo accidentes que ocurren dentro de las instalaciones de la empresa','Atención médica, incapacidades, indemnizaciones por invalidez y pensión por muerte','Solo enfermedades profesionales de carácter crónico y permanente','Daños a la propiedad personal del trabajador accidentado'], c:1, exp:'La póliza cubre: atención médica y hospitalaria, incapacidades temporales (pago del salario), indemnización por incapacidad permanente y pensión a beneficiarios en caso de muerte del trabajador.'},
-
-  /* ── TEMA 8 ── */
-  {temaId:8, q:'¿Qué norma internacional reemplazó a OHSAS 18001 en gestión de seguridad y salud ocupacional?', opts:['ISO 9001:2015 (Sistemas de Gestión de Calidad)','ISO 14001:2015 (Sistemas de Gestión Ambiental)','ISO 45001:2018 (Seguridad y Salud Ocupacional)','ISO 31000:2018 (Gestión de Riesgos)'], c:2, exp:'ISO 45001:2018 reemplazó a OHSAS 18001 y fue la primera norma oficial de ISO para la gestión de Seguridad y Salud Ocupacional. La transición se completó en marzo de 2021.'},
-  {temaId:8, q:'¿Cuál es el enfoque principal de la norma ISO 9001?', opts:['Gestión del impacto ambiental de las organizaciones','Gestión de la seguridad y salud de los trabajadores','Gestión de la calidad y satisfacción del cliente','Gestión de riesgos financieros y operativos'], c:2, exp:'ISO 9001 establece los requisitos para un Sistema de Gestión de Calidad (SGC). Su enfoque central es la satisfacción del cliente mediante procesos consistentes, documentados y en mejora continua.'},
-  {temaId:8, q:'El ciclo PHVA en las normas ISO significa:', opts:['Producir, Homologar, Verificar, Auditar','Planificar, Hacer, Verificar, Actuar','Programar, Hacer, Validar, Autorizar','Planear, Homologar, Validar, Actualizar'], c:1, exp:'PHVA = Planificar → Hacer → Verificar → Actuar (Plan → Do → Check → Act). Es el ciclo de Deming, base de todas las normas ISO para la mejora continua de los sistemas de gestión.'},
-  {temaId:8, q:'¿Cuál norma ISO tiene como beneficiario principal al planeta y a la sociedad?', opts:['ISO 9001 (calidad del producto/servicio)','ISO 45001 (seguridad del trabajador)','ISO 14001 (gestión ambiental)','OHSAS 18001 (norma de seguridad obsoleta)'], c:2, exp:'ISO 14001 es el Sistema de Gestión Ambiental. Su objetivo es reducir el impacto ambiental de las organizaciones → el beneficiario principal es la sociedad y el planeta.'},
-  {temaId:8, q:'¿Cuál es una diferencia clave entre OHSAS 18001 e ISO 45001?', opts:['OHSAS 18001 es más reciente y actualizada que ISO 45001','ISO 45001 requiere participación de los trabajadores como requisito; OHSAS 18001 no lo exigía formalmente','OHSAS 18001 aplica solo a empresas de más de 500 empleados','ISO 45001 solo aplica en países miembros de la Unión Europea'], c:1, exp:'ISO 45001 incluye la participación activa de los trabajadores como requisito formal. OHSAS 18001 tenía un enfoque más top-down. ISO 45001 también es más proactiva en la prevención.'},
-  {temaId:8, q:'Una empresa implementa ISO 9001, ISO 14001 e ISO 45001 simultáneamente. Esto se llama:', opts:['Doble certificación incompatible por superposición de normas','Sistema Integrado de Gestión (SIG)','Certificación obligatoria por mandato legal','Proceso de reingeniería de procesos organizacionales'], c:1, exp:'Cuando una organización implementa varias normas ISO juntas (9001 + 14001 + 45001), se llama Sistema Integrado de Gestión (SIG). Las normas comparten la misma estructura de alto nivel (Annex SL).'},
-  {temaId:8, q:'¿En qué año se publicó la versión más reciente de ISO 9001?', opts:['2008','2012','2015','2020'], c:2, exp:'ISO 9001:2015 es la versión vigente. Fue una actualización significativa que introdujo el pensamiento basado en riesgos y la gestión del contexto de la organización como requisitos nuevos.'},
-  {temaId:8, q:'Una empresa de café que gestiona el tratamiento de sus aguas residuales para no contaminar ríos aplica:', opts:['ISO 9001 (gestión de calidad del producto)','ISO 14001 (gestión ambiental)','ISO 45001 (seguridad del trabajador)','OHSAS 18001 (norma ya reemplazada)'], c:1, exp:'ISO 14001 es el Sistema de Gestión Ambiental. Gestionar el impacto de las aguas residuales del proceso productivo es exactamente su propósito: reducir y controlar el impacto ambiental.'},
-];
-
-/* ============================================================
-   STATE
-   ============================================================ */
-const state = {
-  quizQ: [],
-  quizIdx: 0,
-  quizAnswers: [],
-};
-
-/* ============================================================
-   HOME
-   ============================================================ */
-function renderHome() {
-  const cont = document.getElementById('home-temas');
-  const subareas = [...new Set(TEMAS.map(t => t.subarea))];
-  let html = '';
-  subareas.forEach(sa => {
-    html += `<div class="subarea-label">${sa}</div>`;
-    TEMAS.filter(t => t.subarea === sa).forEach(t => {
-      const col = `var(${t.color})`;
-      const qs = QUIZ.filter(q => q.temaId === t.id).length;
-      const cards = STUDY.filter(s => s.temaId === t.id).length;
-      html += `<div class="tema-card" onclick="startStudyTema(${t.id})">
-        <div class="tema-card-top">
-          <span class="tema-icon">${t.emoji}</span>
-          <div class="tema-info">
-            <h3>${t.nombre}</h3>
-            <p>${cards} tarjetas · ${qs} preguntas de quiz</p>
-          </div>
-        </div>
-        <div class="tema-bar"><div class="tema-bar-fill" style="background:${col};width:100%"></div></div>
-      </div>`;
-    });
-  });
-  cont.innerHTML = html;
-}
-
-function goHome() {
-  showView('home');
-}
-
-/* ============================================================
-   STUDY
-   ============================================================ */
-function startStudy() {
-  buildStudyView(STUDY);
-  showView('study');
-}
-
-function startStudyTema(id) {
-  buildStudyView(STUDY.filter(s => s.temaId === id));
-  showView('study');
-}
-
-function buildStudyView(cards) {
-  const bar = document.getElementById('study-bar');
-  bar.innerHTML = cards.map((_, i) => `<div class="study-seg" id="seg-${i}"></div>`).join('');
-
-  const cont = document.getElementById('cards-container');
-  cont.innerHTML = cards.map((card, i) => {
-    const t = TEMAS.find(t => t.id === card.temaId);
-    const col = t ? `var(${t.color})` : 'var(--t1)';
-    let inner = '';
-    if (card.tipo === 'portada') {
-      inner = `<div class="card-emoji">${t ? t.emoji : '📖'}</div>
-        <div class="card-type">Tema ${t ? t.id : ''} — ${t ? t.subarea : ''}</div>
-        <div class="card-title">${card.titulo}</div>
-        <div class="card-habilidad"><strong>Habilidad evaluada:</strong><br>${t ? t.habilidad : ''}</div>
-        <div class="card-body" style="color:var(--text-dim);font-size:13px"><strong>Contenido:</strong> ${t ? t.contenido : ''}</div>`;
-    } else {
-      inner = `<div class="card-type">${card.tipo === 'especial' ? '⚠️ Caso Especial' : '📖 Concepto'}</div>
-        <div class="card-title">${card.titulo}</div>
-        <div class="card-body">${card.cuerpo}</div>`;
+        if (tab === 'render') {
+            document.querySelector('.btn-render').classList.add('active');
+            document.getElementById('panel-render').classList.add('active');
+        } else if (tab === 'comercio') {
+            document.querySelector('.btn-comercio').classList.add('active');
+            document.getElementById('panel-comercio').classList.add('active');
+        } else {
+            document.querySelector('.btn-aduanas').classList.add('active');
+            document.getElementById('panel-aduanas').classList.add('active');
+        }
     }
-    const isLast = i === cards.length - 1;
-    const temaId = t ? t.id : 0;
-    return `<div class="card" style="--card-color:${col}" data-idx="${i}">
-      ${inner}
-      <div class="card-nav">
-        <span class="card-counter">${i + 1} / ${cards.length}</span>
-        ${isLast
-          ? `<button class="btn btn-primary" style="padding:10px 20px;font-size:13px" onclick="startQuizTema(${temaId})">Quiz del tema 🎯</button>`
-          : `<button class="btn btn-primary" style="padding:10px 20px;font-size:13px" onclick="scrollCard(${i + 1})">Siguiente →</button>`}
-      </div>
-    </div>`;
-  }).join('');
 
-  const total = cards.length;
-  updateStudyNav(0, total);
-
-  cont.addEventListener('scroll', () => {
-    const h = cont.clientHeight || 1;
-    const idx = Math.round(cont.scrollTop / h);
-    document.querySelectorAll('.study-seg').forEach((s, i) => s.classList.toggle('done', i <= idx));
-    updateStudyNav(idx, total);
-  }, { passive: true });
-}
-
-function scrollCard(idx) {
-  const cont = document.getElementById('cards-container');
-  cont.scrollTo({ top: idx * cont.clientHeight, behavior: 'smooth' });
-}
-
-function navCard(dir) {
-  const cont = document.getElementById('cards-container');
-  const total = cont.querySelectorAll('.card').length;
-  const current = Math.round(cont.scrollTop / (cont.clientHeight || 1));
-  const next = Math.max(0, Math.min(total - 1, current + dir));
-  cont.scrollTo({ top: next * cont.clientHeight, behavior: 'smooth' });
-  updateStudyNav(next, total);
-}
-
-function updateStudyNav(idx, total) {
-  const up = document.getElementById('btn-card-up');
-  const dn = document.getElementById('btn-card-down');
-  if (up) up.disabled = idx <= 0;
-  if (dn) dn.disabled = idx >= total - 1;
-}
-
-/* ============================================================
-   QUIZ
-   ============================================================ */
-function startQuiz() {
-  setupQuiz([...QUIZ].sort(() => Math.random() - .5));
-  showView('quiz');
-}
-
-function startQuizTema(temaId) {
-  const pool = QUIZ.filter(q => q.temaId === temaId).sort(() => Math.random() - .5);
-  setupQuiz(pool);
-  showView('quiz');
-}
-
-function setupQuiz(pool) {
-  state.quizQ = pool;
-  state.quizIdx = 0;
-  state.quizAnswers = [];
-  renderQ();
-}
-
-/* Seguimiento de intentos por pregunta */
-const qa = { n: 0, recorded: false, locked: false };
-
-function initQA() {
-  qa.n = 0; qa.recorded = false; qa.locked = false;
-  document.getElementById('quiz-attempt-msg').classList.remove('show');
-  document.getElementById('quiz-review-card').classList.remove('show');
-  document.getElementById('quiz-exp').classList.remove('show');
-}
-
-function renderQ() {
-  initQA();
-  const q = state.quizQ[state.quizIdx];
-  const t = TEMAS.find(t => t.id === q.temaId);
-  const total = state.quizQ.length;
-
-  document.getElementById('quiz-tema-label').textContent = t ? `${t.emoji} ${t.nombre}` : '';
-  document.getElementById('quiz-counter').textContent = `${state.quizIdx + 1} / ${total}`;
-  document.getElementById('quiz-prog').style.width = (state.quizIdx / total * 100) + '%';
-  document.getElementById('quiz-q').textContent = q.q;
-
-  document.getElementById('quiz-opts').innerHTML = q.opts.map((o, i) =>
-    `<button class="opt" onclick="pickOpt(${i})">${o}</button>`
-  ).join('');
-
-  const btnNext = document.getElementById('btn-next');
-  btnNext.classList.remove('show');
-  btnNext.textContent = state.quizIdx < total - 1 ? 'Siguiente →' : 'Ver resultados';
-}
-
-function pickOpt(i) {
-  if (qa.locked) return;
-  const q = state.quizQ[state.quizIdx];
-  qa.n++;
-  const correct = i === q.c;
-
-  /* Registrar PRIMER intento para la nota — nunca sobreescribir */
-  if (!qa.recorded) {
-    qa.recorded = true;
-    state.quizAnswers.push({
-      temaId: q.temaId, correct,
-      q: q.q, exp: q.exp, chosen: q.opts[i], answer: q.opts[q.c]
+    const form = document.getElementById('quiz-form');
+    form.addEventListener('change', () => {
+        const formData = new FormData(form);
+        const uniqueQuestions = new Set();
+        for (let pair of formData.entries()) {
+            uniqueQuestions.add(pair[0]);
+        }
+        document.getElementById('answered-count').innerText = uniqueQuestions.size;
     });
-  }
 
-  const opts = document.querySelectorAll('.opt');
+    function evaluateQuiz(event) {
+        event.preventDefault();
+        const cards = document.querySelectorAll('.question-card');
+        let score = 0;
+        let total = cards.length;
 
-  if (correct) {
-    qa.locked = true;
-    opts.forEach((o, j) => { o.setAttribute('disabled', ''); if (j !== i) o.classList.add('reveal'); });
-    opts[i].classList.add('correct');
-    document.getElementById('quiz-attempt-msg').classList.remove('show');
-    document.getElementById('quiz-review-card').classList.remove('show');
-    showQuizExp(q.exp, true);
-    document.getElementById('btn-next').classList.add('show');
-  } else {
-    /* Flash rojo breve en la opción elegida */
-    opts[i].classList.add('wrong-flash');
-    setTimeout(() => opts[i].classList.remove('wrong-flash'), 520);
+        cards.forEach((card) => {
+            const radioGroup = card.querySelector('input[type="radio"]');
+            if (radioGroup) {
+                const name = radioGroup.getAttribute('name');
+                const selected = card.querySelector(`input[name="${name}"]:checked`);
+                const correctAnswer = card.getAttribute('data-correct');
 
-    if (qa.n >= 4) {
-      /* 4.º fallo: revelar y bloquear */
-      qa.locked = true;
-      opts.forEach((o, j) => {
-        o.setAttribute('disabled', '');
-        if (j === q.c) o.classList.add('correct'); else o.classList.add('reveal');
-      });
-      document.getElementById('quiz-attempt-msg').classList.remove('show');
-      document.getElementById('quiz-review-card').classList.remove('show');
-      showQuizExp(q.exp, false);
-      document.getElementById('btn-next').classList.add('show');
-    } else if (qa.n === 3) {
-      /* 3.er fallo: mostrar tarjeta de repaso */
-      const left = 4 - qa.n;
-      showAttemptMsg(`❌ Incorrecto — ${left} intento más. Repasá el concepto:`);
-      showReviewCard(q.temaId);
-    } else {
-      /* 1.er o 2.º fallo */
-      const left = 4 - qa.n;
-      showAttemptMsg(`❌ Incorrecto — ${left} intentos restantes`);
-      document.getElementById('quiz-review-card').classList.remove('show');
+                card.classList.remove('correct', 'incorrect');
+
+                if (selected) {
+                    if (selected.value === correctAnswer) {
+                        card.classList.add('correct');
+                        score++;
+                    } else {
+                        card.classList.add('incorrect');
+                    }
+                } else {
+                    card.classList.add('incorrect');
+                }
+            }
+        });
+
+        const percentage = Math.round((score / total) * 100);
+        const scoreBoard = document.getElementById('score-board');
+        const scoreText = document.getElementById('score-text');
+        const statusText = document.getElementById('status-text');
+
+        scoreText.innerText = `Has obtenido ${score} de ${total} respuestas correctas (${percentage}%)`;
+        scoreBoard.style.display = 'block';
+        
+        if (percentage >= 70) {
+            statusText.innerText = "Aprobado";
+            statusText.style.color = "var(--emerald-accent)";
+        } else {
+            statusText.innerText = "Reprobado";
+            statusText.style.color = "#ef4444";
+        }
+
+        scoreBoard.scrollIntoView({ behavior: 'smooth' });
     }
-  }
-}
 
-function showAttemptMsg(msg) {
-  const el = document.getElementById('quiz-attempt-msg');
-  el.textContent = msg;
-  el.classList.add('show');
-}
-
-function showReviewCard(temaId) {
-  const t = TEMAS.find(t => t.id === temaId);
-  const card = STUDY.find(s => s.temaId === temaId && s.tipo !== 'portada');
-  const col = t ? `var(${t.color})` : 'var(--t1)';
-  let html = '';
-  if (card) {
-    html = `<div style="font-size:12px;color:${col};font-weight:700;margin-bottom:6px">${card.titulo}</div>${card.cuerpo}`;
-  }
-  document.getElementById('quiz-review-content').innerHTML = html;
-  document.getElementById('btn-go-study').onclick = () => startStudyTema(temaId);
-  document.getElementById('quiz-review-card').classList.add('show');
-}
-
-function showQuizExp(exp, correct) {
-  const el = document.getElementById('quiz-exp');
-  document.getElementById('quiz-exp-text').textContent = exp;
-  el.style.borderColor = correct ? 'var(--good)' : 'var(--bad)';
-  el.classList.add('show');
-}
-
-function nextQ() {
-  state.quizIdx++;
-  if (state.quizIdx >= state.quizQ.length) showResults();
-  else renderQ();
-}
-
-/* ============================================================
-   RESULTS
-   ============================================================ */
-function showResults() {
-  showView('results');
-  const answers = state.quizAnswers;
-  const total = answers.length;
-  const correctas = answers.filter(a => a.correct).length;
-  const nota = Math.round(correctas / total * 100);
-
-  const circ = 2 * Math.PI * 64;
-  const arc = document.getElementById('gauge-arc');
-  const notaEl = document.getElementById('gauge-nota');
-  arc.style.stroke = nota >= 70 ? 'var(--good)' : nota >= 50 ? 'var(--t4)' : 'var(--bad)';
-
-  setTimeout(() => {
-    arc.style.strokeDashoffset = circ * (1 - nota / 100);
-    let n = 0;
-    const step = () => { n += 2; notaEl.textContent = Math.min(n, nota); if (n < nota) requestAnimationFrame(step); };
-    requestAnimationFrame(step);
-  }, 150);
-
-  let fb = '';
-  if (nota >= 90) fb = '⭐ ¡Excelente! Dominás el material del examen.';
-  else if (nota >= 70) fb = '✅ Aprobado. Repasá los temas donde fallaste.';
-  else if (nota >= 50) fb = '⚡ Regular. Necesitás más repaso antes del examen.';
-  else fb = '🔥 Aún hay mucho por reforzar. ¡Repasá las tarjetas!';
-
-  const fbEl = document.getElementById('results-feedback');
-  fbEl.textContent = `${fb} (${correctas}/${total} correctas)`;
-  fbEl.style.borderColor = nota >= 70 ? 'var(--good)' : nota >= 50 ? 'var(--t4)' : 'var(--bad)';
-
-  document.getElementById('breakdown-list').innerHTML = TEMAS.map(t => {
-    const ta = answers.filter(a => a.temaId === t.id);
-    if (!ta.length) return '';
-    const tc = ta.filter(a => a.correct).length;
-    const pct = Math.round(tc / ta.length * 100);
-    const col = `var(${t.color})`;
-    return `<div class="breakdown-row">
-      <div class="breakdown-row-top"><span>${t.emoji} ${t.nombre}</span><span style="color:${col}">${tc}/${ta.length}</span></div>
-      <div class="breakdown-bar-bg"><div class="breakdown-bar-fill" style="background:${col};width:${pct}%"></div></div>
-    </div>`;
-  }).join('');
-
-  const failed = answers.filter(a => !a.correct);
-  const fSec = document.getElementById('failed-section');
-  if (!failed.length) {
-    fSec.style.display = 'none';
-  } else {
-    fSec.style.display = 'block';
-    document.getElementById('failed-list').innerHTML = failed.map(f => `
-      <div class="failed-item">
-        <p><strong>❌ ${f.q}</strong></p>
-        <p style="font-size:12px;color:var(--bad);margin-bottom:2px">Tu respuesta: ${f.chosen}</p>
-        <p style="font-size:12px;color:var(--good);margin-bottom:0">Correcta: ${f.answer}</p>
-        <div class="failed-exp">💡 ${f.exp}</div>
-      </div>`).join('');
-  }
-}
-
-/* ============================================================
-   UTILS
-   ============================================================ */
-function showView(id) {
-  document.querySelectorAll('.view').forEach(v => {
-    v.classList.remove('active');
-    v.style.display = '';
-  });
-  const el = document.getElementById(id);
-  el.classList.add('active');
-  /* El quiz necesita display:flex — se lo damos por inline style para ganar
-     la cascada sin depender de especificidad de selectores */
-  if (id === 'quiz') el.style.display = 'flex';
-  el.scrollTop = 0;
-}
-
-/* ============================================================
-   TECLADO — modo Estudiar
-   ============================================================ */
-document.addEventListener('keydown', e => {
-  if (!document.getElementById('study').classList.contains('active')) return;
-  if (e.key === 'ArrowDown' || e.key === 'PageDown') { e.preventDefault(); navCard(1); }
-  if (e.key === 'ArrowUp'   || e.key === 'PageUp')   { e.preventDefault(); navCard(-1); }
-});
-
-/* ============================================================
-   INIT
-   ============================================================ */
-renderHome();
+    function resetQuiz() {
+        form.reset();
+        document.querySelectorAll('.question-card').forEach(card => {
+            card.classList.remove('correct', 'incorrect');
+        });
+        document.getElementById('score-board').style.display = 'none';
+        document.getElementById('answered-count').innerText = "0";
+        const statusText = document.getElementById('status-text');
+        statusText.innerText = "En Progreso";
+        statusText.style.color = "var(--amber-accent)";
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 </script>
+
 </body>
 </html>
