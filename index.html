@@ -526,6 +526,7 @@ MODS.push({
         '<b>Poka-yoke:</b> dispositivo o técnica a prueba de errores que evita fallas humanas. <b>Flexibilidad:</b> capacidad de responder rápido a cambios de diseño, surtido, volumen o entrega.',
         '<b>Gráfica de cruce:</b> compara costos totales de procesos según el volumen y muestra el punto de cruce. <b>VSM:</b> además de los pasos, analiza el flujo de información y los inventarios de proveedor a cliente. <b>Diagrama de proceso:</b> operación, transporte, inspección, demora y almacenamiento.',
         '<b>PERT:</b> tiempos inciertos (probabilístico). <b>CPM:</b> tiempos deterministas. <b>ERP:</b> software integral de planificación de recursos de la empresa.',
+        '<b>5 retos:</b> variabilidad de la demanda · integración tecnológica · gestión de la calidad (cero defectos) · reducción de desperdicios (lean) · capacitación del personal.',
         '<b>Siglas:</b> ES/EF inicio y término más temprano · LS/LF más tardío · AIS · RFID · ASRS · AGV · FMS · CIM · CAD · CAM · ERP · VSM · BTO · EDT/WBS.'
       ],
       items: [
@@ -599,6 +600,31 @@ MODS.push({
           ['Son lo mismo', 'CIM abarca más.'],
           ['FMS incluye ERP y CIM no', 'Está invertido.'],
           ['CIM es solo un robot', 'No es un robot.']),
+        mc(1, 'Reto de la personalización masiva: <b>variabilidad de la demanda</b>. Consiste en:',
+          ['Adaptar la capacidad a fluctuaciones imprevistas del mercado', 'Si la demanda sube o baja sin aviso, la capacidad debe ajustarse.'],
+          ['Seleccionar herramientas automatizadas sin interrumpir la operación', 'Eso es el reto de integración tecnológica.'],
+          ['Eliminar actividades que no agregan valor', 'Eso es el reto de reducción de desperdicios (lean).'],
+          ['Alinear las habilidades del personal con la tecnología', 'Eso es el reto de capacitación.']),
+        mc(1, 'Reto de <b>integración tecnológica</b>:',
+          ['Seleccionar e implementar herramientas automatizadas sin interrumpir la operación', 'La tecnología debe integrarse sin detener la producción.'],
+          ['Adaptar la capacidad a la demanda cambiante', 'Eso es variabilidad de la demanda.'],
+          ['Mantener altos estándares bajo alta velocidad o personalización', 'Eso es gestión de la calidad.'],
+          ['Capacitar al personal', 'Eso es el reto de capacitación.']),
+        mc(1, 'Reto de <b>gestión de la calidad (cero defectos)</b>:',
+          ['Mantener altos estándares aun con alta velocidad o personalización', 'Más variedad y rapidez aumentan el riesgo de defectos.'],
+          ['Eliminar los desperdicios de la cadena', 'Eso es lean.'],
+          ['Ajustar la capacidad a la demanda', 'Eso es variabilidad de la demanda.'],
+          ['Elegir equipos automatizados', 'Eso es integración tecnológica.']),
+        mc(1, 'Reto de <b>reducción de desperdicios (lean)</b>:',
+          ['Eliminar actividades que no agregan valor en toda la cadena', 'Esperas, movimientos e inventario innecesarios.'],
+          ['Capacitar al personal en nuevas máquinas', 'Eso es el reto de capacitación.'],
+          ['Adaptar la capacidad a la demanda', 'Eso es variabilidad de la demanda.'],
+          ['Evitar defectos en productos personalizados', 'Eso es gestión de la calidad.']),
+        mc(1, 'Reto de <b>capacitación del personal</b>:',
+          ['Alinear las habilidades de la fuerza de trabajo con procesos tecnológicos y flexibles avanzados', 'Sin personal preparado la tecnología no rinde.'],
+          ['Eliminar actividades sin valor', 'Eso es lean.'],
+          ['Cumplir cero defectos', 'Eso es gestión de la calidad.'],
+          ['Prever cambios en la demanda', 'Eso es variabilidad de la demanda.']),
         dv('Elabore un cuadro comparativo de las 4 estrategias de proceso (volumen, variedad y un ejemplo de cada una).',
           'Enfoque en el proceso: bajo volumen, alta variedad (hospital, taller). Repetitivo: volumen y variedad medios, módulos (ensamble de autos, electrodomésticos). Enfoque en el producto: alto volumen, baja variedad, continuo (refinería, cerveza). Personalización masiva: alta variedad y alto volumen a bajo costo (Dell).',
           ['Las cuatro estrategias', 'Volumen y variedad correctos para cada una', 'Un ejemplo por estrategia'])
@@ -1280,53 +1306,69 @@ function render() {
   if (V.v === 'play' && P && P.mode === 'sim') startTimer();
 }
 
+function nextStep() {
+  var mods = MODS.filter(function (m) { return daysTo(m) >= 0; }).sort(function (a, b) { return a.date < b.date ? -1 : 1; });
+  for (var i = 0; i < mods.length; i++) {
+    var m = mods[i];
+    for (var j = 0; j < m.worlds.length; j++) { var p = prog(m, m.worlds[j]); if (p.a < p.t) return { m: m, w: m.worlds[j] }; }
+  }
+  return mods.length ? { m: mods[0], w: null } : null;
+}
+
 function vHome() {
   var mods = MODS.slice().sort(function (a, b) { return a.date < b.date ? -1 : 1; });
-  var all = 0, ok = 0, ans = 0;
-  mods.forEach(function (m) { var p = prog(m); all += p.t; ok += p.c; ans += p.a; });
-  var h = '<header class="hero"><p class="mut">Gestión de la Producción I · 10-1 B · II Semestre 2026</p>' +
-    '<h1 id="h" tabindex="-1">Taller de Producción</h1>' +
-    '<p>Práctica de examen para tus tres pruebas. Cada fallo te explica el error y repites hasta acertar; la nota cuenta solo el <b>primer intento</b>.</p>' +
-    bar(all ? Math.round(ans / all * 100) : 0, 'var(--amber)') +
-    '<p class="mut">' + ans + ' de ' + all + ' ítems contestados · ' + ok + ' acertados a la primera</p></header>';
+  var all = 0, ans = 0;
+  mods.forEach(function (m) { var p = prog(m); all += p.t; ans += p.a; });
+  var h = '<header class="hero"><h1 id="h" tabindex="-1">Taller de Producción</h1>' +
+    '<p class="mut">Práctica de examen · 10-1 B · Un paso a la vez.</p></header>';
+  var n = nextStep();
+  if (n) {
+    var c = n.m.color;
+    h += '<section class="card m" style="--c:' + c + '"><p class="mut">👉 Tu siguiente paso</p>' +
+      '<h2>' + n.m.icon + ' ' + esc(n.m.short) + (n.w ? ' · ' + esc(n.w.name) : ' · Simulacro') + '</h2>' +
+      '<p class="mut">Examen: ' + cd(n.m).toLowerCase() + ' (' + fdate(n.m) + ')</p>' +
+      '<button class="pri" style="--c:' + c + '" data-act="' + (n.w ? 'world' : 'sim') + '" data-mid="' + n.m.id + '" data-id="' + (n.w ? n.w.id : '') + '">' + (n.w ? 'Continuar' : 'Hacer simulacro') + '</button></section>';
+  }
+  h += '<h3>Tus materias</h3>';
   mods.forEach(function (m) {
-    var p = prog(m), d = daysTo(m);
-    h += '<section class="card m" style="--c:' + m.color + '"><div class="row"><span class="chip hot" style="--c:' + m.color + '">' + cd(m) + '</span><span class="chip">' + fdate(m) + '</span></div>' +
-      '<h2>' + m.icon + ' ' + esc(m.name) + '</h2><p class="mut">' + esc(m.source) + '</p>' +
-      bar(p.t ? Math.round(p.a / p.t * 100) : 0, m.color) +
-      '<p class="mut">' + p.a + '/' + p.t + ' contestados · ' + p.c + ' a la primera' + (ms(m.id).sim ? ' · último simulacro ' + ms(m.id).sim.last + '%' : '') + '</p>' +
-      '<button class="pri" style="--c:' + m.color + '" data-act="mod" data-id="' + m.id + '">Entrar a ' + esc(m.short) + '</button></section>';
+    var p = prog(m), pct = p.t ? Math.round(p.a / p.t * 100) : 0;
+    h += '<button class="card m" style="--c:' + m.color + ';display:block" data-act="mod" data-id="' + m.id + '">' +
+      '<span class="row"><b style="font-size:1.1rem">' + m.icon + ' ' + esc(m.short) + '</b><span class="chip hot" style="--c:' + m.color + '">' + cd(m) + '</span></span>' +
+      bar(pct, m.color) + '<span class="mut">' + pct + '% avanzado' + (ms(m.id).sim ? ' · simulacro ' + ms(m.id).sim.last + '%' : '') + '</span></button>';
   });
-  h += '<footer><button class="link" data-act="reset">Reiniciar todo el progreso</button><p class="mut">El progreso se guarda solo en este navegador.</p></footer>';
+  h += '<footer><button class="link" data-act="reset">Reiniciar progreso</button></footer>';
   return h;
 }
 
 function vMod() {
-  var m = V.mod, c = m.color;
+  var m = V.mod, c = m.color, first = null;
+  m.worlds.forEach(function (w) { var p = prog(m, w); if (!first && p.a < p.t) first = w; });
   var h = '<div class="top"><button class="link" data-act="home">← Inicio</button><span class="chip hot" style="--c:' + c + '">' + cd(m) + '</span></div>' +
-    '<h1 id="h" tabindex="-1">' + m.icon + ' ' + esc(m.name) + '</h1><p class="mut">' + fdate(m) + ' · ' + esc(m.source) + '</p>';
-  if (m.note) h += '<div class="box"><b>Ojo:</b> ' + m.note + '</div>';
-  h += '<h3>Mundos de práctica (en el orden recomendado)</h3><div class="list">';
+    '<h1 id="h" tabindex="-1">' + m.icon + ' ' + esc(m.short) + '</h1><p class="mut">Examen ' + fdate(m) + '</p>' +
+    '<details><summary>Qué cubre y avisos</summary><p class="mut">' + esc(m.source) + '</p>' + (m.note ? '<div class="box">' + m.note + '</div>' : '') + '</details>' +
+    '<h3>Tu ruta</h3><div class="list">';
   m.worlds.forEach(function (w) {
-    var p = prog(m, w);
-    h += '<button data-act="world" data-id="' + w.id + '"><span><b>' + w.n + '. ' + esc(w.name) + '</b><small>' + esc(w.pp || '') + ' · ' + p.t + ' ítems' + (w.items.length > p.t ? ' + desarrollo' : '') + '</small></span><span aria-label="' + p.c + ' de ' + p.t + ' a la primera">' + (p.a === p.t ? '✅' : '▫️') + ' ' + p.c + '/' + p.t + '</span></button>';
+    var p = prog(m, w), done = p.a === p.t, now = w === first;
+    h += '<button data-act="world" data-id="' + w.id + '"' + (now ? ' style="border-color:' + c + ';border-width:2px"' : '') + '><span><b>' + w.n + '. ' + esc(w.name) + '</b>' +
+      (now ? '<small style="color:' + c + '">▶ Sigue aquí</small>' : '') + '</span><span aria-label="' + p.c + ' de ' + p.t + ' a la primera">' + (done ? '✅' : '▫️') + '</span></button>';
   });
   var s = ms(m.id).sim;
-  h += '</div><h3>Simulacro final</h3><div class="card"><p>Réplica del examen: ítems mezclados de todos los mundos, <b>sin reintento ni pistas</b>, con cronómetro. Al final ves nota, desglose por tema y repasas lo que fallaste.</p>' +
-    (s ? '<p class="mut">Último: ' + s.last + '% · Mejor: ' + s.best + '%</p>' : '') +
-    '<button class="pri" style="--c:' + c + '" data-act="sim">Iniciar simulacro (' + Math.min(m.simN, modItems(m).length) + ' ítems)</button></div>';
+  h += '</div><h3>Cuando te sientas listo</h3><div class="card"><p><b>Simulacro:</b> ' + Math.min(m.simN, modItems(m).length) + ' ítems mezclados, sin pistas, con cronómetro.' + (s ? ' Último ' + s.last + '%, mejor ' + s.best + '%.' : '') + '</p>' +
+    '<button class="pri" style="--c:' + c + '" data-act="sim">Iniciar simulacro</button></div>';
   return h;
 }
 
 function vReview() {
   var m = V.mod, w = V.world, c = m.color;
-  var h = '<div class="top"><button class="link" data-act="mod" data-id="' + m.id + '">← ' + esc(m.short) + '</button><span class="chip">Mundo ' + w.n + '</span></div>' +
-    '<h1 id="h" tabindex="-1">' + esc(w.name) + '</h1><p class="mut">' + esc(w.pp || '') + '</p>' +
-    '<h3>📖 Repaso rápido</h3><div class="card"><ul>';
-  w.review.forEach(function (r) { h += '<li>' + r + '</li>'; });
-  h += '</ul></div>';
-  if (w.ex) h += '<div class="box ex"><b>Ejemplo resuelto</b>' + w.ex + '</div>';
-  h += '<div class="bottom"><div><button class="pri" style="--c:' + c + '" data-act="start">Empezar ' + w.items.length + ' ítems</button></div></div>';
+  var steps = w.review.slice();
+  if (w.ex) steps.push('<b>Ejemplo resuelto</b>' + w.ex);
+  var r = V.rv || 0, last = r >= steps.length - 1;
+  var h = '<div class="top"><button class="link" data-act="mod" data-id="' + m.id + '">← ' + esc(m.short) + '</button><button class="link" data-act="start">Saltar al ejercicio →</button></div>' +
+    '<h1 id="h" tabindex="-1">' + esc(w.name) + '</h1>' +
+    '<p class="mut">Repaso · idea ' + (r + 1) + ' de ' + steps.length + '</p>' + bar(Math.round((r + 1) / steps.length * 100), c) +
+    '<div class="card" style="font-size:1.08rem;min-height:140px">' + steps[r] + '</div>' +
+    '<div class="bottom"><div>' + (r > 0 ? '<button class="sec" style="width:auto;flex:none" data-act="rvprev">←</button>' : '') +
+    (last ? '<button class="pri" style="--c:' + c + '" data-act="start">Empezar ' + w.items.length + ' ítems</button>' : '<button class="pri" style="--c:' + c + '" data-act="rvnext">Siguiente →</button>') + '</div></div>';
   return h;
 }
 
@@ -1486,9 +1528,11 @@ document.addEventListener('click', function (e) {
   var a = b.getAttribute('data-act'), id = b.getAttribute('data-id');
   if (a === 'home') return go('home');
   if (a === 'mod') return go('mod', { mod: modById(id) });
-  if (a === 'world') { var m = V.mod || P.mod; var w = m.worlds.filter(function (x) { return x.id === id; })[0]; return go('review', { mod: m, world: w }); }
+  if (a === 'world') { var m = modById(b.getAttribute('data-mid')) || V.mod || P.mod; var w = m.worlds.filter(function (x) { return x.id === id; })[0]; return go('review', { mod: m, world: w, rv: 0 }); }
+  if (a === 'rvnext') { V.rv = (V.rv || 0) + 1; render(); window.scrollTo(0, 0); return; }
+  if (a === 'rvprev') { V.rv = Math.max(0, (V.rv || 0) - 1); render(); window.scrollTo(0, 0); return; }
   if (a === 'start') { shuf = {}; return startQueue(V.world.items.slice(), 'world', 'Mundo ' + V.world.n, null, { mod: V.mod, world: V.world, rec: {} }); }
-  if (a === 'sim') { shuf = {}; return startQueue(pickSim(V.mod), 'sim', 'Simulacro', null, { mod: V.mod }); }
+  if (a === 'sim') { var sm = modById(b.getAttribute('data-mid')) || V.mod; V.mod = sm; shuf = {}; return startQueue(pickSim(sm), 'sim', 'Simulacro', null, { mod: sm }); }
   if (a === 'redo') {
     var q = V.q.filter(function (it, i) { return !V.ans[i].ok; }); shuf = {};
     return startQueue(q, 'redo', 'Repaso', null, { mod: V.mod, back: V.mod, rec: {} });
