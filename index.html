@@ -1,905 +1,1470 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Master Quiz: Gestión de la Producción y Comercio Internacional</title>
-    <style>
-        :root {
-            --bg-primary: #0f172a;
-            --bg-secondary: #1e293b;
-            --bg-accent: #334155;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --emerald-accent: #10b981;
-            --blue-accent: #3b82f6;
-            --amber-accent: #f59e0b;
-            --purple-accent: #a855f7;
-            --border-color: #475569;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-primary);
-            color: var(--text-main);
-            line-height: 1.6;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1050px;
-            margin: 0 auto;
-        }
-
-        header {
-            background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
-            padding: 35px 20px;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            margin-bottom: 25px;
-            text-align: center;
-        }
-
-        header h1 {
-            font-size: 2rem;
-            color: #ffffff;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        header p {
-            color: var(--text-muted);
-            font-size: 1.05rem;
-        }
-
-        .stats-bar {
-            display: flex;
-            justify-content: space-around;
-            background-color: var(--bg-secondary);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 25px;
-            border: 1px solid var(--border-color);
-            font-weight: bold;
-        }
-
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-item span {
-            display: block;
-            font-size: 1.4rem;
-            color: var(--blue-accent);
-        }
-
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .tab-btn {
-            flex: 1;
-            background-color: var(--bg-secondary);
-            color: var(--text-muted);
-            border: 1px solid var(--border-color);
-            padding: 14px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-            font-size: 0.9rem;
-        }
-
-        .tab-btn.active {
-            color: #ffffff;
-        }
-        .tab-btn.btn-render.active { background-color: var(--blue-accent); border-color: var(--blue-accent); }
-        .tab-btn.btn-comercio.active { background-color: var(--amber-accent); border-color: var(--amber-accent); }
-        .tab-btn.btn-aduanas.active { background-color: var(--purple-accent); border-color: var(--purple-accent); }
-
-        .section-panel {
-            display: none;
-        }
-
-        .section-panel.active {
-            display: block;
-        }
-
-        .intro-card {
-            background-color: var(--bg-secondary);
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-
-        .question-card {
-            background-color: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            transition: transform 0.15s ease;
-        }
-
-        .question-card:hover {
-            transform: translateY(-2px);
-        }
-
-        .question-meta {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            font-weight: bold;
-            margin-bottom: 6px;
-        }
-
-        .meta-render { color: var(--blue-accent); }
-        .meta-comercio { color: var(--amber-accent); }
-        .meta-aduanas { color: var(--purple-accent); }
-
-        .question-text {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
-
-        .options-list {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .option-item {
-            background-color: var(--bg-accent);
-            border: 1px solid var(--border-color);
-            padding: 12px 15px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .option-item:hover {
-            background-color: #475569;
-            border-color: #64748b;
-        }
-
-        .option-item input[type="radio"] {
-            cursor: pointer;
-            width: 18px;
-            height: 18px;
-            accent-color: var(--blue-accent);
-        }
-
-        .question-card.correct {
-            border-color: var(--emerald-accent);
-            box-shadow: 0 0 8px rgba(16, 185, 129, 0.2);
-        }
-
-        .question-card.incorrect {
-            border-color: #ef4444;
-            box-shadow: 0 0 8px rgba(239, 68, 68, 0.2);
-        }
-
-        .feedback-box {
-            margin-top: 15px;
-            padding: 12px;
-            border-radius: 6px;
-            font-size: 0.95rem;
-            display: none;
-        }
-
-        .question-card.correct .feedback-box {
-            display: block;
-            background-color: rgba(16, 185, 129, 0.1);
-            color: #34d399;
-            border: 1px solid rgba(16, 185, 129, 0.2);
-        }
-
-        .question-card.incorrect .feedback-box {
-            display: block;
-            background-color: rgba(239, 68, 68, 0.1);
-            color: #f87171;
-            border: 1px solid rgba(239, 68, 68, 0.2);
-        }
-
-        .action-bar {
-            display: flex;
-            gap: 15px;
-            margin-top: 25px;
-            margin-bottom: 5px;
-        }
-
-        .btn {
-            padding: 14px 24px;
-            border: none;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            flex: 1;
-            text-align: center;
-        }
-
-        .btn-submit {
-            background-color: var(--emerald-accent);
-            color: #ffffff;
-        }
-
-        .btn-submit:hover {
-            background-color: #059669;
-        }
-
-        .btn-reset {
-            background-color: var(--bg-accent);
-            color: var(--text-main);
-            border: 1px solid var(--border-color);
-        }
-
-        .btn-reset:hover {
-            background-color: #475569;
-        }
-
-        .score-display {
-            background: linear-gradient(135deg, #064e3b 0%, #022c22 100%);
-            border: 2px solid var(--emerald-accent);
-            padding: 25px;
-            border-radius: 12px;
-            text-align: center;
-            margin-top: 30px;
-            display: none;
-        }
-
-        .score-display h2 {
-            font-size: 2rem;
-            color: #34d399;
-            margin-bottom: 10px;
-        }
-
-        @media (max-width: 768px) {
-            .tabs { flex-direction: column; }
-            .stats-bar { flex-direction: column; gap: 10px; }
-            .action-bar { flex-direction: column; }
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14161a">
+<title>Taller de Producción — Práctica de Examen</title>
+<style>
+:root{
+  --bg:#14161a;--panel:#1f2329;--panel2:#2a2f37;--line:#3b424c;
+  --tx:#f1f3f5;--mut:#aab2bd;
+  --amber:#ffb300;--cyan:#4dd0e1;--red:#ff7043;
+  --ok:#66d17a;--bad:#ff6b6b;--okbg:#17321f;--badbg:#3a1c1c;
+  --pad:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--tx);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  padding:env(safe-area-inset-top) max(var(--pad),env(safe-area-inset-right)) calc(96px + env(safe-area-inset-bottom)) max(var(--pad),env(safe-area-inset-left));min-height:100vh}
+#app{max-width:760px;margin:0 auto}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+h1{font-size:clamp(1.4rem,5vw,2rem);line-height:1.2}
+h2{font-size:clamp(1.15rem,4vw,1.5rem);line-height:1.25;margin:4px 0 8px}
+h3{font-size:1.05rem;margin:14px 0 6px}
+p{margin:6px 0}
+ul,ol{margin:6px 0 6px 22px}
+li{margin:4px 0}
+b{color:#fff}
+:focus-visible{outline:3px solid var(--cyan);outline-offset:2px}
+#h:focus{outline:none}
+.hero{margin:14px 0 16px;padding:18px 16px;border-radius:14px;background:var(--panel);border:1px solid var(--line);position:relative;overflow:hidden}
+.hero:before{content:"";position:absolute;left:0;right:0;top:0;height:8px;background:repeating-linear-gradient(-45deg,var(--amber) 0 14px,#111 14px 28px)}
+.hero h1{margin-top:8px}
+.mut{color:var(--mut);font-size:.92rem}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0}
+.card.m{border-left:6px solid var(--c,var(--amber))}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.chip{display:inline-block;padding:3px 10px;border-radius:99px;background:var(--panel2);border:1px solid var(--line);font-size:.85rem;color:var(--mut)}
+.chip.hot{background:var(--c,var(--amber));border-color:transparent;color:#111;font-weight:700}
+.bar{height:10px;background:var(--panel2);border-radius:99px;overflow:hidden;margin:8px 0}
+.bar i{display:block;height:100%;background:var(--c,var(--amber));width:0}
+button,.btn{font:inherit;color:var(--tx);background:var(--panel2);border:1px solid var(--line);border-radius:12px;min-height:48px;padding:10px 16px;cursor:pointer;text-align:left;width:100%;display:block}
+button:hover{border-color:var(--mut)}
+button[disabled]{cursor:default;opacity:.85}
+.pri{background:var(--c,var(--amber));color:#111;font-weight:700;text-align:center;border-color:transparent}
+.sec{text-align:center}
+.link{background:none;border:none;color:var(--cyan);width:auto;min-height:44px;padding:6px 4px;text-decoration:underline}
+.list button{margin:8px 0;display:flex;justify-content:space-between;gap:10px;align-items:center}
+.list small{color:var(--mut);display:block;font-size:.82rem}
+.opt{margin:9px 0;display:block}
+.opt.sel{border-color:var(--cyan);box-shadow:inset 0 0 0 2px var(--cyan)}
+.opt.good{background:var(--okbg);border-color:var(--ok)}
+.opt.bad{background:var(--badbg);border-color:var(--bad)}
+.fb{margin:-4px 0 10px;padding:9px 12px;border-radius:0 0 12px 12px;font-size:.95rem;background:var(--panel2);border:1px solid var(--line);border-top:none}
+.fb.good{border-color:var(--ok)}.fb.bad{border-color:var(--bad)}
+.q{font-size:1.08rem;margin:8px 0 12px}
+.lvl{font-size:.8rem;color:var(--mut)}
+input[type=text]{font:inherit;width:100%;min-height:52px;padding:10px 14px;border-radius:12px;border:2px solid var(--line);background:#0f1115;color:var(--tx)}
+.bottom{position:fixed;left:0;right:0;bottom:0;padding:10px max(var(--pad),env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(var(--pad),env(safe-area-inset-left));background:linear-gradient(transparent,var(--bg) 30%);}
+.bottom>div{max-width:760px;margin:0 auto;display:flex;gap:10px}
+.box{background:var(--panel2);border-radius:12px;padding:10px 14px;margin:10px 0;border:1px solid var(--line)}
+.box.ex{border-left:5px solid var(--cyan)}
+.scroll{overflow-x:auto;max-width:100%}
+table{border-collapse:collapse;margin:8px 0;font-size:.92rem}
+td,th{border:1px solid var(--line);padding:4px 9px;text-align:center}
+th{background:var(--panel2)}
+.big{font-size:2.4rem;font-weight:800;line-height:1.1}
+.ok{color:var(--ok)}.no{color:var(--bad)}
+details{margin:8px 0}
+summary{cursor:pointer;min-height:44px;display:flex;align-items:center;color:var(--cyan)}
+label.ck{display:flex;gap:10px;align-items:flex-start;padding:8px 0;min-height:44px}
+label.ck input{width:24px;height:24px;margin-top:2px;flex:none}
+.top{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:10px}
+footer{margin-top:28px;text-align:center}
+@media(min-width:768px){body{font-size:17px}.hero{padding:26px 24px}}
+@media(prefers-reduced-motion:no-preference){.bar i{transition:width .4s}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
 </head>
 <body>
-
-<div class="container">
-    <header>
-        <h1>Simulador Integral de Examen</h1>
-        <p>Gestión de la Producción, Operaciones Globales y Guía Aduanera Completa</p>
-    </header>
-
-    <div class="stats-bar">
-        <div class="stat-item">Preguntas Totales: <span>40</span></div>
-        <div class="stat-item">Respondidas: <span id="answered-count">0</span>/40</div>
-        <div class="stat-item">Estado: <span id="status-text" style="color: var(--amber-accent);">En Progreso</span></div>
-    </div>
-
-    <div class="tabs">
-        <button class="tab-btn btn-render active" onclick="switchTab('render')">Módulo 1: Barry Render (Cap. 2)</button>
-        <button class="tab-btn btn-comercio" onclick="switchTab('comercio')">Módulo 2: Import / Export Básicos</button>
-        <button class="tab-btn btn-aduanas" onclick="switchTab('aduanas')">Módulo 3: Presentaciones y Técnica Aduanera</button>
-    </div>
-
-    <form id="quiz-form" onsubmit="evaluateQuiz(event)">
-        
-        <!-- MÓDULO 1: BARRY RENDER -->
-        <div id="panel-render" class="section-panel active">
-            <div class="intro-card" style="border-left: 4px solid var(--blue-accent);">
-                <h3>Estrategia de Operaciones en un Entorno Global</h3>
-                <p>Análisis de competitividad, decisiones de la AO y las directrices globales de administración empresarial.</p>
-            </div>
-
-            <!-- Q1 -->
-            <div class="question-card" data-correct="b">
-                <div class="question-meta meta-render">Pregunta 1 • Cadena de Suministro Moderna</div>
-                <div class="question-text">¿Qué aprendizaje estratégico clave deja el perfil de Boeing respecto a la fabricación de aeronaves complejas como el 787?</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q1" value="a"> Las empresas líderes deben centralizar sus manufacturas en un solo taller para controlar la calidad.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q1" value="b"> La producción moderna está atomizada globalmente; los componentes se diseñan y fabrican en distintos países según especialización técnica.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q1" value="c"> La subcontratación internacional es ineficiente y eleva el riesgo aduanero a niveles inmanejables.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: B.</b> Refleja la dispersión geográfica y la integración multinacional de las cadenas de valor de hoy.</div>
-            </div>
-
-            <!-- Q2 -->
-            <div class="question-card" data-correct="a">
-                <div class="question-meta meta-render">Pregunta 2 • Globalización de Operaciones</div>
-                <div class="question-text">¿Cuáles son motivos de peso para que una corporación decida internacionalizar u otorgar un enfoque global a sus plantas productivas?</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q2" value="a"> Reducir costos de mano de obra/aranceles, optimizar la cadena de suministro, comprender mercados locales y captar talento global.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q2" value="b"> Evitar auditorías contables locales y centralizar las utilidades en paraísos fiscales de forma opaca.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q2" value="c"> Incrementar los tiempos de entrega (lead times) para saturar los almacenes fiscales en puertos.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: A.</b> Render destaca 6 razones clave para globalizarse, todas orientadas a la eficiencia, costos y mercados.</div>
-            </div>
-
-            <!-- Q3 -->
-            <div class="question-card" data-correct="c">
-                <div class="question-meta meta-render">Pregunta 3 • Cultura y Ética</div>
-                <div class="question-text">¿Por qué las diferencias culturales y de ética impactan directamente la Administración de Operaciones (AO) internacional?</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q3" value="a"> Porque el comercio internacional prohíbe trabajar con culturas ajenas a la occidental.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q3" value="b"> Porque la automatización elimina todo tipo de factor humano o cultural de los procesos.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q3" value="c"> Porque varían los estándares de puntualidad, la cultura laboral, visiones sobre el soborno y regulaciones ambientales entre países.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: C.</b> Los gerentes de operaciones deben operar bajo marcos culturales y legales disímiles sin comprometer la responsabilidad social corporativa.</div>
-            </div>
-
-            <!-- Q4 -->
-            <div class="question-card" data-correct="b">
-                <div class="question-meta meta-render">Pregunta 4 • Planeación Estratégica</div>
-                <div class="question-text">¿Qué establece formalmente la "Misión" de una organización?</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q4" value="a"> El plan de distribución de planta o layout para los próximos dos meses.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q4" value="b"> El propósito fundamental de la organización, definiendo qué va a aportar a la sociedad y hacia dónde se dirige.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q4" value="c"> El cálculo de costos variables por contenedor de mercancías importadas.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: B.</b> La misión es el norte corporativo; la razón de ser de la compañía.</div>
-            </div>
-
-            <!-- Q5 -->
-            <div class="question-card" data-correct="a">
-                <div class="question-meta meta-render">Pregunta 5 • Estrategia</div>
-                <div class="question-text">¿Qué es una "Estrategia" en el ámbito operativo?</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q5" value="a"> El mapa de ruta o plan de acción diseñado para alcanzar los objetivos de la misión corporativa.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q5" value="b"> La secuencia rígida de programación de una máquina CNC.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q5" value="c"> Un reporte de auditoría sobre mermas e inventarios obsoletos.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: A.</b> Las estrategias transforman los enunciados filosóficos de la misión en planes de ejecución y operaciones reales.</div>
-            </div>
-
-            <!-- Q6 -->
-            <div class="question-card" data-correct="b">
-                <div class="question-meta meta-render">Pregunta 6 • Ventaja Competitiva</div>
-                <div class="question-text">¿Cuáles son las tres opciones estratégicas puras para construir una ventaja competitiva en AO?</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q6" value="a"> Tercerización, Monopolización y Financiamiento.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q6" value="b"> Diferenciación, Liderazgo en Costos y Respuesta Rápida.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q6" value="c"> Automatización, Inspección final y Almacenamiento.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: B.</b> A través de estas tres palancas (Diferenciación, Costo y Respuesta), las operaciones generan valor superior e inimitable para el cliente.</div>
-            </div>
-
-            <!-- Q7 -->
-            <div class="question-card" data-correct="c">
-                <div class="question-meta meta-render">Pregunta 7 • Liderazgo en Costo</div>
-                <div class="question-text">Lograr una ventaja basada en "Costo" implica fundamentalmente:</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q7" value="a"> Sacrificar las propiedades y especificaciones técnicas de calidad del producto final.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q7" value="b"> Establecer precios predatorios ilegales en los mercados de destino.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q7" value="c"> Alcanzar la máxima eficiencia en los procesos operativos eliminando desperdicios y optimizando la capacidad instalada.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: C.</b> Competir en costo significa operar de manera esbelta (lean), no fabricar bienes de mala calidad.</div>
-            </div>
-
-            <!-- Q8 -->
-            <div class="question-card" data-correct="a">
-                <div class="question-meta meta-render">Pregunta 8 • Competencia en Respuesta</div>
-                <div class="question-text">¿Qué dimensiones componen la ventaja competitiva en "Respuesta"?</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q8" value="a"> Flexibilidad operativa (volumen/diseño), confiabilidad en los tiempos comprometidos y rapidez en la ejecución.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q8" value="b"> Capacidad de contestar llamadas de soporte técnico en menos de 5 minutos.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q8" value="c"> Habilidad para apelar multas arancelarias en aduanas terrestres de forma legal.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: A.</b> Involucra velocidad del mercado, cumplimiento de itinerarios y adaptación a cambios inesperados de la demanda.</div>
-            </div>
-
-            <!-- Q9 -->
-            <div class="question-card" data-correct="c">
-                <div class="question-meta meta-render">Pregunta 9 • Decisiones AO</div>
-                <div class="question-text">¿A qué grupo pertenecen las llamadas "10 decisiones estratégicas de la Administración de Operaciones"?</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q9" value="a"> Contratación de seguros marítimos, consolidación bancaria y mercadeo digital.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q9" value="b"> Cabildeo gubernamental, fijación de aranceles y devaluación monetaria.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q9" value="c"> Diseño del producto, calidad, diseño de procesos, localización, layout, RRHH, cadena de suministro, inventario, programación y mantenimiento.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: C.</b> Estas 10 áreas abarcan las competencias clave que un administrador de operaciones debe coordinar estratégicamente.</div>
-            </div>
-
-            <!-- Q10 -->
-            <div class="question-card" data-correct="b">
-                <div class="question-meta meta-render">Pregunta 10 • Estrategia e Implementación</div>
-                <div class="question-text">¿Qué es un Factor Crítico de Éxito (FCE) para las operaciones de una firma?</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q10" value="a"> Una patente exclusiva que no posee ningún otro competidor industrial.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q10" value="b"> Aquellas actividades o procesos operativos indispensables que la empresa debe ejecutar de forma excelente para poder competir y sobrevivir.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q10" value="c"> El margen neto consolidado dictado por la gerencia financiera.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: B.</b> Los FCE marcan las pautas que la organización tiene que dominar obligatoriamente para no quedar fuera del mercado.</div>
-            </div>
-
-            <!-- Q11 -->
-            <div class="question-card" data-correct="a">
-                <div class="question-meta meta-render">Pregunta 11 • Competencias Centrales</div>
-                <div class="question-text">¿Qué define a una "Competencia Central"?</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q11" value="a"> El conjunto de habilidades, conocimientos o tecnologías únicas en las cuales la empresa destaca con creces por encima de su competencia.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q11" value="b"> Las normativas de seguridad impuestas obligatoriamente por el Ministerio de Trabajo.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q11" value="c"> Los procesos automatizados básicos que se compran en un software comercial genérico.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: A.</b> Es el núcleo duro de ventajas de la firma; lo que sabe hacer mejor que nadie y sustenta su valor a largo plazo.</div>
-            </div>
-
-            <!-- Q12 -->
-            <div class="question-card" data-correct="c">
-                <div class="question-meta meta-render">Pregunta 12 • Estrategia Internacional</div>
-                <div class="question-text">¿Cómo opera una organización bajo la "Estrategia Internacional"?</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q12" value="a"> Centraliza todas sus actividades críticas e ignora los controles fronterizos.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q12" value="b"> Adapta detalladamente sus productos a cada cultura municipal de exportación.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q12" value="c"> Extiende sus mercados internos mediante el uso de exportaciones o contratos de licencias en el exterior, con presiones bajas en costos y en adaptación local.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: C.</b> Es la estrategia global de menor complejidad y riesgo operativo inicial para expandir ventas.</div>
-            </div>
-
-            <!-- Q13 -->
-            <div class="question-card" data-correct="a">
-                <div class="question-meta meta-render">Pregunta 13 • Estrategia Multidoméstica</div>
-                <div class="question-text">La característica principal de la "Estrategia Multidoméstica" en AO es:</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q13" value="a"> Máxima descentralización operativa dando amplia autonomía a cada filial nacional para adaptar el bien a las necesidades del mercado local.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q13" value="b"> Rigidizar la estandarización técnica de componentes para abaratar el inventario global.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q13" value="c"> Fabricar en un solo país un único bien genérico empaquetado al vacío.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: A.</b> Prioriza la respuesta y la adaptación local por encima del ahorro en costos que otorgan las economías de escala.</div>
-            </div>
-
-            <!-- Q14 -->
-            <div class="question-card" data-correct="b">
-                <div class="question-meta meta-render">Pregunta 14 • Estrategia Global</div>
-                <div class="question-text">¿Qué busca una firma al implementar una "Estrategia Global" en sus operaciones?</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q14" value="a"> Trasladar las oficinas de relaciones públicas a todos los países del mundo.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q14" value="b"> Una fuerte centralización con productos altamente estandarizados para generar economías de escala masivas (alta presión en costos, baja respuesta local).</label></li>
-                    <li class="option-item"><label><input type="radio" name="q14" value="c"> Eliminar el uso de aduanas y depender del comercio informal de trueque marítimo.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: B.</b> Considera al planeta entero como un mercado unificado, maximizando la estandarización fabril.</div>
-            </div>
-
-            <!-- Q15 -->
-            <div class="question-card" data-correct="c">
-                <div class="question-meta meta-render">Pregunta 15 • Estrategia Trasnacional</div>
-                <div class="question-text">¿Por qué la "Estrategia Trasnacional" es la más compleja para un administrador de plantas?</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q17" value="a"> Porque requiere operar sin sistemas informáticos de manufactura.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q17" value="b"> Porque el pago de aranceles duplica el costo de las licencias comerciales de la casa matriz.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q17" value="c"> Porque busca simultáneamente alta eficiencia en costos globales y alta respuesta/adaptación local, compartiendo talentos y competencias cross-border.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: C.</b> Combina los beneficios de escala global con la flexibilidad de personalización en cada destino aduanero.</div>
-            </div>
-        </div>
-
-        <!-- MÓDULO 2: IMPORTACIONES Y EXPORTACIONES BÁSICAS -->
-        <div id="panel-comercio" class="section-panel">
-            <div class="intro-card" style="border-left: 4px solid var(--amber-accent);">
-                <h3>Fundamentos de Comercio Internacional</h3>
-                <p>Análisis de flujos básicos comerciales, balanza comercial, valor agregado en origen y clasificaciones de oferta exportable.</p>
-            </div>
-
-            <!-- Q16 -->
-            <div class="question-card" data-correct="a">
-                <div class="question-meta meta-comercio">Pregunta 16 • El Trueque Histórico</div>
-                <div class="question-text">¿Cuál es la ineficiencia intrínseca del Trueque que obligó a formalizar el Comercio Internacional monetario?</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q18" value="a"> Requiere una doble coincidencia de necesidades y carece de una unidad de valor común para medir costos de producción de manera exacta.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q18" value="b"> Está penalizado criminalmente por todos los tratados internacionales vigentes.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q18" value="c"> Limita el transporte terrestre exclusivamente a tracción animal.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: A.</b> Sin una divisa y un sistema cambiario, calcular costos marginales y fijar precios logísticos a gran escala es inviable.</div>
-            </div>
-
-            <!-- Q17 -->
-            <div class="question-card" data-correct="b">
-                <div class="question-meta meta-comercio">Pregunta 17 • Exportación Tradicional</div>
-                <div class="question-text">¿Qué representa una Exportación Tradicional para una economía en desarrollo?</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q19" value="a"> Venta de servicios tecnológicos en la nube desarrollados localmente.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q19" value="b"> El envío al exterior de commodities o materias primas básicas con escaso procesamiento industrial, históricamente dominantes en sus ventas externas.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q19" value="c"> Envío temporal de maquinaria pesada para reparación mecánica.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: B.</b> Ejemplos clásicos incluyen recursos minerales extraídos, petróleo crudo, café en grano sin tostar o frutas frescas sin procesar.</div>
-            </div>
-
-            <!-- Q18 -->
-            <div class="question-card" data-correct="c">
-                <div class="question-meta meta-comercio">Pregunta 18 • Exportación No Tradicional</div>
-                <div class="question-text">¿Qué caracteriza operativamente a los productos de Exportación No Tradicional?</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q20" value="a"> Bienes que ingresan de contrabando sin registros fiscales en puertos nacionales.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q20" value="b"> Productos obsoletos que se donan a fundaciones internacionales libres de impuestos.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q20" value="c"> Bienes con un grado de industrialización, tecnología incorporada o valor agregado que diversifican la oferta exportable histórica del país.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: C.</b> Dispositivos médicos complejos, circuitos electrónicos, software especializado o alimentos gourmet procesados entran en esta categoría de alta rentabilidad operativa.</div>
-            </div>
-
-            <!-- Q19 -->
-            <div class="question-card" data-correct="a">
-                <div class="question-meta meta-comercio">Pregunta 19 • Logística de Importación</div>
-                <div class="question-text">¿Cuál es la función crítica de los procesos de Importación para el administrador de planta moderno?</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q21" value="a"> Abastecer la línea productiva con materias primas, insumos y bienes de capital avanzados que no están disponibles localmente o son más eficientes en costo.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q21" value="b"> Retener mercancía defectuosa en almacenes portuarios indefinidamente para evitar multas comerciales.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q21" value="c"> Reducir de manera artificial el Producto Interno Bruto del país receptor de la carga.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: A.</b> Sin una importación fluida de componentes clave, es imposible implementar esquemas de manufactura flexible o Just-In-Time a nivel global.</div>
-            </div>
-
-            <!-- Q20 -->
-            <div class="question-card" data-correct="b">
-                <div class="question-meta meta-comercio">Pregunta 20 • Balanza Comercial</div>
-                <div class="question-text">¿Cuándo se dice que una nación presenta un Superávit Comercial en su balanza operativa?</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q22" value="a"> Cuando el valor monetario de sus importaciones supera al de sus exportaciones totales.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q22" value="b"> Cuando el valor total de las exportaciones de bienes y servicios supera al valor de sus importaciones en un lapso de tiempo.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q22" value="c"> Cuando las aduanas perdonan el cobro de aranceles ad-valorem a todas las empresas de zona franca.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: B.</b> Representa una inyección neta de divisas a la economía del país exportador, fortaleciendo sus reservas operacionales.</div>
-            </div>
-        </div>
-
-        <!-- MÓDULO 3: PRESENTACIONES Y TÉCNICA ADUANERA AVANZADA -->
-        <div id="panel-aduanas" class="section-panel">
-            <div class="intro-card" style="border-left: 4px solid var(--purple-accent);">
-                <h3>Técnica Aduanera, Regímenes, Incoterms y Documentación</h3>
-                <p>Evaluación detallada de la Guía Aduanera, marcos legales en fronteras, responsabilidades de entrega de mercancías y trámites logísticos obligatorios.</p>
-            </div>
-
-            <!-- Q21 -->
-            <div class="question-card" data-correct="c">
-                <div class="question-meta meta-aduanas">Pregunta 21 • Rol Aduanero</div>
-                <div class="question-text">¿Cuál es el propósito legal y fiscal primordial de una Aduana en puertos de entrada o salida terrestres, marítimos y aéreos?</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q23" value="a"> Dictar las estrategias de marketing de los importadores privados.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q23" value="b"> Almacenar de forma gratuita la carga de los transportistas internacionales.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q23" value="c"> Controlar y fiscalizar el paso transfronterizo de bienes, recaudar tributos arancelarios y velar por la seguridad nacional y biológica.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: C.</b> Las aduanas actúan como filtros institucionales obligatorios para la legalidad, trazabilidad y tributación del comercio exterior.</div>
-            </div>
-
-            <!-- Q22 -->
-            <div class="question-card" data-correct="b">
-                <div class="question-meta meta-aduanas">Pregunta 22 • Régimen Definitivo</div>
-                <div class="question-text">El "Régimen Aduanero de Importación Definitiva" se define operativamente como:</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q24" value="a"> El ingreso de carga para exhibición en ferias de manufactura que saldrá del país en un mes.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q24" value="b"> La entrada de mercancías procedentes del extranjero destinadas a permanecer en el territorio nacional de manera ilimitada, previo pago de tributos.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q24" value="c"> El paso express de contenedores sellados que cruzan un país con destino a un tercer estado.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: B.</b> Es el trámite regular por el cual un insumo o producto nacionaliza su condición legal y se incorpora formalmente al comercio nacional.</div>
-            </div>
-
-            <!-- Q23 -->
-            <div class="question-card" data-correct="a">
-                <div class="question-meta meta-aduanas">Pregunta 23 • Perfeccionamiento Activo</div>
-                <div class="question-text">¿Por qué el Régimen de "Perfeccionamiento Activo" (Maquila o Zonas Francas) es vital para plantas de ensamble globales?</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q25" value="a"> Permite importar materias primas o componentes suspendiendo temporalmente los aranceles, para ser procesados, ensamblados y luego reexportados.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q25" value="b"> Exime a las empresas de implementar sistemas de gestión de la calidad o auditorías de procesos.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q25" value="c"> Obliga al importador a vender toda su producción manufacturada en el mercado interno minorista.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: A.</b> Es una palanca competitiva enorme en costos que evita la doble tributación de insumos en cadenas de ensamble multinacionales.</div>
-            </div>
-
-            <!-- Q24 -->
-            <div class="question-card" data-correct="c">
-                <div class="question-meta meta-aduanas">Pregunta 24 • Tránsito Aduanero</div>
-                <div class="question-text">¿Qué función cumple el régimen de "Tránsito Aduanero"?</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q26" value="a"> El cobro de peajes viales a camiones articulados en autopistas nacionales.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q26" value="b"> Almacenar carga decomisada por contrabando de alto riesgo.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q26" value="c"> Permitir el transporte de mercancías bajo control de una aduana de partida a una aduana de destino, cruzando fronteras intermedias suspendiendo aranceles.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: C.</b> Garantiza que la carga llegue intacta y con sellos oficiales desde el puerto de entrada hasta el almacén fiscal interior o frontera de salida sin nacionalizarse en el trayecto.</div>
-            </div>
-
-            <!-- Q25 -->
-            <div class="question-card" data-correct="b">
-                <div class="question-meta meta-aduanas">Pregunta 25 • Incoterms</div>
-                <div class="question-text">¿Qué regulan internacionalmente los "Incoterms" creados por la Cámara de Comercio Internacional (CCI)?</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q27" value="a"> Los montos arancelarios e impuestos directos fijos que impone el Ministerio de Hacienda.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q27" value="b"> El punto exacto de entrega de los bienes, la transferencia de riesgos de daño y la distribución de costos de transporte y aduanas entre comprador y vendedor.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q27" value="c"> La tasa de cambio oficial entre divisas como el dólar, euro o colones.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: B.</b> Los Incoterms estandarizan las responsabilidades contractuales de la logística de distribución física internacional (DFI).</div>
-            </div>
-
-            <!-- Q26 -->
-            <div class="question-card" data-correct="a">
-                <div class="question-meta meta-aduanas">Pregunta 26 • Incoterm EXW (Ex Works)</div>
-                <div class="question-text">Bajo el Incoterm "EXW" (En Fábrica), ¿dónde terminan las obligaciones y costes del vendedor/exportador?</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q28" value="a"> En sus propias instalaciones (fábrica o almacén), poniendo la carga a disposición del comprador sin cargarla en el vehículo de recogida.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q28" value="b"> Al colocar el contenedor de manera segura sobre la cubierta del buque en el puerto de origen.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q28" value="c"> En la puerta de la bodega del comprador en el país de destino con impuestos pagados.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: A.</b> Representa el grado de obligación mínimo para el vendedor; todo el riesgo y costo logístico posterior corre por cuenta del importador.</div>
-            </div>
-
-            <!-- Q27 -->
-            <div class="question-card" data-correct="c">
-                <div class="question-meta meta-aduanas">Pregunta 27 • Incoterm FOB (Free On Board)</div>
-                <div class="question-text">En un contrato bajo términos de venta marítimos "FOB", el vendedor transfiere el riesgo al comprador cuando:</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q29" value="a"> El camión logístico sale de los portones perimetrales de la fábrica de origen.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q29" value="b"> La mercancía llega sin novedades a la aduana destino.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q29" value="c"> La mercancía es colocada a bordo del buque designado por el comprador en el puerto de embarque acordado.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: C.</b> El vendedor corre con los costos y trámites de exportación locales hasta que el contenedor descansa en la cubierta o bodegas del barco.</div>
-            </div>
-
-            <!-- Q28 -->
-            <div class="question-card" data-correct="b">
-                <div class="question-meta meta-aduanas">Pregunta 28 • Incoterm CIF</div>
-                <div class="question-text">¿Qué costos adicionales e importantes asume obligatoriamente el exportador bajo el término "CIF" (Cost, Insurance and Freight)?</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q30" value="a"> El pago de los impuestos de nacionalización en la aduana de entrada destino.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q30" value="b"> El pago del flete marítimo principal internacional y la contratación de una póliza de seguro de transporte contra riesgos de pérdida o daño para el comprador.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q30" value="c"> El transporte de última milla terrestre desde el puerto destino hasta la fábrica final.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: B.</b> El vendedor paga flete internacional y seguro básico, aunque el riesgo se transfiere al comprador una vez cargado el buque en origen.</div>
-            </div>
-
-            <!-- Q29 -->
-            <div class="question-card" data-correct="a">
-                <div class="question-meta meta-aduanas">Pregunta 29 • Incoterm DDP</div>
-                <div class="question-text">El Incoterm "DDP" (Delivered Duty Paid) representa:</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q31" value="a"> La máxima obligación para el vendedor, quien entrega la mercancía en destino habiendo pagado el flete internacional, seguros y los trámites e impuestos aduaneros de importación.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q31" value="b"> Un término exclusivo para envíos urgentes de mensajería aérea libre de revisiones de aduana.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q31" value="c"> Una modalidad donde el comprador realiza el trámite de exportación en origen por su cuenta.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: A.</b> DDP implica una entrega llave en mano en las bodegas del importador con todo coste cubierto por el proveedor.</div>
-            </div>
-
-            <!-- Q30 -->
-            <div class="question-card" data-correct="c">
-                <div class="question-meta meta-aduanas">Pregunta 30 • Conocimiento de Embarque</div>
-                <div class="question-text">¿Qué es el "Conocimiento de Embarque" (Bill of Lading / B/L o Guía Aérea / AWB)?</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q32" value="a"> Un inventario de activos fijos del operador de montacargas del puerto.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q32" value="b"> El folleto publicitario con los itinerarios anuales de las navieras comerciales.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q32" value="c"> El contrato de transporte internacional de las mercancías, que funge como recibo de carga a bordo y título representativo de propiedad de los bienes.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: C.</b> Documento legal y logístico neurálgico en comercio exterior; sin su presentación original o liberación electrónica, no se entrega la carga.</div>
-            </div>
-
-            <!-- Q31 -->
-            <div class="question-card" data-correct="a">
-                <div class="question-meta meta-aduanas">Pregunta 31 • Factura Comercial Internacional</div>
-                <div class="question-text">¿Cuál es el rol jurídico y tributario de la Factura Comercial en el proceso aduanero?</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q33" value="a"> Servir de base legal para la declaración del valor aduanero de las mercancías sobre el cual se calcularán los impuestos arancelarios de importación.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q33" value="b"> Listar únicamente las dimensiones físicas y pesos brutos de los palets del contenedor.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q33" value="c"> Desglosar el catálogo de mantenimiento preventivo de la maquinaria adquirida.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: A.</b> Es el documento comercial probatorio que detalla el precio pagado o por pagar, las partes y las condiciones de venta (Incoterm).</div>
-            </div>
-
-            <!-- Q32 -->
-            <div class="question-card" data-correct="b">
-                <div class="question-meta meta-aduanas">Pregunta 32 • Lista de Empaque</div>
-                <div class="question-text">¿Qué información crítica aporta la "Lista de Empaque" (Packing List) a los inspectores de aduana en puerto?</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q34" value="a"> Los datos bancarios y líneas de crédito abiertas para financiar la transacción comercial.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q34" value="b"> El desglose detallado del contenido del contenedor, describiendo bultos, pesos netos, pesos brutos, volúmenes y numeración de empaque.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q34" value="c"> El registro consolidado de horas extra del operario que cargó la mercancía.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: B.</b> Facilita enormemente las labores de muestreo, aforo o revisión física selectiva de los bultos por parte de la autoridad aduanera.</div>
-            </div>
-
-            <!-- Q33 -->
-            <div class="question-card" data-correct="c">
-                <div class="question-meta meta-aduanas">Pregunta 33 • DUA / DTI</div>
-                <div class="question-text">La DUA (Declaración Única Aduanera) o documento equivalente de despacho aduanero representa:</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q35" value="a"> Un permiso ambiental optativo aplicable únicamente al desecho de cartón.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q35" value="b"> El contrato privado firmado entre el transportista interno y el almacén fiscal.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q35" value="c"> El documento oficial y declaración jurada mediante la cual el importador/exportador solicita asignar un régimen aduanero formal a las mercancías.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: C.</b> Consolida toda la información comercial, clasificación arancelaria, datos de transporte y liquidación de impuestos del embarque.</div>
-            </div>
-
-            <!-- Q34 -->
-            <div class="question-card" data-correct="a">
-                <div class="question-meta meta-aduanas">Pregunta 34 • Certificado de Origen</div>
-                <div class="question-text">¿Para qué sirve el "Certificado de Origen" dentro de un Tratado de Libre Comercio (TLC)?</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q36" value="a"> Para probar legalmente el país de fabricación del bien y acogerse a preferencias arancelarias o exenciones fiscales contempladas en los TLC.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q36" value="b"> Para rastrear la ubicación satelital GPS de la carga marítima en tiempo real.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q36" value="c"> Para certificar que la empresa cumple con las normas ISO de mantenimiento industrial.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: A.</b> Es el instrumento legal habilitante para reducir o eliminar aranceles de importación legítimamente entre naciones socias.</div>
-            </div>
-
-            <!-- Q35 -->
-            <div class="question-card" data-correct="b">
-                <div class="question-meta meta-aduanas">Pregunta 35 • Clasificación Arancelaria</div>
-                <div class="question-text">¿Qué es el Sistema Armonizado (Código o Partida Arancelaria)?</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q37" value="a"> El número secuencial asignado al contenedor de acero de forma internacional.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q37" value="b"> Una nomenclatura numérica internacional estandarizada de dígitos que identifica universalmente las mercancías para fijar sus aranceles y controles.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q37" value="c"> El registro nacional de licencias de conducir para personal logístico pesado.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: B.</b> Permite que una aduana en América y otra en Asia entiendan exactamente de qué producto se trata sin ambigüedades lingüísticas.</div>
-            </div>
-
-            <!-- Q36 -->
-            <div class="question-card" data-correct="c">
-                <div class="question-meta meta-aduanas">Pregunta 36 • Barreras No Arancelarias</div>
-                <div class="question-text">¿A qué corresponden las denominadas Barreras No Arancelarias en comercio internacional?</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q38" value="a"> Al cobro exclusivo de impuestos específicos por volumen excesivo.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q38" value="b"> Al muro físico o vallas perimetrales construidas en las fronteras terrestres de aduana.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q38" value="c"> A regulaciones técnicas, requisitos fitosanitarios, normas de etiquetado y permisos previos que restringen o regulan la entrada de mercancías.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: C.</b> Tienen justificaciones de salud, calidad o seguridad, pero su incumplimiento frena por completo el flujo logístico.</div>
-            </div>
-
-            <!-- Q37 -->
-            <div class="question-card" data-correct="a">
-                <div class="question-meta meta-aduanas">Pregunta 37 • Valor en Aduana</div>
-                <div class="question-text">En la gran mayoría de aduanas del mundo, la base imponible para calcular los impuestos de importación es el Valor CIF. Este se compone de:</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q39" value="a"> El valor de la mercancía (FOB) + el costo del flete internacional + la prima del seguro internacional.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q39" value="b"> El costo de fabricación de la planta de origen - la depreciación contable de maquinaria.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q39" value="c"> Únicamente el precio estipulado en la factura de compra de fábrica sin cargos adicionales.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: A.</b> Sobre la suma de estos tres componentes logísticos se tasan los porcentajes impositivos nacionales de entrada.</div>
-            </div>
-
-            <!-- Q38 -->
-            <div class="question-card" data-correct="b">
-                <div class="question-meta meta-aduanas">Pregunta 38 • Agente de Aduana</div>
-                <div class="question-text">¿Cuál es el rol operativo y legal de un "Agente o Corredor de Aduana"?</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q40" value="a"> Transportar físicamente los palets desde los patios de contenedores a las líneas de ensamble.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q40" value="b"> Actuar como un auxiliar autorizado de la función pública, asesorando y gestionando el despacho de mercancías en nombre del importador/exportador.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q40" value="c"> Fijar y recaudar las tasas de interés de los créditos comerciales internacionales.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: B.</b> Es un especialista técnico encargado de clasificar la carga, confeccionar la DUA y canalizar el trámite aduanero sin errores legales.</div>
-            </div>
-
-            <!-- Q39 -->
-            <div class="question-card" data-correct="c">
-                <div class="question-meta meta-aduanas">Pregunta 39 • Almacén Fiscal</div>
-                <div class="question-text">Un "Almacén Fiscal o Depósito Aduanero Autorizado" sirve a la Gestión de la Producción para:</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q41" value="a"> Almacenar los residuos tóxicos o chatarras finales de la manufactura para siempre.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q41" value="b"> Evitar que la policía nacional fiscalice el contenido logístico de un embarque comercial.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q41" value="c"> Custodiar de manera temporal mercancías importadas suspendiendo el pago de impuestos, permitiendo nacionalizarlas de forma parcial según los requerimientos de planta.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: C.</b> Da un respiro financiero enorme al flujo de caja, permitiendo retirar y pagar aranceles solo de los insumos que se usarán en la semana de producción.</div>
-            </div>
-
-            <!-- Q40 -->
-            <div class="question-card" data-correct="a">
-                <div class="question-meta meta-aduanas">Pregunta 40 • Despacho Just-In-Time</div>
-                <div class="question-text">Para sostener una producción esbelta "Justo a Tiempo (JIT)", un retraso prolongado por aforo (inspección física) en aduana representa:</div>
-                <ul class="options-list">
-                    <li class="option-item"><label><input type="radio" name="q42" value="a"> Un desperdicio crítico en forma de paros de línea productiva, incremento de costos por demoras en puerto e incumplimiento de despachos al cliente final.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q42" value="b"> Un aumento positivo en los niveles de inventarios de reserva (MRO) de la planta.</label></li>
-                    <li class="option-item"><label><input type="radio" name="q42" value="c"> Un proceso administrativo ordinario que no afecta los planes de las celdas de manufactura.</label></li>
-                </ul>
-                <div class="feedback-box"><b>Correcto: A.</b> Los retrasos en frontera quiebran la confiabilidad logística y elevan el lead time, obligando a coordinar aduanas anticipadas o predictivas.</div>
-            </div>
-        </div>
-
-        <div class="action-bar">
-            <button type="button" class="btn btn-reset" onclick="resetQuiz()">Reiniciar Simulador</button>
-            <button type="submit" class="btn btn-submit">Calificar Todo el Examen</button>
-        </div>
-    </form>
-
-    <div id="score-board" class="score-display">
-        <h2>Resultado Global</h2>
-        <p id="score-text" style="font-size: 1.3rem;">Has obtenido 0 de 40 puntos (0%)</p>
-    </div>
-</div>
-
+<div id="app"></div>
+<div id="live" class="sr" aria-live="polite"></div>
 <script>
-    function switchTab(tab) {
-        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-        document.querySelectorAll('.section-panel').forEach(panel => panel.classList.remove('active'));
+/* ================= DATOS ================= */
+/* mc(nivel, enunciado, correcta, mala1, mala2, mala3) — cada opción es [texto, retroalimentación]. La 1.ª es la correcta; el motor mezcla el orden. */
+function mc(l, q) {
+  var a = Array.prototype.slice.call(arguments, 2);
+  return { k: 'mc', l: l, q: q, o: a.map(function (x, i) { return { t: x[0], f: x[1], ok: i === 0 }; }) };
+}
+function nu(l, q, ans, tol, unit, h, sol) { return { k: 'num', l: l, q: q, ans: ans, tol: tol, unit: unit, h: h, sol: sol }; }
+function dv(q, model, check) { return { k: 'dev', q: q, model: model, check: check }; }
 
-        if (tab === 'render') {
-            document.querySelector('.btn-render').classList.add('active');
-            document.getElementById('panel-render').classList.add('active');
-        } else if (tab === 'comercio') {
-            document.querySelector('.btn-comercio').classList.add('active');
-            document.getElementById('panel-comercio').classList.add('active');
-        } else {
-            document.querySelector('.btn-aduanas').classList.add('active');
-            document.getElementById('panel-aduanas').classList.add('active');
-        }
+var MODS = [];
+
+/* ---------- GESTIÓN (Render cap. 3 y 7) ---------- */
+MODS.push({
+  id: 'gestion', short: 'Gestión', name: 'Gestión: Proyectos y Estrategia de Proceso', icon: '🏗️', color: '#ffb300',
+  date: '2026-10-13', time: '7:00 am', simN: 24,
+  source: 'Libro Render · Cap. 3 (Administración de proyectos, p. 55) y Cap. 7 (Estrategia de proceso, p. 255)',
+  note: 'Los ejercicios numéricos usan datos propios con la misma mecánica que los del libro (3.3, 3.6, 3.7, 3.9a, 3.10, 3.12, 3.15a, 7.5, 7.6). Practica también los del libro con tus números reales.',
+  worlds: [
+    {
+      id: 'g1', name: 'Fundamentos de la administración de proyectos', pp: 'Cap. 3 · pp. 55–62',
+      review: [
+        '<b>Proyecto:</b> conjunto de actividades únicas, con inicio y fin, para lograr un objetivo. Se administra en 3 fases: <b>planeación, programación y control</b>.',
+        '<b>Planeación:</b> fijar objetivos, definir el proyecto, organizar el equipo y desglosar el trabajo (EDT).',
+        '<b>Programación:</b> relacionar personas, dinero y materiales con actividades específicas, y las actividades entre sí (Gantt, PERT/CPM).',
+        '<b>Control:</b> vigilar recursos, costos, calidad y presupuesto; comparar lo real con lo planeado y corregir.',
+        '<b>EDT (estructura de desglose del trabajo):</b> divide el proyecto en niveles: 1 proyecto, 2 tareas principales, 3 subtareas, 4 paquetes de trabajo.',
+        '<b>Gerente de proyecto:</b> coordina y responde por tiempo, costo y calidad; integra personas de varias áreas.'
+      ],
+      items: [
+        mc(1, '¿Cuáles son las tres fases de la administración de proyectos?',
+          ['Planeación, programación y control', 'Son las tres fases que describe el libro: planear qué hacer, programar cuándo y con qué, y controlar el avance.'],
+          ['Diseño, producción y entrega', 'Son etapas de un producto, no de la administración del proyecto.'],
+          ['Pronóstico, programación y control', 'El pronóstico es de planeación de la demanda; la primera fase aquí es la planeación del proyecto.'],
+          ['Presupuesto, compra e inventario', 'Son funciones de apoyo; no son las fases de la administración de proyectos.']),
+        mc(1, 'La EDT (estructura de desglose del trabajo) sirve para:',
+          ['Dividir el proyecto en tareas, subtareas y paquetes de trabajo', 'Descompone el proyecto de lo general a lo específico para poder asignar y controlar.'],
+          ['Calcular la probabilidad de terminar a tiempo', 'Eso se hace con PERT y la distribución normal, no con la EDT.'],
+          ['Determinar el precio de venta del proyecto', 'La EDT organiza trabajo; no fija precios.'],
+          ['Registrar las horas trabajadas por persona', 'Eso es parte del control; la EDT es una herramienta de planeación.']),
+        mc(1, '¿Qué fase relaciona personas, dinero y materiales con actividades específicas y las actividades entre sí?',
+          ['Programación', 'Programar es decidir cuándo y con qué recursos se hace cada actividad y en qué orden.'],
+          ['Planeación', 'Planear fija objetivos y define el trabajo; la asignación en el tiempo es programación.'],
+          ['Control', 'Controlar es vigilar y corregir lo que ya se programó.'],
+          ['Cierre', 'No es una de las tres fases del enfoque de Render.']),
+        mc(1, '¿Qué hace el gerente de proyecto?',
+          ['Coordina el trabajo y responde por tiempo, costo y calidad', 'Integra al equipo y es responsable de que el proyecto cumpla alcance, plazo y presupuesto.'],
+          ['Ejecuta personalmente todas las actividades', 'Coordina; no hace todo el trabajo técnico.'],
+          ['Solo aprueba facturas', 'Su papel es mucho más amplio: planear, programar y controlar.'],
+          ['Se encarga únicamente de comprar los materiales', 'Compras es una parte; el gerente responde por el proyecto completo.']),
+        mc(2, '¿Cuál actividad corresponde a la fase de <b>control</b>?',
+          ['Comparar el avance real con el plan y corregir desviaciones', 'Controlar es medir lo real contra lo planeado y actuar.'],
+          ['Definir los objetivos del proyecto', 'Eso es planeación.'],
+          ['Construir el diagrama de red con las precedencias', 'Eso es programación.'],
+          ['Desglosar el proyecto en paquetes de trabajo', 'Eso es planeación (EDT).']),
+        mc(2, 'Un equipo define objetivos, nombra responsables y descompone el trabajo en una EDT. ¿En qué fase está?',
+          ['Planeación', 'Fijar objetivos, organizar y desglosar son tareas de planeación.'],
+          ['Programación', 'La programación viene después: tiempos, recursos y secuencia.'],
+          ['Control', 'Todavía no hay avance que medir.'],
+          ['Mejora continua', 'No es una fase de administración de proyectos.']),
+        mc(2, 'Ventaja principal de una gráfica de Gantt:',
+          ['Muestra de forma visual el inicio y fin de cada actividad en el tiempo', 'Es simple y fácil de entender: barras contra un calendario.'],
+          ['Calcula automáticamente la probabilidad de terminar', 'Eso lo hace PERT.'],
+          ['Muestra con detalle todas las relaciones de precedencia', 'Es justamente su debilidad; para eso están las redes PERT/CPM.'],
+          ['Optimiza el costo del proyecto', 'No optimiza costos; solo representa la programación.']),
+        mc(3, 'En una remodelación, el costo excedió 30 % y nadie lo notó hasta el final. ¿Qué función falló y qué se debió hacer?',
+          ['Control: comparar costo real contra presupuesto periódicamente y corregir', 'El problema fue la falta de monitoreo. Se debieron hacer revisiones frecuentes y ajustes.'],
+          ['Planeación: habría que cancelar el proyecto', 'No se puede concluir eso; el fallo descrito es de seguimiento, no de objetivos.'],
+          ['Programación: dibujar más flechas en la red', 'Un diagrama más detallado no detecta desviaciones de costo.'],
+          ['Ninguna: los sobrecostos son normales', 'Sin control, los sobrecostos crecen sin que nadie reaccione.']),
+        dv('Explique por qué es importante la administración de proyectos (dé al menos tres razones) y nombre las tres fases.',
+          'Los proyectos tienen recursos limitados (tiempo, dinero, personas) y muchas actividades relacionadas; administrarlos permite cumplir plazos y presupuesto, coordinar áreas, detectar problemas a tiempo y lograr la calidad esperada. Las fases son planeación, programación y control.',
+          ['Mencioné al menos 3 razones (plazo, costo, coordinación, calidad)', 'Nombré planeación, programación y control', 'Expliqué brevemente qué se hace en cada una'])
+      ]
+    },
+    {
+      id: 'g2', name: 'Redes, ruta crítica y holgura', pp: 'Cap. 3 · pp. 63–73 · Ej. 3.1–3.3, Fig. 3.11',
+      review: [
+        '<b>AON</b> (actividad en el nodo): las actividades son nodos y las flechas muestran precedencia. <b>AOA</b> (actividad en la flecha): las actividades son flechas y los nodos son eventos; usa <b>actividades ficticias</b> (duración 0) para respetar precedencias.',
+        '<b>Pasada hacia adelante:</b> ES = mayor EF de las predecesoras · EF = ES + t.',
+        '<b>Pasada hacia atrás:</b> LF = menor LS de las sucesoras · LS = LF − t. (Empieza con LF final = EF final del proyecto.)',
+        '<b>Holgura</b> = LS − ES = LF − EF. <b>Ruta crítica</b> = ruta más larga, con holgura 0; fija la duración del proyecto.',
+        'Un retraso en una actividad crítica retrasa el proyecto; en una no crítica solo si supera su holgura.'
+      ],
+      ex: '<br>Actividades: A(3) · B(2, sigue a A) · C(4, sigue a A) · D(5, sigue a B) · E(2, sigue a C) · F(3, sigue a D y E).' +
+        '<div class="scroll"><table><tr><th>Act</th><th>t</th><th>ES</th><th>EF</th><th>LS</th><th>LF</th><th>Holg.</th></tr>' +
+        '<tr><td>A</td><td>3</td><td>0</td><td>3</td><td>0</td><td>3</td><td>0</td></tr>' +
+        '<tr><td>B</td><td>2</td><td>3</td><td>5</td><td>3</td><td>5</td><td>0</td></tr>' +
+        '<tr><td>C</td><td>4</td><td>3</td><td>7</td><td>4</td><td>8</td><td>1</td></tr>' +
+        '<tr><td>D</td><td>5</td><td>5</td><td>10</td><td>5</td><td>10</td><td>0</td></tr>' +
+        '<tr><td>E</td><td>2</td><td>7</td><td>9</td><td>8</td><td>10</td><td>1</td></tr>' +
+        '<tr><td>F</td><td>3</td><td>10</td><td>13</td><td>10</td><td>13</td><td>0</td></tr></table></div>' +
+        'Ruta crítica A–B–D–F = 13. La otra ruta A–C–E–F = 12 (1 de holgura).',
+      items: [
+        mc(1, 'En una red AON (actividad en el nodo), las flechas representan:',
+          ['Relaciones de precedencia entre actividades', 'Cada actividad es un nodo y la flecha dice cuál va antes de cuál.'],
+          ['Las actividades con su duración', 'Eso es la red AOA (actividad en la flecha).'],
+          ['Eventos o hitos del proyecto', 'Los eventos son los nodos en AOA.'],
+          ['Los recursos asignados', 'Las flechas no muestran recursos.']),
+        mc(1, 'La holgura de una actividad se calcula como:',
+          ['LS − ES (o LF − EF)', 'Es cuánto se puede atrasar sin retrasar el proyecto.'],
+          ['ES − LS', 'Daría el signo invertido (negativo).'],
+          ['EF − ES', 'Eso es la duración de la actividad, no la holgura.'],
+          ['LF + EF', 'No tiene significado como holgura.']),
+        mc(1, 'La ruta crítica es:',
+          ['La ruta más larga de la red; sus actividades tienen holgura 0', 'Su duración es el tiempo mínimo en que puede terminar el proyecto.'],
+          ['La ruta más corta de la red', 'Si fuera la más corta, el proyecto terminaría antes de completar las demás rutas.'],
+          ['La ruta con más actividades', 'Importa la duración, no la cantidad de actividades.'],
+          ['La ruta de mayor costo', 'La crítica se define por tiempo, no por costo.']),
+        mc(1, 'Si una actividad tiene varias predecesoras, su ES es:',
+          ['El mayor de los EF de las predecesoras', 'Debe esperar a que termine la última predecesora.'],
+          ['El menor de los EF de las predecesoras', 'Eso se usaría para el LF en la pasada hacia atrás (con LS).'],
+          ['El promedio de los EF', 'No se promedia; manda la más tardía.'],
+          ['La suma de los EF', 'No se suman; se toma el máximo.']),
+        nu(2, 'Con la red del ejemplo (A3, B2, C4, D5, E2, F3; B y C siguen a A; D sigue a B; E a C; F a D y E), ¿cuál es la duración del proyecto en semanas?',
+          13, 0.01, 'semanas', 'Suma cada ruta completa y toma la mayor: A–B–D–F y A–C–E–F.',
+          'A–B–D–F = 3+2+5+3 = 13. A–C–E–F = 3+4+2+3 = 12. El proyecto dura la más larga: <b>13</b>.'),
+        nu(2, 'En la misma red, ¿cuál es el ES de la actividad F?',
+          10, 0.01, 'semanas', 'F espera a D y E. ¿Cuál termina más tarde: EF de D o EF de E?',
+          'EF(D) = 5+5 = 10; EF(E) = 7+2 = 9. ES(F) = máx(10, 9) = <b>10</b>.'),
+        nu(2, 'En la misma red, ¿cuál es la holgura de la actividad C?',
+          1, 0.01, 'semanas', 'Compara la longitud de la ruta que contiene a C con la de la ruta crítica.',
+          'Ruta de C = 12; ruta crítica = 13. Holgura = 13 − 12 = <b>1</b> (LS 4 − ES 3 = 1).'),
+        mc(2, 'En la misma red, ¿cuál es la ruta crítica?',
+          ['A–B–D–F', 'Suma 13, la mayor; todas sus actividades tienen holgura 0.'],
+          ['A–C–E–F', 'Suma 12; tiene 1 semana de holgura, no es crítica.'],
+          ['A–B–D–E–F', 'D no precede a E en esta red; esa ruta no existe.'],
+          ['C–E', 'Una ruta crítica va de inicio a fin de la red, no son dos actividades sueltas.']),
+        nu(3, 'Si la actividad C (holgura 1) se retrasa 3 semanas, ¿cuántas semanas se retrasa el <b>proyecto</b>?',
+          2, 0.01, 'semanas', 'Solo cuenta el retraso que excede la holgura.',
+          'Retraso 3 − holgura 1 = <b>2</b>. La ruta A–C–E–F pasa a 12+3 = 15, contra 13 de la crítica original.'),
+        mc(3, 'Si la actividad D (crítica) se retrasa 2 semanas, el proyecto:',
+          ['Se retrasa 2 semanas', 'D tiene holgura 0: todo su retraso se traslada al final.'],
+          ['No se retrasa, porque hay otra ruta', 'La otra ruta es más corta; no absorbe el retraso de la crítica.'],
+          ['Se retrasa 1 semana', 'La holgura 1 es de C y E, no de D.'],
+          ['Depende del costo de D', 'El retraso en tiempo no depende del costo.']),
+        mc(2, '¿Para qué sirve una actividad ficticia (dummy) en una red AOA?',
+          ['Representar una precedencia sin consumir tiempo ni recursos', 'Mantiene la lógica de la red y evita actividades con el mismo par de eventos.'],
+          ['Aumentar la duración del proyecto', 'Su duración es cero.'],
+          ['Registrar una actividad opcional del cliente', 'No es una actividad real.'],
+          ['Marcar la ruta crítica', 'No tiene relación con identificar la ruta crítica.']),
+        mc(2, 'En la pasada hacia atrás, si una actividad tiene dos sucesoras con LS de 8 y 11, su LF es:',
+          ['8', 'LF es el menor de los LS de las sucesoras: no puede terminar después de que deba empezar la primera.'],
+          ['11', 'Tomar el mayor permitiría atrasar la sucesora de LS 8.'],
+          ['9,5', 'No se promedia.'],
+          ['19', 'No se suman.']),
+        mc(3, '¿Puede un proyecto tener más de una ruta crítica?',
+          ['Sí, cuando dos o más rutas empatan en la mayor duración', 'Todas tendrán holgura 0 y cualquier retraso en ellas retrasa el proyecto.'],
+          ['No, siempre existe una sola', 'Pueden empatar varias rutas.'],
+          ['Sí, pero solo en redes AOA', 'Ocurre igual en AON y AOA.'],
+          ['No, si hay actividades ficticias', 'Las ficticias no impiden empates.'])
+      ]
+    },
+    {
+      id: 'g3', name: 'PERT: tres estimaciones y probabilidad', pp: 'Cap. 3 · pp. 73–79 · Ej. 3.3, 3.6, 3.7, 3.9a',
+      review: [
+        'PERT usa tres estimaciones: <b>optimista (a)</b>, <b>más probable (m)</b> y <b>pesimista (b)</b>, con distribución beta.',
+        '<b>Tiempo esperado:</b> te = (a + 4m + b) / 6',
+        '<b>Varianza:</b> σ² = ((b − a) / 6)²',
+        'Varianza de la ruta crítica = <b>suma de las varianzas de sus actividades críticas</b>; σ = √(suma).',
+        '<b>Z</b> = (fecha deseada − duración esperada de la ruta crítica) / σ. Luego se busca el área en la tabla normal.',
+        'Z = 0 → 50 % · Z = 1 → ≈ 84 % · Z = 2 → ≈ 97,7 % · Z = −1 → ≈ 16 %.'
+      ],
+      ex: '<br>Actividad con a=2, m=5, b=14: te = (2+20+14)/6 = 6; σ² = (12/6)² = 4.<br>Ruta crítica esperada 40 semanas, σ² total 16 → σ = 4. Probabilidad de terminar en 44: Z = (44−40)/4 = 1 → <b>84,13 %</b>.',
+      items: [
+        mc(1, 'Las tres estimaciones de PERT son:',
+          ['Optimista, más probable y pesimista', 'Con ellas se calcula el tiempo esperado y la variabilidad.'],
+          ['Mínima, media y máxima de costo', 'PERT estima tiempos, no costos.'],
+          ['Normal, acelerada y de emergencia', 'Esos son tiempos de CPM (normal y de aceleración).'],
+          ['Temprana, tardía y de holgura', 'Son valores del cálculo de la red (ES/LS), no estimaciones.']),
+        mc(1, 'La fórmula del tiempo esperado en PERT es:',
+          ['(a + 4m + b) / 6', 'Da más peso a la estimación más probable.'],
+          ['(a + m + b) / 3', 'Es un promedio simple; PERT pondera m con 4.'],
+          ['(a + b) / 2', 'Ignora la estimación más probable.'],
+          ['(b − a) / 6', 'Eso es la desviación estándar de la actividad.']),
+        nu(2, 'Calcule el tiempo esperado de una actividad con a = 2, m = 5 y b = 14 días.',
+          6, 0.01, 'días', 'Usa (a + 4m + b)/6.', '(2 + 4·5 + 14)/6 = 36/6 = <b>6</b> días.'),
+        nu(2, 'Calcule la varianza de esa misma actividad (a = 2, m = 5, b = 14).',
+          4, 0.01, '', 'Varianza = ((b − a)/6)².', '((14 − 2)/6)² = 2² = <b>4</b>.'),
+        nu(2, 'Tiempo esperado de una actividad con a = 4, m = 8 y b = 18 semanas.',
+          9, 0.01, 'semanas', 'Multiplica m por 4 antes de sumar.', '(4 + 32 + 18)/6 = 54/6 = <b>9</b> semanas.'),
+        nu(2, 'Las actividades críticas tienen varianzas 4, 1, 9 y 2. ¿Cuál es la desviación estándar de la ruta crítica?',
+          4, 0.01, 'semanas', 'Suma varianzas y saca raíz cuadrada.', 'Σσ² = 4+1+9+2 = 16 → σ = √16 = <b>4</b>.'),
+        nu(2, 'Ruta crítica esperada = 40 semanas, σ = 4. ¿Cuál es Z para una fecha límite de 44 semanas?',
+          1, 0.01, '', 'Z = (fecha − esperado)/σ.', 'Z = (44 − 40)/4 = <b>1,00</b>.'),
+        mc(2, 'Con Z = 1,00, la probabilidad de terminar en 44 semanas o menos es aproximadamente:',
+          ['84 %', 'El área normal a la izquierda de Z = 1 es 0,8413.'],
+          ['16 %', 'Eso es el área para Z = −1.'],
+          ['50 %', 'El 50 % corresponde a Z = 0 (la fecha igual al valor esperado).'],
+          ['98 %', 'Eso corresponde a Z = 2.']),
+        mc(3, 'Misma ruta (40 semanas, σ = 4): ¿probabilidad de terminar en 36 semanas o menos?',
+          ['≈ 16 %', 'Z = (36 − 40)/4 = −1 → 0,1587.'],
+          ['≈ 84 %', 'Olvidó el signo: Z es negativo porque la fecha es menor que el esperado.'],
+          ['50 %', 'Solo sería 50 % si la fecha fuera 40.'],
+          ['≈ 2 %', 'Eso sería Z = −2, es decir 32 semanas.']),
+        mc(3, 'Para obtener σ de la ruta crítica se deben sumar:',
+          ['Las varianzas de las actividades de la ruta crítica', 'Las varianzas se suman; después se saca la raíz.'],
+          ['Las desviaciones estándar de las actividades críticas', 'Las desviaciones estándar no son aditivas; lo son las varianzas.'],
+          ['Las varianzas de todas las actividades del proyecto', 'Solo influyen las de la ruta crítica.'],
+          ['Los tiempos esperados de las actividades críticas', 'Eso da la duración esperada, no la variabilidad.']),
+        mc(3, 'Si se pide la probabilidad de terminar justo en la duración esperada de la ruta crítica (Z = 0), el resultado es:',
+          ['50 %', 'La distribución normal es simétrica alrededor de la media.'],
+          ['100 %', 'Nunca hay certeza total con estimaciones probabilísticas.'],
+          ['0 %', 'Hay la misma probabilidad de terminar antes que después.'],
+          ['84 %', 'Eso corresponde a una desviación estándar por encima de la media.']),
+        dv('Explique paso a paso cómo se calcula la probabilidad de terminar un proyecto en una fecha dada usando PERT.',
+          '1) Calcular te y σ² de cada actividad. 2) Hallar la ruta crítica con los te. 3) Sumar las varianzas de las actividades críticas y sacar raíz: σ del proyecto. 4) Z = (fecha − duración esperada)/σ. 5) Buscar Z en la tabla normal para obtener la probabilidad.',
+          ['Usé (a+4m+b)/6 y ((b−a)/6)²', 'Sumé solo varianzas de la ruta crítica', 'Calculé Z y consulté la tabla normal'])
+      ]
+    },
+    {
+      id: 'g4', name: 'Costo–tiempo, críticas a PERT/CPM y MS Project', pp: 'Cap. 3 · pp. 79–82 · Ej. 3.10, 3.12, 3.15a',
+      review: [
+        '<b>Intercambio costo–tiempo (CPM):</b> acortar una actividad (aceleración) cuesta más. Se acelera solo lo que está en la ruta crítica.',
+        '<b>Costo por unidad de tiempo</b> = (costo acelerado − costo normal) / (tiempo normal − tiempo acelerado).',
+        'Se acelera primero la actividad <b>crítica</b> con menor costo por semana, sin pasar su límite de aceleración.',
+        'Al acelerar, otra ruta puede volverse crítica: hay que recalcular.',
+        '<b>Crítica a PERT/CPM:</b> exige precedencias claras, estimaciones subjetivas, supone que la ruta crítica es lo único que importa y puede subestimar la duración real.',
+        '<b>MS Project:</b> software para planear, programar y controlar: genera Gantt y red, recalcula la ruta crítica y asigna recursos.'
+      ],
+      items: [
+        mc(1, 'En el análisis costo–tiempo de CPM, acelerar una actividad normalmente:',
+          ['Reduce su duración y aumenta su costo directo', 'Ese es el intercambio: pagar más para terminar antes.'],
+          ['Reduce duración y costo a la vez', 'No existiría un dilema; acelerar suele costar más.'],
+          ['Aumenta duración y reduce costo', 'Eso sería lo contrario de acelerar.'],
+          ['No cambia el costo', 'Acelerar requiere más recursos y por ello aumenta el costo.']),
+        mc(1, 'Dónde conviene acelerar para reducir la duración del proyecto:',
+          ['En actividades de la ruta crítica', 'Solo acortar la crítica reduce el tiempo total.'],
+          ['En cualquier actividad con costo bajo', 'Si no es crítica, acortarla no reduce el proyecto y se gasta en vano.'],
+          ['En las actividades con mayor holgura', 'La holgura grande significa que no es crítica.'],
+          ['En la actividad más corta', 'La duración no define si es crítica.']),
+        nu(2, 'Actividad con tiempo normal 10 semanas y costo normal ₡5 000; acelerada: 7 semanas y ₡6 800. ¿Cuánto cuesta por semana acelerar (en colones)?',
+          600, 0.01, '₡/semana', 'Divide el aumento de costo entre las semanas ahorradas.', '(6 800 − 5 000)/(10 − 7) = 1 800/3 = <b>600</b> por semana.'),
+        mc(2, 'Actividades críticas: X (₡300/sem), Y (₡450/sem). Z (₡200/sem) <b>no</b> es crítica. Para acortar el proyecto 1 semana, ¿cuál se acelera?',
+          ['X', 'Es la crítica más barata por semana.'],
+          ['Z', 'Es la más barata, pero no es crítica: no acorta el proyecto.'],
+          ['Y', 'Es crítica pero más cara que X.'],
+          ['X, Y y Z a la vez', 'Se gastaría de más; basta con la más barata de las críticas.']),
+        nu(2, 'Se acelera X (₡300/semana) durante 2 semanas. ¿Cuánto cuesta adicional en total?',
+          600, 0.01, '₡', 'Costo por semana × semanas aceleradas.', '300 × 2 = <b>₡600</b>.'),
+        mc(3, 'Después de acelerar la ruta crítica, ¿por qué hay que revisar las demás rutas?',
+          ['Porque una ruta antes no crítica puede igualar o superar a la acortada y volverse crítica', 'La duración del proyecto la fija la ruta más larga, que puede cambiar.'],
+          ['Porque el costo de acelerar desaparece', 'El costo no desaparece.'],
+          ['Porque las holguras pasan a ser negativas siempre', 'No siempre; el punto es que otra ruta puede quedar como la más larga.'],
+          ['No hace falta revisar nada', 'Sí hace falta: de otro modo se podría gastar sin ahorrar tiempo.']),
+        mc(2, 'Una crítica o limitación de PERT/CPM es que:',
+          ['Las estimaciones de tiempo son subjetivas y exigen precedencias bien definidas', 'Si las estimaciones o la lógica son malas, el resultado también.'],
+          ['No permite calcular la ruta crítica', 'Justamente su fuerte es calcular la ruta crítica.'],
+          ['Solo sirve para proyectos de construcción', 'Sirve para cualquier proyecto con actividades relacionadas.'],
+          ['No considera el tiempo', 'El tiempo es lo que modela.']),
+        mc(2, 'Una ventaja de usar Microsoft Project para administrar un proyecto es:',
+          ['Recalcula la ruta crítica y el Gantt automáticamente al cambiar duraciones o precedencias', 'Ahorra el trabajo manual de actualizar la red.'],
+          ['Elimina la necesidad de estimar tiempos', 'Aún se necesitan estimaciones.'],
+          ['Garantiza que el proyecto no se atrase', 'Es una herramienta; no garantiza resultados.'],
+          ['Solo sirve para proyectos PERT, no CPM', 'Maneja ambos enfoques.'])
+      ]
+    },
+    {
+      id: 'g5', name: 'Cap. 7: Estrategias de proceso', pp: 'Cap. 7 · pp. 255–263 · Dell · Ej. 4, 7.5, 7.6',
+      review: [
+        '<b>Dell Computer Corp.:</b> ensambla a pedido (personalización masiva) con ventas directas y proveedores muy coordinados.',
+        '<b>Cuatro estrategias de proceso:</b> (1) enfoque en el <b>proceso</b>: bajo volumen y alta variedad (taller, hospital). (2) <b>Repetitivo</b>: módulos y líneas de ensamble, volumen y variedad medios. (3) enfoque en el <b>producto</b>: alto volumen y baja variedad, flujo continuo (refinería, acero). (4) <b>Personalización masiva</b>: alta variedad con costos de alto volumen (Dell).',
+        'El enfoque en el proceso usa equipo de uso general y mano de obra calificada; el enfoque en el producto usa equipo especializado y poco personal.',
+        '<b>Comparación de alternativas:</b> costo total = costo fijo + (costo variable × volumen). El <b>punto de cruce</b> es el volumen donde dos procesos cuestan lo mismo. Con volúmenes mayores gana el de menor costo variable.'
+      ],
+      ex: '<br>Proceso A: fijo ₡20 000, variable ₡15/u. Proceso B: fijo ₡50 000, variable ₡5/u.<br>20 000 + 15x = 50 000 + 5x → 10x = 30 000 → <b>x = 3 000 u</b>. Con más de 3 000 unidades conviene B.',
+      items: [
+        mc(1, 'La estrategia de bajo volumen y alta variedad es:',
+          ['Enfoque en el proceso', 'Equipo flexible de uso general, como un taller de maquinado o un hospital.'],
+          ['Enfoque en el producto', 'Es de alto volumen y baja variedad.'],
+          ['Repetitivo', 'Es de volumen y variedad medios.'],
+          ['Personalización masiva', 'Combina alta variedad con alto volumen.']),
+        mc(1, 'Dell Computer Corp. es un ejemplo de:',
+          ['Personalización masiva', 'Ensambla computadoras a la medida del pedido con eficiencia de alto volumen.'],
+          ['Enfoque en el producto (flujo continuo)', 'Dell ofrece mucha variedad; el flujo continuo es de productos estándar.'],
+          ['Enfoque en el proceso puro', 'Dell tiene volumen alto, no taller artesanal.'],
+          ['Enfoque repetitivo sin variedad', 'Dell sí ofrece mucha variedad de configuraciones.']),
+        mc(1, 'El enfoque en el producto se caracteriza por:',
+          ['Alto volumen, baja variedad y flujo continuo', 'Como en una refinería o planta de cemento.'],
+          ['Bajo volumen y alta variedad', 'Eso describe el enfoque en el proceso.'],
+          ['Módulos intercambiables en línea de ensamble', 'Eso es el enfoque repetitivo.'],
+          ['Producir solo bajo pedido único', 'Eso se acerca más al enfoque en el proceso.']),
+        mc(1, 'El enfoque repetitivo usa principalmente:',
+          ['Líneas de ensamble y módulos', 'Ensambla productos de módulos preparados con volumen y variedad intermedios.'],
+          ['Talleres de trabajo con rutas distintas por pedido', 'Eso es enfoque en el proceso.'],
+          ['Procesos continuos de una sola sustancia', 'Eso es enfoque en el producto.'],
+          ['Solo trabajo manual artesanal', 'No es característico del repetitivo.']),
+        mc(2, 'Una planta de cemento que produce un único tipo de producto en proceso continuo usa:',
+          ['Enfoque en el producto', 'Alto volumen, baja variedad, equipo especializado.'],
+          ['Enfoque en el proceso', 'Ese sería un taller con muchos pedidos distintos.'],
+          ['Personalización masiva', 'No hay personalización por cliente.'],
+          ['Enfoque repetitivo', 'No es un ensamble de módulos.']),
+        mc(2, 'Un taller que fabrica muebles a la medida, cada uno distinto, usa:',
+          ['Enfoque en el proceso', 'Alta variedad, bajo volumen, equipo flexible.'],
+          ['Enfoque en el producto', 'No hay un producto estándar de alto volumen.'],
+          ['Enfoque repetitivo', 'No hay una línea con módulos estandarizados.'],
+          ['Proceso continuo', 'No es flujo continuo.']),
+        nu(2, 'Proceso A: costo fijo ₡20 000 y variable ₡15/unidad. Proceso B: fijo ₡50 000 y variable ₡5/unidad. ¿En qué volumen cuestan lo mismo?',
+          3000, 0.5, 'unidades', 'Iguala 20 000 + 15x con 50 000 + 5x y despeja x.', '20 000 + 15x = 50 000 + 5x → 10x = 30 000 → <b>x = 3 000</b> unidades.'),
+        mc(2, 'Con los mismos datos (A: 20 000 + 15x; B: 50 000 + 5x), si la demanda es de 4 000 unidades, conviene:',
+          ['B (₡70 000 contra ₡80 000)', 'A: 20 000+15·4 000 = 80 000. B: 50 000+5·4 000 = 70 000.'],
+          ['A (₡80 000 contra ₡70 000)', 'Invirtió los totales: A es la más cara en ese volumen.'],
+          ['Son iguales', 'Solo son iguales en 3 000 unidades.'],
+          ['No se puede decidir sin el precio de venta', 'Para comparar costos no hace falta el precio.']),
+        mc(2, 'Con los mismos datos y demanda de 2 000 unidades, conviene:',
+          ['A (₡50 000 contra ₡60 000)', 'Por debajo del punto de cruce (3 000) gana el de menor costo fijo.'],
+          ['B (₡60 000 contra ₡50 000)', 'Invirtió los totales.'],
+          ['Son iguales', 'Solo coinciden en 3 000 unidades.'],
+          ['Ninguna', 'Siempre hay una más barata.']),
+        mc(3, 'Una tecnología con costo fijo alto y costo variable bajo se justifica cuando:',
+          ['El volumen esperado es alto', 'El costo fijo se reparte entre muchas unidades.'],
+          ['El volumen esperado es bajo', 'Con poco volumen no se recupera el costo fijo.'],
+          ['La variedad de productos es muy alta', 'Alta variedad suele pedir equipo flexible, no especializado.'],
+          ['No importa el volumen', 'El volumen determina cuál alternativa resulta más barata.']),
+        mc(3, 'La personalización masiva logra variedad con bajo costo principalmente porque:',
+          ['Usa módulos estandarizados y pospone el ensamble final hasta tener el pedido', 'Combina la eficiencia del producto estándar con la variedad a pedido.'],
+          ['Fabrica solo bajo diseño totalmente único para cada cliente', 'Eso sería más caro; se apoya en módulos.'],
+          ['Elimina a los proveedores', 'Depende de proveedores muy coordinados.'],
+          ['Produce en lotes enormes de un solo modelo', 'Eso es enfoque en el producto.'])
+      ]
+    },
+    {
+      id: 'g6', name: 'Análisis y diseño del proceso; servicios', pp: 'Cap. 7 · pp. 263–271',
+      review: [
+        '<b>Diagrama de flujo:</b> muestra gráficamente los pasos del proceso y su secuencia (operación, transporte, inspección, demora, almacenamiento).',
+        '<b>Gráfica de función tiempo:</b> mide el tiempo de cada paso para ver demoras y pasos largos.',
+        '<b>Gráfica de flujo de valor:</b> separa lo que <b>agrega valor</b> de lo que es desperdicio (esperas, movimientos, inventario).',
+        '<b>Diagramas del proceso de servicio:</b> muestran actividades que el cliente ve (línea de visibilidad) y las que no. Verifica en tu libro la nomenclatura exacta.',
+        '<b>Diseño preliminar y del proceso del servicio:</b> definir el paquete de servicio y diseñar su flujo.',
+        '<b>Interacción con el cliente:</b> el cliente forma parte del proceso; alto contacto aumenta la variabilidad. Se separan tareas de bajo contacto (trastienda).',
+        '<b>Oportunidades de mejora en servicios:</b> eliminar esperas, autoservicio, simplificar pasos, automatizar tareas sin contacto.'
+      ],
+      items: [
+        mc(1, 'Un diagrama de flujo de proceso sirve para:',
+          ['Mostrar los pasos y su secuencia para analizar y mejorar el proceso', 'Permite ver dónde hay demoras, retrabajo o pasos innecesarios.'],
+          ['Calcular el costo de capital', 'No es una herramienta financiera.'],
+          ['Pronosticar la demanda', 'No tiene relación con pronósticos.'],
+          ['Calcular la ruta crítica de un proyecto', 'Eso se hace con redes PERT/CPM.']),
+        mc(1, 'La gráfica de flujo de valor distingue entre:',
+          ['Actividades que agregan valor y las que no', 'Su meta es reducir desperdicio en el flujo de material e información.'],
+          ['Productos y servicios', 'No clasifica por tipo de oferta.'],
+          ['Costos fijos y variables', 'Eso es análisis de costos.'],
+          ['Proveedores nacionales y extranjeros', 'No es su propósito.']),
+        mc(2, 'En un proceso, la pieza espera 3 horas en cola antes de la máquina. Esa espera:',
+          ['No agrega valor; es una demora que debe reducirse', 'El cliente no paga por esperar.'],
+          ['Agrega valor porque hay trabajo en proceso', 'Tener inventario en espera no incrementa el valor del producto.'],
+          ['Es una inspección', 'Inspeccionar es verificar, no esperar.'],
+          ['Es una operación de transformación', 'No se transforma nada mientras espera.']),
+        mc(2, 'En diseño de servicios, las tareas de <b>bajo contacto</b> con el cliente normalmente:',
+          ['Se pueden estandarizar o hacer en la trastienda para ganar eficiencia', 'Al no depender del cliente se manejan como una operación de fábrica.'],
+          ['Deben hacerse siempre delante del cliente', 'Es al revés.'],
+          ['No se pueden mejorar', 'Sí se pueden mejorar y automatizar.'],
+          ['Son siempre más costosas', 'Suelen ser más eficientes.']),
+        mc(2, 'Una oportunidad típica para mejorar un proceso de servicio es:',
+          ['Pasar tareas simples a autoservicio y eliminar esperas', 'Reduce costo y tiempo, y mejora la experiencia.'],
+          ['Agregar más pasos de aprobación', 'Más pasos suelen aumentar las demoras.'],
+          ['Aumentar la variabilidad', 'Se busca reducirla.'],
+          ['Ocultar el tiempo de espera al cliente', 'No elimina el problema.']),
+        mc(3, 'Un banco tiene filas largas porque todas las transacciones, simples o complejas, usan las mismas cajas. ¿Qué cambio es coherente con lo estudiado?',
+          ['Separar las transacciones simples (cajero automático, autoservicio) de las complejas', 'Segmenta el proceso por nivel de contacto y complejidad y reduce la espera.'],
+          ['Eliminar las cajas por completo', 'Algunas transacciones requieren atención personal.'],
+          ['Cobrar una comisión a quien espere', 'No mejora el proceso.'],
+          ['Contratar más personal sin cambiar el proceso', 'Puede aliviar, pero no rediseña el proceso.']),
+        mc(3, 'Se dice que el diseño de servicios es más difícil que el de bienes porque:',
+          ['El cliente participa en el proceso, así que hay más variabilidad e incertidumbre', 'El cliente interviene y el servicio no se puede almacenar.'],
+          ['Los servicios no tienen costos', 'Todo servicio tiene costos.'],
+          ['No se pueden medir tiempos', 'Sí se pueden medir con diagramas del proceso.'],
+          ['Siempre requieren robots', 'No necesariamente.']),
+        mc(2, 'En un diagrama de proceso de servicio, la línea de visibilidad separa:',
+          ['Lo que el cliente ve de lo que ocurre en la trastienda', 'Ayuda a decidir qué se estandariza y qué se cuida frente al cliente.'],
+          ['Productos de servicios', 'No separa por tipo de oferta.'],
+          ['Costos de ingresos', 'No es un concepto financiero.'],
+          ['Proveedores de clientes', 'No es esa función.'])
+      ]
+    },
+    {
+      id: 'g7', name: 'Tecnología y rediseño de procesos', pp: 'Cap. 7 · pp. 271–277',
+      review: [
+        '<b>Sistemas de identificación automatizados (AIS):</b> códigos de barras y <b>RFID</b> (etiquetas de radiofrecuencia).',
+        '<b>Control del proceso:</b> sensores y computadoras vigilan en tiempo real. <b>Sistemas de visión:</b> cámaras y software que inspeccionan. <b>Robots:</b> tareas repetitivas, peligrosas o de precisión.',
+        '<b>ASRS:</b> almacenamiento y recuperación automatizados. <b>AGV:</b> vehículo de guiado automático para mover materiales.',
+        '<b>FMS (sistema flexible de manufactura):</b> estaciones controladas por computadora con AGV; cambia rápido de producto. <b>CIM:</b> integra diseño, ingeniería, manufactura y administración por computadora.',
+        '<b>Rediseño de procesos (BPR):</b> replantear fundamentalmente y rediseñar de forma radical los procesos para lograr mejoras drásticas en costo, calidad, servicio y rapidez.'
+      ],
+      items: [
+        mc(1, 'Las siglas ASRS corresponden a:',
+          ['Sistemas de almacenamiento y recuperación automatizados', 'Mueven y almacenan mercancía con poca intervención humana.'],
+          ['Sistemas de ensamble robotizado y supervisión', 'No es esa la definición.'],
+          ['Sistemas de análisis y reporte de ventas', 'No es un sistema de ventas.'],
+          ['Servicios de abastecimiento y rutas de suministro', 'No es esa la definición.']),
+        mc(1, 'Un AGV es:',
+          ['Un vehículo de guiado automático que transporta materiales', 'Se mueve sin conductor por rutas definidas.'],
+          ['Un sistema de visión de alta velocidad', 'Eso inspecciona; no transporta.'],
+          ['Un brazo robótico de soldadura', 'Eso es un robot.'],
+          ['Un software de diseño asistido', 'Eso es CAD.']),
+        mc(1, 'La ventaja principal de la etiqueta RFID frente al código de barras es:',
+          ['Se lee a distancia, sin línea de vista directa, y puede leer varias a la vez', 'Funciona con ondas de radio.'],
+          ['No cuesta nada', 'Suele ser más cara que el código de barras.'],
+          ['Solo sirve para vehículos', 'Se usa en muchos artículos.'],
+          ['Requiere pasar la etiqueta por un lector óptico', 'Eso describe el código de barras.']),
+        mc(1, 'Un sistema flexible de manufactura (FMS) se caracteriza por:',
+          ['Estaciones de trabajo controladas por computadora que cambian rápido de producto', 'Une flexibilidad con la eficiencia de la automatización.'],
+          ['Ser una línea rígida para un único producto', 'Eso es lo contrario de flexible.'],
+          ['No usar computadoras', 'Está controlado por computadora.'],
+          ['Ser solo un almacén automático', 'Eso es un ASRS.']),
+        mc(1, 'La manufactura integrada por computadora (CIM) busca:',
+          ['Integrar diseño, ingeniería, manufactura y administración mediante computadoras', 'Une CAD/CAM con control de inventario y programación.'],
+          ['Sustituir al cliente', 'No tiene relación.'],
+          ['Eliminar la inspección de calidad', 'No elimina la inspección.'],
+          ['Solo programar a los empleados', 'Es más amplio.']),
+        mc(2, 'Una cámara con software que revisa si las etiquetas de una botella están bien colocadas es:',
+          ['Un sistema de visión', 'Inspecciona automáticamente con imágenes.'],
+          ['Un AGV', 'Los AGV transportan.'],
+          ['Un ASRS', 'Los ASRS almacenan.'],
+          ['Un CIM', 'CIM es integración general, no la cámara de inspección.']),
+        mc(2, 'Una empresa usa robots principalmente para:',
+          ['Tareas repetitivas, peligrosas o de alta precisión', 'Mejoran seguridad y consistencia.'],
+          ['Reemplazar la planeación estratégica', 'No sustituyen decisiones estratégicas.'],
+          ['Aumentar la variabilidad del proceso', 'Normalmente la reducen.'],
+          ['Realizar tareas creativas ajenas a la producción', 'No es su uso típico en la producción.']),
+        mc(2, 'El rediseño de procesos (BPR) se describe mejor como:',
+          ['Replantear de raíz y rediseñar radicalmente los procesos para lograr mejoras drásticas', 'No busca ajustes pequeños sino cambios profundos.'],
+          ['Ajustar pequeños detalles cada semana', 'Eso es mejora continua (kaizen).'],
+          ['Comprar más maquinaria sin cambiar procesos', 'No es rediseñar el proceso.'],
+          ['Reducir personal sin analizar el proceso', 'BPR parte del análisis del proceso.']),
+        mc(3, 'Una fábrica produce 200 productos distintos en lotes pequeños y cambia de modelo varias veces al día. ¿Qué tecnología encaja mejor?',
+          ['Un sistema flexible de manufactura (FMS)', 'Cambia rápido de producto sin perder mucha eficiencia.'],
+          ['Una línea fija de un solo producto', 'Las líneas rígidas no toleran tantos cambios.'],
+          ['Un proceso continuo tipo refinería', 'Eso es para un producto estándar de volumen alto.'],
+          ['Solo equipo manual sin automatizar', 'No aprovecha la flexibilidad con eficiencia.']),
+        mc(3, 'Diferencia clave entre rediseño de procesos (BPR) y mejora continua:',
+          ['BPR es un cambio radical y discontinuo; la mejora continua es gradual y constante', 'Ambos se pueden usar, pero con distinto alcance.'],
+          ['BPR es gradual y la mejora continua es radical', 'Está invertido.'],
+          ['No hay diferencia', 'Sí la hay en magnitud y ritmo.'],
+          ['BPR solo se aplica a servicios', 'Aplica a bienes y servicios.'])
+      ]
     }
+  ]
+});
 
-    const form = document.getElementById('quiz-form');
-    form.addEventListener('change', () => {
-        const formData = new FormData(form);
-        const uniqueQuestions = new Set();
-        for (let pair of formData.entries()) {
-            uniqueQuestions.add(pair[0]);
-        }
-        document.getElementById('answered-count').innerText = uniqueQuestions.size;
+
+/* ---------- PLANEACIÓN (Render cap. 5) ---------- */
+MODS.push({
+  id: 'planeacion', short: 'Planeación', name: 'Planeación: Diseño de Bienes y Servicios', icon: '📐', color: '#4dd0e1',
+  date: '2026-10-14', time: '7:00 am', simN: 24,
+  source: 'Libro Render · Cap. 5 (Diseño de bienes y servicios, pp. 158–182)',
+  note: 'Construido con el contenido estándar del libro. Los problemas 5.10–5.18 se practican con datos propios (EMV con árboles de decisión y hacer-o-comprar). El perfil de Regal Marine y la Figura 5.1 conviene verificarlos contra tu libro.',
+  worlds: [
+    {
+      id: 'p1', name: 'Selección de productos, estrategia y ciclo de vida', pp: 'pp. 158–161 · Regal Marine · Ej. 1',
+      review: [
+        '<b>Regal Marine:</b> fabricante de lanchas en Florida que usa diseño asistido por computadora, equipos de diseño y lanzamientos frecuentes para competir (verifica los datos en tu libro).',
+        '<b>Estrategias de producto que apoyan la ventaja competitiva:</b> diferenciación, bajo costo y respuesta rápida.',
+        '<b>Ciclo de vida:</b> introducción → crecimiento → madurez → declinación. En introducción: ajustes de diseño, ventas bajas. En crecimiento: aumentar capacidad. En madurez: bajar costos y estandarizar. En declinación: reducir costos o retirar.',
+        '<b>Análisis del producto por valor:</b> lista los productos por su contribución monetaria anual para decidir cuáles fortalecer, mejorar o eliminar.',
+        '<b>Generación de nuevos productos:</b> clientes, proveedores, competidores, ingeniería, investigación. <b>Oportunidades</b>: cambios económicos, sociales y demográficos, tecnológicos, políticos y legales, y cambios en el mercado.',
+        '<b>Importancia:</b> los productos maduran y declinan; la empresa necesita renovar la oferta para sobrevivir.'
+      ],
+      items: [
+        mc(1, 'Las tres estrategias de producto que apoyan la ventaja competitiva son:',
+          ['Diferenciación, bajo costo y respuesta rápida', 'Son las tres opciones de estrategia que presenta Render.'],
+          ['Pronóstico, inventario y compras', 'Son áreas funcionales, no estrategias de producto.'],
+          ['Introducción, madurez y declinación', 'Son etapas del ciclo de vida.'],
+          ['Diseño robusto, modular y ético', 'Son consideraciones de diseño, no estrategias.']),
+        mc(1, 'Las etapas del ciclo de vida del producto, en orden, son:',
+          ['Introducción, crecimiento, madurez, declinación', 'Es el orden del ciclo de vida.'],
+          ['Crecimiento, introducción, madurez, declinación', 'No se puede crecer antes de introducir.'],
+          ['Introducción, madurez, crecimiento, declinación', 'El crecimiento va antes de la madurez.'],
+          ['Madurez, crecimiento, introducción, declinación', 'Está en orden inverso.']),
+        mc(1, 'El análisis del producto por valor:',
+          ['Ordena los productos por su contribución monetaria para decidir cuáles apoyar o eliminar', 'Ayuda a enfocar recursos en lo que más aporta.'],
+          ['Calcula la probabilidad de aceptación de un producto', 'No es un cálculo de probabilidad.'],
+          ['Define el diseño técnico del producto', 'Eso corresponde al desarrollo del producto.'],
+          ['Mide el tiempo de ciclo de la planta', 'No es un indicador de tiempo.']),
+        mc(1, 'Un motivo por el que las empresas necesitan nuevos productos es:',
+          ['Los productos pasan por un ciclo de vida y llegan a declinar', 'Para mantener ventas hay que renovar la oferta.'],
+          ['Los clientes nunca cambian', 'Los clientes y la tecnología sí cambian.'],
+          ['Los nuevos productos no tienen riesgo', 'Tienen riesgo; por eso se evalúan.'],
+          ['Los competidores nunca innovan', 'Sí innovan, y eso obliga a responder.']),
+        mc(2, 'Un producto con ventas que suben rápidamente y la capacidad se queda corta está en:',
+          ['Crecimiento', 'La demanda en alza exige ampliar capacidad y mejorar el producto.'],
+          ['Introducción', 'En introducción las ventas son bajas.'],
+          ['Madurez', 'En madurez las ventas se estabilizan.'],
+          ['Declinación', 'En declinación las ventas bajan.']),
+        mc(2, 'En la etapa de madurez, una estrategia razonable es:',
+          ['Reducir costos, estandarizar y mejorar la eficiencia', 'Las ventas se estabilizan y compiten el precio y el costo.'],
+          ['Cambiar el diseño cada semana', 'Eso es más propio de la introducción.'],
+          ['Expandir la capacidad sin límite', 'Eso corresponde al crecimiento.'],
+          ['Ignorar los costos', 'En madurez el costo es clave.']),
+        mc(2, 'Una compañía que lanza una nueva versión de un producto semanas antes que sus competidores está usando una estrategia de:',
+          ['Respuesta rápida', 'Se apoya en velocidad de desarrollo y entrega.'],
+          ['Bajo costo', 'La rapidez no implica costos más bajos.'],
+          ['Diferenciación por diseño ecológico', 'La clave aquí es el tiempo.'],
+          ['Ninguna estrategia', 'La rapidez es una estrategia en sí misma.']),
+        mc(3, 'El análisis por valor muestra que un producto aporta solo 2 % de la contribución y cae cada año. ¿Qué decisión es más razonable?',
+          ['Evaluar su mejora o retiro y redirigir recursos a los productos que más aportan', 'Es candidato a mejorar o eliminar, según su potencial.'],
+          ['Aumentar su capacidad al máximo', 'Invertir en un producto en caída es poco razonable.'],
+          ['Ignorarlo porque ya se vende', 'Consume recursos que podrían usarse mejor.'],
+          ['Lanzarlo de nuevo como si fuera una novedad sin cambios', 'Sin cambios no atacará la causa de la caída.']),
+        mc(3, 'Un nuevo producto pierde dinero en su etapa de introducción. ¿Qué conclusión es adecuada?',
+          ['Es normal en la introducción; hay que evaluar si el crecimiento esperado lo justifica', 'La rentabilidad suele llegar en crecimiento y madurez.'],
+          ['Hay que retirarlo de inmediato siempre', 'Las pérdidas iniciales son comunes.'],
+          ['Hay que duplicar el precio sin analizar', 'Sin análisis podría reducir más las ventas.'],
+          ['Significa que está en madurez', 'En madurez se espera rentabilidad estable.'])
+      ]
+    },
+    {
+      id: 'p2', name: 'Desarrollo del producto y QFD', pp: 'pp. 162–167 · Ej. 3',
+      review: [
+        '<b>Sistema de desarrollo:</b> ideas → factibilidad y selección → especificaciones funcionales → diseño y revisión → prueba (prototipo) → introducción al mercado.',
+        '<b>QFD (despliegue de la función de calidad):</b> traduce lo que quiere el cliente en requisitos técnicos. La <b>casa de la calidad</b> tiene: <b>qué</b> quiere el cliente (filas), <b>cómo</b> se logra técnicamente (columnas), matriz de relaciones, <b>techo</b> (correlación entre los «cómo») y evaluación frente a competidores.',
+        '<b>Organización:</b> equipos multifuncionales (ingeniería, operaciones, mercadeo, compras) que trabajan al mismo tiempo (<b>desarrollo concurrente</b>) acortan el ciclo.',
+        '<b>Manufacturabilidad (DFM):</b> diseñar para que sea fácil y barato de fabricar: menos piezas, partes estándar, ensamble simple.',
+        '<b>Ingeniería de valor:</b> mejora el diseño para bajar costo manteniendo función, durante el desarrollo.'
+      ],
+      items: [
+        mc(1, 'QFD (despliegue de la función de calidad) sirve para:',
+          ['Traducir los deseos del cliente en requisitos técnicos del producto', 'Conecta la voz del cliente con el diseño.'],
+          ['Calcular el punto de equilibrio', 'Es otra herramienta.'],
+          ['Programar las rutas de entrega', 'No es de logística.'],
+          ['Determinar el precio de las materias primas', 'No es de compras.']),
+        mc(1, 'La herramienta gráfica del QFD es:',
+          ['La casa de la calidad', 'Es la matriz que relaciona qué quiere el cliente con cómo se logra.'],
+          ['El diagrama de Gantt', 'El Gantt es de programación de proyectos.'],
+          ['El árbol de decisión', 'Se usa para evaluar alternativas con probabilidades.'],
+          ['El diagrama de flujo valor', 'Es de análisis de procesos.']),
+        mc(1, 'La manufacturabilidad (diseño para manufactura) busca:',
+          ['Facilitar y abaratar la fabricación del producto', 'Se simplifican las piezas y el ensamble.'],
+          ['Aumentar el número de piezas del producto', 'Más piezas complican y encarecen.'],
+          ['Hacer el diseño más difícil de copiar', 'No es su meta.'],
+          ['Eliminar la fase de pruebas', 'No elimina las pruebas.']),
+        mc(1, 'La ingeniería de valor se enfoca en:',
+          ['Reducir costos del diseño sin perder la función', 'Busca la misma función a menor costo.'],
+          ['Aumentar el precio sin cambios', 'No trata del precio de venta.'],
+          ['Eliminar la función del producto', 'Mantiene la función.'],
+          ['Solo seleccionar proveedores', 'Es más amplia: se centra en el diseño.']),
+        mc(2, 'En la casa de la calidad, el «techo» muestra:',
+          ['Las correlaciones entre los requisitos técnicos (los «cómo»)', 'Indica si mejorar un atributo ayuda o perjudica a otro.'],
+          ['Los deseos del cliente', 'Esos van en las filas (los «qué»).'],
+          ['La competencia únicamente', 'La comparación con competidores va en otra sección.'],
+          ['El precio final', 'No muestra precios.']),
+        mc(2, 'Un equipo multifuncional que incluye ingeniería, operaciones y mercadeo desde el inicio del diseño permite:',
+          ['Acortar el tiempo de desarrollo y detectar problemas de manufactura antes', 'Es el desarrollo concurrente.'],
+          ['Aumentar la separación entre áreas', 'Al revés: las integra.'],
+          ['Evitar cualquier prueba', 'No elimina las pruebas.'],
+          ['Que solo ingeniería decida', 'Se decide en conjunto.']),
+        mc(2, 'En el sistema de desarrollo de un producto, ¿cuál etapa va <b>antes</b> de construir el prototipo?',
+          ['Evaluar la factibilidad y definir especificaciones', 'Primero se decide si vale la pena y qué debe hacer el producto.'],
+          ['Lanzar el producto al mercado', 'Se lanza al final.'],
+          ['Recopilar quejas posventa', 'Solo existen después del lanzamiento.'],
+          ['Retirar el producto', 'Es el final del ciclo de vida.']),
+        mc(3, 'Los clientes piden una puerta «liviana». En QFD, «liviana» y «peso en kg» se ubican respectivamente como:',
+          ['«Liviana» es un qué (requisito del cliente); «peso en kg» es un cómo (característica técnica)', 'El qué viene del cliente y el cómo lo traduce a algo medible.'],
+          ['«Liviana» es un cómo y «peso» un qué', 'Están invertidos.'],
+          ['Ambos son «qué»', 'El peso en kg es la medida técnica, no la voz del cliente.'],
+          ['Ambos son parte del techo', 'El techo relaciona los cómo entre sí.']),
+        mc(3, 'La diferencia entre desarrollo secuencial y concurrente es que en el concurrente:',
+          ['Varias áreas trabajan simultáneamente y comparten información desde el principio', 'Se reducen retrabajos y plazos.'],
+          ['Cada área espera a que la anterior termine por completo', 'Eso es el secuencial.'],
+          ['Solo se trabaja con proveedores', 'No es la característica definitoria.'],
+          ['No se hacen pruebas', 'Se hacen pruebas.']),
+        dv('Describa los componentes principales de la casa de la calidad y para qué sirve.',
+          'Sirve para traducir la voz del cliente en requisitos técnicos. Componentes: los «qué» (necesidades del cliente, filas), los «cómo» (características técnicas, columnas), la matriz de relaciones entre ambos, el techo con las correlaciones entre los «cómo», la evaluación frente a competidores y los valores meta.',
+          ['Mencioné los qué y los cómo', 'Mencioné la matriz de relaciones y el techo', 'Expliqué el propósito (voz del cliente → diseño)'])
+      ]
+    },
+    {
+      id: 'p3', name: 'Consideraciones de diseño y tecnología', pp: 'pp. 167–172',
+      review: [
+        '<b>Diseño robusto:</b> el producto funciona bien aunque cambien las condiciones de uso o fabricación.',
+        '<b>Diseño modular:</b> partes o módulos intercambiables; facilitan fabricación, reparación y variedad.',
+        '<b>CAD</b> (diseño asistido por computadora): crea y modifica diseños en pantalla. <b>CAM</b> (manufactura asistida): usa el diseño para controlar máquinas. <b>Realidad virtual:</b> visualiza el diseño en 3D inmersivo antes de construirlo.',
+        '<b>Análisis de valor:</b> busca reducir costo del producto ya en producción sin perder función.',
+        '<b>Diseños éticos y amigables con el ambiente:</b> desarrollo sustentable, las 3R (reducir, reutilizar, reciclar), diseño para desarmar, seguridad y materiales responsables.',
+        '<b>Competencia basada en el tiempo:</b> acortar el tiempo de desarrollo y de entrega como ventaja.'
+      ],
+      items: [
+        mc(1, 'Un diseño robusto es aquel que:',
+          ['Funciona bien aun con variaciones en el uso o la fabricación', 'Tolera condiciones adversas.'],
+          ['Solo funciona en condiciones ideales', 'Eso es un diseño frágil.'],
+          ['Tiene el mayor número de piezas posible', 'No se relaciona con la cantidad de piezas.'],
+          ['Se fabrica más lento', 'No tiene relación con la velocidad.']),
+        mc(1, 'Un diseño modular se caracteriza por:',
+          ['Partes o módulos estandarizados e intercambiables', 'Facilita producción, reparación y variedad.'],
+          ['Piezas únicas e irrepetibles', 'Eso es lo opuesto a modular.'],
+          ['Ser siempre de un solo material', 'No tiene relación con el material.'],
+          ['No poder repararse', 'Reparar es más fácil por módulos.']),
+        mc(1, 'CAD significa:',
+          ['Diseño asistido por computadora', 'Se usa para crear y modificar diseños en pantalla.'],
+          ['Control automático de distribución', 'No es esa definición.'],
+          ['Cálculo anual de demanda', 'No es esa definición.'],
+          ['Catálogo de artículos disponibles', 'No es esa definición.']),
+        mc(1, 'CAM (manufactura asistida por computadora) se refiere a:',
+          ['Usar computadoras para controlar y programar las máquinas de producción', 'Aprovecha el diseño de CAD para fabricar.'],
+          ['Diseñar planos en pantalla', 'Eso es CAD.'],
+          ['Contabilizar los costos', 'No es contable.'],
+          ['Hacer encuestas a clientes', 'No tiene relación.']),
+        mc(2, 'La ventaja principal de la realidad virtual en el diseño es:',
+          ['Visualizar y probar el diseño en 3D antes de fabricar', 'Ahorra prototipos físicos y tiempo.'],
+          ['Eliminar la necesidad de diseñar', 'No sustituye el diseño.'],
+          ['Aumentar el costo del prototipo', 'Lo reduce.'],
+          ['Reemplazar al cliente', 'No lo reemplaza; permite mostrarle el diseño.']),
+        mc(2, 'Las 3R de un diseño amigable con el ambiente son:',
+          ['Reducir, reutilizar y reciclar', 'Disminuyen residuos y uso de recursos.'],
+          ['Reparar, rechazar y retrasar', 'No son las 3R.'],
+          ['Registrar, revisar y reportar', 'No son las 3R.'],
+          ['Rediseñar, reponer y revender', 'No son las 3R.']),
+        mc(2, 'La competencia basada en el tiempo busca:',
+          ['Reducir el tiempo de desarrollo y de entrega para ganar ventaja', 'Ser más rápido que los competidores.'],
+          ['Alargar los plazos para mejorar la calidad', 'No es el objetivo.'],
+          ['Eliminar las pruebas del producto', 'La velocidad no elimina las pruebas.'],
+          ['Cobrar siempre más caro', 'Es una estrategia de rapidez, no de precio.']),
+        mc(3, 'Una empresa diseña un empaque que facilita desarmarlo para reciclar sus materiales. Este es un ejemplo de:',
+          ['Diseño amigable con el ambiente', 'Considera el fin de vida del producto.'],
+          ['Diseño robusto', 'Robusto trata de tolerancia a variaciones.'],
+          ['Realidad virtual', 'Es una tecnología de visualización.'],
+          ['Competencia basada en el tiempo', 'Trata de rapidez.']),
+        mc(3, 'Una empresa quiere ofrecer muchas variantes de un producto sin disparar costos. ¿Qué consideración de diseño ayuda más?',
+          ['Diseño modular: combinar módulos estándar', 'Genera variedad con partes comunes.'],
+          ['Diseñar una pieza distinta para cada variante', 'Aumenta costos e inventarios.'],
+          ['Eliminar las pruebas', 'Pone en riesgo la calidad.'],
+          ['Aumentar el tiempo de entrega', 'No resuelve el costo de la variedad.'])
+      ]
+    },
+    {
+      id: 'p4', name: 'Hacer o comprar, alianzas, documentos y PLM', pp: 'pp. 172–178 · Problemas 5.10–5.13',
+      review: [
+        '<b>Compra de tecnología:</b> mediante <b>adquisición de una empresa</b> (comprar la tecnología ya desarrollada). <b>Sociedades de riesgo</b> (joint ventures): dos o más empresas comparten recursos y riesgos. <b>Alianzas</b>: cooperación para compartir capacidades sin fusionarse.',
+        '<b>Definición de un producto:</b> especificaciones, planos de ingeniería, lista de materiales (BOM).',
+        '<b>Hacer o comprar:</b> decidir si se produce internamente o se compra. Comparar costos (fijo y variable), calidad, capacidad y asuntos estratégicos.',
+        '<b>Tecnología de grupos:</b> clasifica piezas similares en familias para producirlas en celdas y reducir preparaciones.',
+        '<b>Documentos para la producción:</b> dibujos de ingeniería, lista de materiales, dibujos de ensamble, hoja de ruta, órdenes de trabajo y avisos de cambio de ingeniería.',
+        '<b>PLM:</b> software que administra la información del producto durante todo su ciclo de vida, desde la idea hasta el retiro.'
+      ],
+      ex: '<br>Hacer: ₡50 000 fijos + ₡8/u. Comprar: ₡13/u. Punto de equilibrio: 50 000 + 8x = 13x → 5x = 50 000 → <b>x = 10 000 u</b>. Con más de 10 000 unidades conviene hacer; con menos, comprar.',
+      items: [
+        mc(1, 'Una sociedad de riesgo (joint venture) es:',
+          ['Una asociación en la que las empresas comparten recursos y riesgos', 'Permite acceder a tecnología o mercados con menos riesgo individual.'],
+          ['Que una empresa compre el 100 % de otra', 'Eso es una adquisición.'],
+          ['Un contrato exclusivo con un proveedor de materiales', 'Eso es una relación de suministro.'],
+          ['La venta de un producto sin ganancia', 'No es esa definición.']),
+        mc(1, 'La tecnología de grupos consiste en:',
+          ['Agrupar piezas similares en familias para producirlas eficientemente', 'Reduce preparaciones y tiempos.'],
+          ['Formar equipos de trabajo para reuniones', 'No es un tema de equipos.'],
+          ['Un sistema de pago para grupos de empleados', 'No es de remuneración.'],
+          ['Agrupar clientes por edad', 'No es de segmentación de clientes.']),
+        mc(1, 'La lista de materiales (BOM) forma parte de:',
+          ['Los documentos para la producción', 'Detalla componentes y cantidades.'],
+          ['El estado de resultados', 'Es un informe financiero distinto.'],
+          ['Las políticas de venta', 'No es una política comercial.'],
+          ['El contrato laboral', 'No es laboral.']),
+        mc(1, 'PLM (administración del ciclo de vida del producto) es:',
+          ['Un software que gestiona la información del producto desde la idea hasta su retiro', 'Integra diseño, ingeniería, compras y producción.'],
+          ['Un método para pronosticar ventas', 'No es de pronósticos.'],
+          ['Una técnica de programación de proyectos', 'No es PERT/CPM.'],
+          ['Un manual de seguridad', 'No es de seguridad ocupacional.']),
+        nu(2, 'Hacer: ₡50 000 fijos + ₡8 por unidad. Comprar: ₡13 por unidad. ¿A partir de cuántas unidades conviene hacer?',
+          10000, 0.5, 'unidades', 'Iguala 50 000 + 8x con 13x.', '50 000 + 8x = 13x → 5x = 50 000 → <b>x = 10 000</b> unidades.'),
+        mc(2, 'Con los datos anteriores y 12 000 unidades, conviene:',
+          ['Hacer (₡146 000 contra ₡156 000)', 'Hacer: 50 000+8·12 000 = 146 000. Comprar: 13·12 000 = 156 000.'],
+          ['Comprar (₡156 000 contra ₡146 000)', 'Invirtió los totales.'],
+          ['Son iguales', 'Solo se igualan en 10 000.'],
+          ['No se puede decidir', 'Hay datos suficientes.']),
+        mc(2, 'Aparte del costo, un factor importante en la decisión de hacer o comprar es:',
+          ['La calidad, capacidad disponible y el valor estratégico de la actividad', 'No solo importa el costo.'],
+          ['El color del logotipo', 'No es un factor relevante.'],
+          ['El nombre del gerente', 'No es relevante.'],
+          ['La cantidad de oficinas', 'No es relevante.']),
+        mc(2, 'Una empresa farmacéutica compra una compañía pequeña para obtener su patente. Eso es:',
+          ['Compra de tecnología mediante adquisición', 'Compra la empresa para obtener su tecnología.'],
+          ['Una alianza sin intercambio de capital', 'Aquí hay compra completa.'],
+          ['Una sociedad de riesgo', 'No se comparte la propiedad; se compra.'],
+          ['Tecnología de grupos', 'No tiene relación.']),
+        mc(2, 'Los dibujos de ensamble y las hojas de ruta sirven para:',
+          ['Indicar cómo y en qué orden se fabrica o ensambla el producto', 'Son documentos de producción.'],
+          ['Calcular los impuestos', 'No son fiscales.'],
+          ['Evaluar a los empleados', 'No son de recursos humanos.'],
+          ['Elegir el nombre comercial', 'No son de mercadeo.']),
+        mc(3, 'Una empresa tiene capacidad ociosa y el costo de hacer es menor al de comprar, pero el proveedor ofrece mejor calidad en una actividad no estratégica. ¿Qué enfoque es más completo?',
+          ['Analizar costo, calidad, capacidad y estrategia antes de decidir', 'La decisión es multicriterio.'],
+          ['Decidir solo por el costo más bajo', 'Ignora calidad y estrategia.'],
+          ['Comprar siempre', 'No siempre conviene.'],
+          ['Hacer siempre', 'No siempre conviene.']),
+        mc(3, 'Para fabricar piezas de formas parecidas con menos cambios de preparación, conviene:',
+          ['Tecnología de grupos con celdas por familias de piezas', 'Reduce preparaciones y movimiento.'],
+          ['Producir cada pieza en una planta distinta', 'Aumenta el movimiento y la complejidad.'],
+          ['Aumentar la cantidad de documentos', 'No resuelve el problema.'],
+          ['Eliminar la clasificación de piezas', 'La clasificación es la base.'])
+      ]
+    },
+    {
+      id: 'p5', name: 'Diseño del servicio y árboles de decisión', pp: 'pp. 178–182 · Fig. 5.1 · Problemas 5.14–5.18',
+      review: [
+        '<b>Servicios:</b> intangibles, se producen y consumen a la vez, el cliente participa y no se pueden almacenar. El <b>paquete de servicio</b> incluye instalaciones, bienes facilitadores y servicios explícitos e implícitos.',
+        '<b>Diseño del servicio:</b> se enfoca en el cliente y en el proceso. <b>Documentos para los servicios:</b> describen las actividades, tareas y personas (instrucciones, guiones, diagramas).',
+        '<b>Árbol de decisión:</b> cuadrado = decisión (usted elige); círculo = evento fortuito (probabilidades). Se resuelve de <b>derecha a izquierda</b> con el valor monetario esperado (EMV) = Σ(probabilidad × pago).',
+        'Se elige la alternativa de mayor EMV (o de menor costo esperado).'
+      ],
+      ex: '<br>Planta grande: 60 % éxito → +₡200 000; 40 % fracaso → −₡180 000. EMV = 0,6·200 000 + 0,4·(−180 000) = 120 000 − 72 000 = <b>₡48 000</b>.<br>Planta pequeña: 60 % → +₡100 000; 40 % → −₡20 000. EMV = 60 000 − 8 000 = <b>₡52 000</b>. Conviene la pequeña.',
+      items: [
+        mc(1, 'En un árbol de decisión, un cuadrado representa:',
+          ['Un punto de decisión', 'Allí quien decide elige una alternativa.'],
+          ['Un evento fortuito', 'Eso se dibuja con un círculo.'],
+          ['El pago final', 'El pago aparece al final de las ramas, no es un cuadrado de decisión.'],
+          ['Una probabilidad', 'Las probabilidades se escriben sobre las ramas.']),
+        mc(1, 'Un árbol de decisión se evalúa:',
+          ['De derecha a izquierda, calculando EMV en los nodos de azar', 'Se empieza por los pagos finales.'],
+          ['De izquierda a derecha sin calcular', 'Así no se obtienen los valores esperados.'],
+          ['Solo con el pago más alto', 'Ignora probabilidades.'],
+          ['Solo con la probabilidad mayor', 'Ignora los pagos.']),
+        mc(1, 'Una característica propia de los servicios frente a los bienes es:',
+          ['Se producen y consumen simultáneamente y no se pueden almacenar', 'Por eso el diseño debe considerar al cliente.'],
+          ['Siempre se pueden almacenar', 'Los servicios no son inventariables.'],
+          ['Son siempre tangibles', 'Son principalmente intangibles.'],
+          ['El cliente nunca participa', 'Participa activamente.']),
+        nu(2, 'Planta grande: 60 % de éxito con pago ₡200 000 y 40 % de fracaso con pago −₡180 000. ¿Cuál es el EMV (en colones)?',
+          48000, 1, '₡', 'Multiplica cada pago por su probabilidad y suma.', '0,6·200 000 = 120 000; 0,4·(−180 000) = −72 000. EMV = <b>48 000</b>.'),
+        nu(2, 'Planta pequeña: 60 % de éxito con pago ₡100 000 y 40 % de fracaso con pago −₡20 000. ¿Cuál es el EMV (en colones)?',
+          52000, 1, '₡', 'Mismas probabilidades, otros pagos.', '0,6·100 000 = 60 000; 0,4·(−20 000) = −8 000. EMV = <b>52 000</b>.'),
+        mc(2, 'Con EMV grande = ₡48 000, pequeña = ₡52 000 y «no hacer nada» = ₡0, la mejor decisión es:',
+          ['Construir la planta pequeña', 'Tiene el mayor EMV.'],
+          ['Construir la planta grande', 'Su pago máximo es mayor, pero su EMV es menor.'],
+          ['No hacer nada', 'El EMV de 0 es menor que el de las otras dos.'],
+          ['Cualquiera, son iguales', 'Los EMV son distintos.']),
+        nu(2, 'Diseño de alta tecnología: mercado bueno (50 %) → +₡300 000; malo (50 %) → −₡100 000. ¿EMV (en colones)?',
+          100000, 1, '₡', 'Cada rama pesa 0,5.', '0,5·300 000 = 150 000; 0,5·(−100 000) = −50 000. EMV = <b>100 000</b>.'),
+        mc(2, 'Comparando el diseño de alta tecnología (EMV ₡100 000) con uno conservador (mercado bueno +₡120 000, malo +₡40 000, 50 % cada uno), conviene:',
+          ['Alta tecnología (₡100 000 contra ₡80 000)', 'Conservador: 0,5·120 000 + 0,5·40 000 = 80 000.'],
+          ['Conservador (₡80 000 contra ₡100 000)', 'Invirtió la comparación de EMV.'],
+          ['Conservador porque nunca pierde', 'La regla es EMV, no evitar toda pérdida.'],
+          ['Son iguales', 'Los EMV difieren.']),
+        mc(3, 'Dos alternativas tienen el mismo pago máximo, pero una tiene 80 % de probabilidad de ese pago y la otra 30 %. En un árbol de decisión con EMV:',
+          ['Gana la de 80 %, si los demás pagos son iguales', 'Mayor probabilidad del pago positivo aumenta el EMV.'],
+          ['Son iguales porque tienen el mismo pago máximo', 'El EMV también depende de las probabilidades.'],
+          ['Gana la de 30 %', 'Menor probabilidad de ganar disminuye el EMV.'],
+          ['No se puede calcular EMV', 'Sí se puede.']),
+        mc(3, 'Un restaurante quiere diseñar un servicio rápido sin perder trato personal. ¿Qué enfoque es coherente con el diseño de servicios?',
+          ['Estandarizar las tareas de bajo contacto y cuidar la interacción con el cliente', 'Combina eficiencia con calidad de servicio.'],
+          ['Eliminar toda interacción con el cliente', 'Perdería el trato personal.'],
+          ['Hacer cada servicio completamente distinto', 'Se complica la eficiencia.'],
+          ['Ignorar los documentos del servicio', 'Los documentos guían al personal.']),
+        dv('Explique cómo se resuelve un árbol de decisión con EMV (símbolos y procedimiento).',
+          'Se dibuja de izquierda a derecha: cuadrados = decisiones, círculos = eventos fortuitos con probabilidades en las ramas, y los pagos al final. Se resuelve de derecha a izquierda: en cada círculo se calcula el EMV = Σ(probabilidad × pago); en cada cuadrado se elige la rama de mayor EMV (menor costo si son costos).',
+          ['Distinguí cuadrado y círculo', 'Dije que se resuelve de derecha a izquierda', 'Escribí la fórmula del EMV y cómo elegir'])
+      ]
+    }
+  ]
+});
+
+
+/* ---------- MANTENIMIENTO (seguridad, incendios y primeros auxilios) ---------- */
+MODS.push({
+  id: 'mantenimiento', short: 'Mantenimiento', name: 'Mantenimiento: Fuego, Emergencias y Primeros Auxilios', icon: '🧯', color: '#ff7043',
+  date: '2026-10-15', time: '7:00 am', simN: 24,
+  source: 'Carpeta 10-1 de Teams (mantenimiento): salud ocupacional, bomberos, extintores, protección contra incendios, protocolo, teoría del fuego, primeros auxilios',
+  note: 'No tengo tus archivos de Teams: este módulo usa conocimiento general (normas NFPA y práctica habitual en Costa Rica). Si tus apuntes dan otro dato (distancias, tiempos, colores), <b>manda lo que dicen tus apuntes</b>. Verifica especialmente lo marcado con «verifica».',
+  worlds: [
+    {
+      id: 'm1', name: 'Teoría del fuego y clases de fuego', pp: 'Teoría del Fuego',
+      review: [
+        '<b>Fuego:</b> reacción química de oxidación rápida (combustión) que libera luz y calor.',
+        '<b>Triángulo del fuego:</b> combustible + comburente (oxígeno) + calor. <b>Tetraedro:</b> agrega la <b>reacción en cadena</b>. Si se elimina uno, el fuego se apaga.',
+        '<b>Métodos de extinción:</b> enfriamiento (quita calor, agua), sofocación (quita oxígeno), aislamiento o eliminación del combustible, inhibición de la reacción en cadena (polvo químico).',
+        '<b>Clases (NFPA):</b> <b>A</b> sólidos comunes (madera, papel, tela) · <b>B</b> líquidos y gases inflamables · <b>C</b> equipo eléctrico energizado · <b>D</b> metales combustibles · <b>K</b> aceites y grasas de cocina.',
+        '<b>Transmisión del calor:</b> conducción, convección y radiación. El <b>humo</b> es la principal causa de muerte en incendios.'
+      ],
+      items: [
+        mc(1, 'Los elementos del triángulo del fuego son:',
+          ['Combustible, comburente (oxígeno) y calor', 'Si falta uno de los tres, no hay fuego.'],
+          ['Agua, aire y tierra', 'No son los elementos de la combustión.'],
+          ['Combustible, humo y ceniza', 'Humo y ceniza son productos, no causas.'],
+          ['Calor, frío y presión', 'No es el triángulo del fuego.']),
+        mc(1, 'El tetraedro del fuego agrega al triángulo:',
+          ['La reacción en cadena', 'Explica por qué algunos agentes apagan interrumpiendo la reacción.'],
+          ['El humo', 'El humo es un producto.'],
+          ['La presión atmosférica', 'No es un componente.'],
+          ['El agua', 'El agua es un agente extintor, no un componente.']),
+        mc(1, 'Un incendio de madera, papel o tela es de clase:',
+          ['A', 'Combustibles sólidos comunes.'],
+          ['B', 'Clase B son líquidos y gases inflamables.'],
+          ['C', 'Clase C es equipo eléctrico energizado.'],
+          ['D', 'Clase D son metales combustibles.']),
+        mc(1, 'Un incendio de gasolina, solventes o gas es de clase:',
+          ['B', 'Líquidos y gases inflamables.'],
+          ['A', 'Clase A son sólidos comunes.'],
+          ['C', 'Eso es equipo eléctrico energizado.'],
+          ['K', 'Es de aceites y grasas de cocina.']),
+        mc(1, 'Un incendio en un tablero eléctrico energizado es de clase:',
+          ['C', 'Equipo eléctrico energizado.'],
+          ['A', 'No es combustible sólido común.'],
+          ['B', 'No es líquido inflamable.'],
+          ['D', 'No es metal combustible.']),
+        mc(1, 'Un incendio de aceite de freír en una cocina industrial es de clase:',
+          ['K', 'Aceites y grasas de cocina.'],
+          ['A', 'No es sólido común.'],
+          ['B', 'Aunque es líquido, tiene clase propia por su temperatura.'],
+          ['D', 'No es metal.']),
+        mc(2, 'Quitar el oxígeno de un fuego (por ejemplo, cubrirlo con una manta) corresponde al método de:',
+          ['Sofocación', 'Elimina el comburente.'],
+          ['Enfriamiento', 'Quita calor.'],
+          ['Aislamiento', 'Quita el combustible.'],
+          ['Inhibición de la reacción en cadena', 'Interrumpe la reacción química.']),
+        mc(2, 'Cerrar la válvula de un tanque de gas que alimenta una llama aplica el método de:',
+          ['Eliminar el combustible', 'Corta el suministro.'],
+          ['Enfriamiento', 'No baja la temperatura.'],
+          ['Sofocación', 'No quita el oxígeno.'],
+          ['Inhibición', 'No interrumpe la reacción en cadena.']),
+        mc(2, 'Echar agua en un fuego de leña actúa principalmente por:',
+          ['Enfriamiento', 'Absorbe calor y baja la temperatura.'],
+          ['Eliminar el combustible', 'No elimina la leña.'],
+          ['Inhibición química', 'Eso hace el polvo químico seco.'],
+          ['Aumentar el oxígeno', 'No aumenta el oxígeno.']),
+        mc(3, 'En un incendio en una oficina, la principal causa de muerte suele ser:',
+          ['La inhalación de humo y gases tóxicos', 'El humo reduce el oxígeno y envenena antes que las llamas.'],
+          ['Las quemaduras por contacto directo', 'Son frecuentes, pero el humo mata más.'],
+          ['El agua del extintor', 'No es una causa común.'],
+          ['El ruido de la alarma', 'No es una causa de muerte.']),
+        mc(3, 'Un incendio empieza en una papelera (clase A) junto a un tomacorriente energizado. Primero debe pensarse en:',
+          ['Usar un agente seguro para equipo energizado (ABC o CO₂) y desenergizar si es posible', 'Hay riesgo eléctrico; el agua podría conducir la electricidad.'],
+          ['Usar agua directa sin más', 'Con electricidad energizada el agua es peligrosa.'],
+          ['Cubrir el tomacorriente con papel', 'Alimenta el fuego.'],
+          ['Ignorar el tomacorriente', 'Es un riesgo importante.'])
+      ]
+    },
+    {
+      id: 'm2', name: 'Extintores: tipos, etiqueta y uso', pp: 'Formas de extinción y agentes extintores · Protocolo y etiqueta',
+      review: [
+        '<b>Agua a presión:</b> solo clase A. <b>Polvo químico seco ABC:</b> A, B y C (multipropósito). <b>CO₂:</b> B y C; no deja residuo, ideal para equipo electrónico; no se agarra la boquilla (muy fría). <b>Espuma:</b> A y B. <b>Acetato de potasio:</b> clase K. <b>Polvo especial:</b> clase D.',
+        '<b>Uso del extintor (secuencia):</b> halar el pasador (seguro) → apuntar a la <b>base</b> del fuego → apretar la manija → barrer de lado a lado. Mantén distancia segura y la salida a tu espalda.',
+        '<b>Etiqueta:</b> clases de fuego que apaga, símbolos, capacidad, instrucciones de uso, fabricante y fecha de recarga o mantenimiento.',
+        '<b>Revisión:</b> inspección visual mensual (manómetro en zona verde, pasador y sello, sin daños) y mantenimiento anual (verifica con tu material).',
+        '<b>Ubicación:</b> visible, señalizado, de fácil acceso, cerca de las rutas de salida y con la manija a menos de 1,5 m de altura (verifica).'
+      ],
+      items: [
+        mc(1, 'El extintor de agua a presión se usa solo en fuegos de clase:',
+          ['A', 'Combustibles sólidos comunes.'],
+          ['B', 'El agua puede esparcir líquidos inflamables.'],
+          ['C', 'Es peligroso por conducir electricidad.'],
+          ['K', 'El agua sobre aceite caliente causa salpicaduras violentas.']),
+        mc(1, 'El extintor de polvo químico seco ABC sirve para fuegos:',
+          ['A, B y C', 'Es el multipropósito.'],
+          ['Solo A', 'Esa es la limitación del agua.'],
+          ['Solo D', 'Para metales se usan polvos especiales.'],
+          ['Solo K', 'Para cocinas se usa agente especial para K.']),
+        mc(1, 'El extintor de CO₂ es adecuado principalmente para:',
+          ['Clases B y C, como equipo eléctrico y líquidos inflamables', 'No deja residuo.'],
+          ['Solo clase A', 'No es lo ideal para brasas profundas.'],
+          ['Metales combustibles (D)', 'Se usa polvo especial.'],
+          ['Cualquier fuego sin riesgo', 'Tiene limitaciones.']),
+        mc(1, 'En el uso del extintor, el chorro se dirige:',
+          ['A la base del fuego', 'Ahí está el combustible que arde.'],
+          ['A las llamas más altas', 'Se ataca el combustible, no la altura de la llama.'],
+          ['Al techo', 'No apaga nada.'],
+          ['Hacia la persona más cercana', 'Nunca se dirige a personas.']),
+        mc(1, 'La secuencia correcta de uso del extintor es:',
+          ['Halar el pasador, apuntar a la base, apretar la manija, barrer', 'Es la secuencia estándar.'],
+          ['Apretar la manija, apuntar, halar el pasador, barrer', 'Con el pasador puesto, no sale agente.'],
+          ['Barrer, apuntar, apretar, halar', 'Está en desorden.'],
+          ['Apuntar, barrer, halar, apretar', 'Está en desorden.']),
+        mc(2, 'El manómetro de un extintor está en la zona roja. ¿Qué debe hacerse?',
+          ['No confiar en él y enviarlo a recarga o mantenimiento', 'Indica presión fuera de rango.'],
+          ['Usarlo igual', 'Podría no funcionar en una emergencia.'],
+          ['Taparlo con cinta', 'Oculta el problema.'],
+          ['Moverlo a otro lugar', 'Sigue sin funcionar.']),
+        mc(2, 'Un fuego de aceite en la cocina de un restaurante debe atacarse con:',
+          ['Un agente clase K, como acetato de potasio', 'Enfría y saponifica el aceite.'],
+          ['Agua directa', 'Salpicaría el aceite ardiendo.'],
+          ['Un balde de agua', 'Extendería el fuego.'],
+          ['Un ventilador', 'Avivaría las llamas.']),
+        mc(2, 'La etiqueta del extintor sirve para:',
+          ['Informar clases de fuego, instrucciones de uso, capacidad y fechas de mantenimiento', 'Es la guía rápida en la emergencia.'],
+          ['Decorar el extintor', 'Es información de seguridad.'],
+          ['Indicar quién lo compró', 'No es su propósito.'],
+          ['Reemplazar el manómetro', 'No lo reemplaza.']),
+        mc(3, 'Un incendio de metal (por ejemplo, magnesio) se ataca con:',
+          ['Polvo especial clase D', 'El agua u otros agentes comunes pueden empeorar el fuego.'],
+          ['Agua', 'Reacciona violentamente con algunos metales.'],
+          ['Espuma común', 'No es adecuada para metales.'],
+          ['Un extintor de CO₂', 'No es efectivo en metales combustibles.']),
+        mc(3, 'Al combatir un conato de incendio, ¿qué debe hacer primero la persona?',
+          ['Avisar la alarma, asegurar su ruta de salida y evaluar si puede atacarlo', 'La seguridad de la persona va primero.'],
+          ['Entrar al humo sin protección', 'Es muy peligroso.'],
+          ['Cerrar la salida', 'Elimina su vía de escape.'],
+          ['Quedarse a mirar', 'Perdería tiempo valioso.']),
+        mc(3, 'El fuego es demasiado grande y el humo bloquea la vista. Lo correcto es:',
+          ['Evacuar, cerrar puertas al salir y llamar a Bomberos (911)', 'Ya no es un conato.'],
+          ['Seguir apuntando el extintor', 'Es peligroso si el fuego ya superó su capacidad.'],
+          ['Abrir todas las ventanas', 'Alimenta con oxígeno.'],
+          ['Buscar documentos', 'No vale la pena arriesgar la vida.'])
+      ]
+    },
+    {
+      id: 'm3', name: 'Protección contra incendios, bomberos y salud ocupacional', pp: 'Bomberos · Sistemas de emergencia · Protección contra incendios · Plan de salud ocupacional',
+      review: [
+        '<b>Protección activa:</b> detectores de humo o calor, alarmas, rociadores, hidrantes, extintores. <b>Pasiva:</b> paredes y puertas cortafuego, materiales resistentes, rutas de evacuación y señalización.',
+        '<b>Plan de emergencia:</b> brigadas, rutas de evacuación, punto de reunión y simulacros. Para emergencias en Costa Rica se llama al <b>911</b>.',
+        'En una evacuación: mantener la calma, <b>no usar ascensores</b>, agacharse bajo el humo, tocar la puerta antes de abrirla.',
+        '<b>Salud ocupacional:</b> prevenir accidentes y enfermedades del trabajo. Se organiza con una <b>comisión de salud ocupacional</b> (obligatoria desde cierto número de trabajadores; verifica el dato en tu material).',
+        '<b>Jerarquía de control del riesgo:</b> eliminar → sustituir → controles de ingeniería → controles administrativos → equipo de protección personal (EPP).',
+        '<b>Colores de seguridad:</b> rojo = incendio, prohibición y paro; amarillo = advertencia o precaución; verde = salidas y primeros auxilios; azul = obligación.'
+      ],
+      items: [
+        mc(1, 'Un detector de humo y un rociador automático son ejemplos de protección:',
+          ['Activa', 'Se activan para detectar o combatir el fuego.'],
+          ['Pasiva', 'La pasiva no se activa: son paredes, puertas y materiales.'],
+          ['Administrativa', 'Eso son procedimientos y capacitación.'],
+          ['Personal', 'Eso es el EPP.']),
+        mc(1, 'Una puerta cortafuego es protección:',
+          ['Pasiva', 'Compartimenta el edificio sin necesidad de activarse.'],
+          ['Activa', 'No detecta ni apaga el fuego por sí sola.'],
+          ['Eléctrica', 'No es una clasificación aplicable.'],
+          ['De EPP', 'No la usa una persona.']),
+        mc(1, 'El número de emergencias en Costa Rica es:',
+          ['911', 'Es el número único de emergencias.'],
+          ['800', 'No es el número de emergencias.'],
+          ['1311', 'No es el número de emergencias.'],
+          ['811', 'No es el número de emergencias.']),
+        mc(1, 'Durante una evacuación por incendio se debe:',
+          ['Usar las escaleras y no los ascensores', 'Los ascensores pueden quedar atrapados por falla eléctrica o humo.'],
+          ['Usar el ascensor para ir más rápido', 'Es peligroso.'],
+          ['Correr empujando a los demás', 'Genera caídas y pánico.'],
+          ['Regresar por objetos personales', 'Pone en riesgo la vida.']),
+        mc(1, 'En el color de seguridad, el verde indica:',
+          ['Salidas de emergencia y primeros auxilios', 'Condición segura.'],
+          ['Prohibición', 'La prohibición usa rojo.'],
+          ['Advertencia de peligro', 'Eso es amarillo.'],
+          ['Obligación de usar EPP', 'Eso es azul.']),
+        mc(2, 'En la jerarquía de control de riesgos, la medida más eficaz es:',
+          ['Eliminar el peligro', 'Quita el riesgo de raíz.'],
+          ['Entregar EPP', 'Es la última barrera, no la más eficaz.'],
+          ['Poner un letrero', 'Es un control administrativo, menos eficaz.'],
+          ['Capacitar al personal solamente', 'Es administrativo y depende del comportamiento.']),
+        mc(2, 'El EPP (equipo de protección personal) se considera:',
+          ['La última barrera de defensa, cuando otros controles no bastan', 'No elimina el peligro.'],
+          ['La primera y mejor medida', 'Es la menos prioritaria.'],
+          ['Innecesario si hay letreros', 'Los letreros no protegen físicamente.'],
+          ['Un sustituto de la capacitación', 'Ambos son necesarios.']),
+        mc(2, 'Un letrero amarillo en el piso mojado indica:',
+          ['Precaución o advertencia', 'Amarillo advierte riesgo.'],
+          ['Prohibición', 'Sería rojo.'],
+          ['Obligación', 'Sería azul.'],
+          ['Salida de emergencia', 'Sería verde.']),
+        mc(2, 'La finalidad del plan de salud ocupacional es:',
+          ['Prevenir accidentes de trabajo y enfermedades laborales', 'Identifica riesgos y define acciones de control.'],
+          ['Aumentar la producción a cualquier costo', 'No es su objetivo.'],
+          ['Reducir los salarios', 'No tiene relación.'],
+          ['Evitar las inspecciones', 'Las inspecciones forman parte de la prevención.']),
+        mc(3, 'Al sentir humo en el pasillo, ¿cómo debe desplazarse una persona?',
+          ['Agachada o gateando, cerca del suelo', 'El aire más limpio está abajo.'],
+          ['De pie, con la cabeza alta', 'Respiraría más humo caliente.'],
+          ['Corriendo hacia el humo para ver el origen', 'Es peligroso.'],
+          ['Abriendo todas las puertas del pasillo', 'Alimenta el fuego.']),
+        mc(3, 'Antes de abrir una puerta cerrada durante un incendio se debe:',
+          ['Tocarla con el dorso de la mano para verificar si está caliente', 'Si está caliente, hay fuego del otro lado.'],
+          ['Abrirla de golpe', 'Podría provocar una llamarada.'],
+          ['Patearla', 'No es seguro.'],
+          ['Gritar y esperar', 'No ayuda a evaluar el peligro.']),
+        mc(3, 'La brigada de emergencia y los simulacros de evacuación forman parte de:',
+          ['El plan de emergencia de la empresa', 'Preparan al personal para actuar organizadamente.'],
+          ['El plan de ventas', 'No tienen relación.'],
+          ['El control de inventarios', 'No tienen relación.'],
+          ['El presupuesto de mercadeo', 'No tienen relación.']),
+        dv('Explique la diferencia entre protección contra incendios activa y pasiva con dos ejemplos de cada una, y cite la jerarquía de control de riesgos.',
+          'Activa: se acciona ante el fuego (detectores, alarmas, rociadores, extintores, hidrantes). Pasiva: está incorporada al edificio y limita el fuego sin accionarse (puertas y paredes cortafuego, materiales ignífugos, rutas de evacuación). Jerarquía: eliminar, sustituir, controles de ingeniería, controles administrativos y EPP.',
+          ['Dos ejemplos de activa', 'Dos ejemplos de pasiva', 'Cité los cinco niveles de la jerarquía'])
+      ]
+    },
+    {
+      id: 'm4', name: 'Primeros auxilios y transporte de víctimas', pp: 'Video de transporte de víctimas · Primeros auxilios',
+      review: [
+        '<b>PAS:</b> <b>P</b>roteger (que la escena sea segura), <b>A</b>visar (911), <b>S</b>ocorrer.',
+        '<b>Evaluación primaria (ABC):</b> vía aérea, respiración y circulación.',
+        '<b>RCP en adultos:</b> 30 compresiones y 2 ventilaciones, en el centro del pecho, a 5–6 cm de profundidad y 100–120 por minuto (verifica con tu material).',
+        '<b>Hemorragia:</b> presión directa con un apósito limpio y elevar el miembro si es posible.',
+        '<b>Quemaduras:</b> enfriar con agua corriente fresca; no reventar ampollas ni poner hielo, mantequilla o cremas caseras.',
+        '<b>Transporte:</b> no mover a una persona con posible lesión de columna salvo peligro inminente (fuego, derrumbe). Técnicas: arrastre, silla de manos, camilla improvisada, cargado en brazos o al hombro. Inconsciente que respira y sin sospecha de trauma: posición lateral de seguridad.'
+      ],
+      items: [
+        mc(1, 'Las siglas PAS significan:',
+          ['Proteger, Avisar, Socorrer', 'Es la secuencia básica de actuación.'],
+          ['Preparar, Atender, Salir', 'No son las siglas correctas.'],
+          ['Pausar, Actuar, Sentarse', 'No son las siglas correctas.'],
+          ['Pedir, Anotar, Seguir', 'No son las siglas correctas.']),
+        mc(1, 'Lo primero al encontrar a una persona accidentada es:',
+          ['Asegurarse de que la escena sea segura para uno y para la víctima', 'Si usted también se lesiona, no podrá ayudar.'],
+          ['Moverla de inmediato', 'Podría agravar una lesión.'],
+          ['Darle agua', 'No es prioritario y puede ser peligroso.'],
+          ['Irse a buscar un auto', 'Primero se evalúa la situación.']),
+        mc(1, 'La evaluación ABC se refiere a:',
+          ['Vía aérea, respiración y circulación', 'Son prioridades vitales.'],
+          ['Alarma, bomberos y camilla', 'No es esa evaluación.'],
+          ['Ambulancia, botiquín y cobija', 'No es esa evaluación.'],
+          ['Aire, bebida y comida', 'No es esa evaluación.']),
+        mc(1, 'La relación de compresiones y ventilaciones en la RCP de adultos es:',
+          ['30 compresiones y 2 ventilaciones', 'Es la relación estándar.'],
+          ['15 compresiones y 5 ventilaciones', 'No es la relación estándar para adultos.'],
+          ['2 compresiones y 30 ventilaciones', 'Está invertida.'],
+          ['10 y 10', 'No es la relación estándar.']),
+        mc(2, 'Para controlar una hemorragia externa se debe:',
+          ['Aplicar presión directa con un apósito limpio', 'Detiene la salida de sangre.'],
+          ['Lavar con alcohol en grandes cantidades y esperar', 'No controla la hemorragia.'],
+          ['Quitar el apósito para mirar cada minuto', 'Rompe el coágulo.'],
+          ['Dar de beber a la víctima', 'No controla la hemorragia.']),
+        mc(2, 'Ante una quemadura leve, lo correcto es:',
+          ['Enfriarla con agua corriente fresca', 'Reduce el daño y el dolor.'],
+          ['Aplicar hielo directo', 'Puede dañar más el tejido.'],
+          ['Reventar las ampollas', 'Aumenta el riesgo de infección.'],
+          ['Aplicar mantequilla', 'Retiene calor y favorece infecciones.']),
+        mc(2, 'Si hay sospecha de lesión de columna y no hay peligro inminente, usted debe:',
+          ['No mover a la víctima y esperar a personal especializado', 'Moverla podría agravar la lesión.'],
+          ['Sentarla rápidamente', 'Es riesgoso.'],
+          ['Levantarla en brazos', 'Es riesgoso.'],
+          ['Arrastrarla por los pies', 'Es riesgoso.']),
+        mc(2, 'Una persona inconsciente respira normalmente y no hay sospecha de trauma. Se recomienda:',
+          ['Colocarla en posición lateral de seguridad', 'Mantiene la vía aérea despejada.'],
+          ['Dejarla boca arriba sin vigilar', 'Podría ahogarse con vómito o la lengua.'],
+          ['Darle de beber', 'Podría atragantarse.'],
+          ['Sentarla', 'Puede empeorar su estado.']),
+        mc(3, 'Dos rescatistas deben sacar a una víctima consciente con lesión en el pie de un edificio humeante. ¿Qué técnica de transporte es razonable?',
+          ['Silla de manos o transporte entre dos personas', 'Es seguro para una víctima consciente sin sospecha de lesión de columna.'],
+          ['Arrastrarla por el cuello', 'Daña cuello y columna.'],
+          ['Dejarla sola', 'Quedaría expuesta al peligro.'],
+          ['Cargarla de cabeza', 'Es peligroso y pesado.']),
+        mc(3, 'Se debe mover a una víctima de columna sospechosa solamente cuando:',
+          ['Hay peligro inminente, como incendio o derrumbe', 'Y se hace manteniendo el eje cabeza-cuello-tronco lo mejor posible.'],
+          ['Ella lo pida', 'Aun así puede empeorarse la lesión.'],
+          ['Pase mucho tiempo', 'El tiempo por sí solo no justifica moverla.'],
+          ['Nunca, en ninguna circunstancia', 'Sí se mueve si el peligro es inminente.']),
+        dv('Describa los pasos de PAS y qué haría si presencia a un compañero que cae inconsciente y no respira.',
+          'Proteger: verificar que la escena sea segura. Avisar: llamar al 911 y pedir un DEA si hay. Socorrer: comprobar respuesta y respiración; si no respira, iniciar RCP con 30 compresiones en el centro del pecho (5–6 cm, 100–120 por minuto) y 2 ventilaciones hasta que llegue ayuda.',
+          ['Nombré proteger, avisar y socorrer', 'Mencioné llamar al 911', 'Mencioné RCP 30:2 con ritmo y profundidad'])
+      ]
+    }
+  ]
+});
+
+/* ================= MOTOR ================= */
+var KEY = 'practica_gestionproduccion_10-1_v1';
+var S = { m: {} };
+function load() {
+  try { var r = localStorage.getItem(KEY); if (r) S = JSON.parse(r); } catch (e) {}
+  if (!S || !S.m) S = { m: {} };
+}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+function ms(id) { return S.m[id] || (S.m[id] = { f: {}, sim: null }); }
+
+var $app = document.getElementById('app');
+var $live = document.getElementById('live');
+var V = { v: 'home' };
+var P = null;      // sesión de práctica activa
+var timer = null;
+var shuf = {};     // orden de opciones estable por ítem
+
+function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function shuffle(a) {
+  a = a.slice();
+  for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; }
+  return a;
+}
+function scored(w) { return w.items.filter(function (x) { return x.k !== 'dev'; }); }
+function modItems(m) { var r = []; m.worlds.forEach(function (w) { r = r.concat(scored(w)); }); return r; }
+
+MODS.forEach(function (m) {
+  m.worlds.forEach(function (w, wi) {
+    w.n = wi + 1;
+    w.items.forEach(function (it, i) { it.id = m.id + '.' + w.id + '.' + i; it.mod = m; it.world = w; });
+  });
+});
+
+function daysTo(m) {
+  var a = new Date(); a.setHours(0, 0, 0, 0);
+  var p = m.date.split('-');
+  var b = new Date(+p[0], +p[1] - 1, +p[2]);
+  return Math.round((b - a) / 864e5);
+}
+function cd(m) {
+  var d = daysTo(m);
+  if (d < 0) return 'Ya pasó';
+  if (d === 0) return '¡Es hoy!';
+  if (d === 1) return 'Mañana';
+  return 'En ' + d + ' días';
+}
+function fdate(m) {
+  var p = m.date.split('-'); var mes = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'set', 'oct', 'nov', 'dic'];
+  return +p[2] + ' ' + mes[+p[1] - 1] + ' · ' + m.time;
+}
+function prog(m, ws) {
+  var items = ws ? scored(ws) : modItems(m), st = ms(m.id), a = 0, c = 0;
+  items.forEach(function (it) { if (st.f[it.id] !== undefined) { a++; if (st.f[it.id] === 1) c++; } });
+  return { a: a, c: c, t: items.length };
+}
+function announce(t) { $live.textContent = ''; setTimeout(function () { $live.textContent = t; }, 30); }
+function stopTimer() { if (timer) { clearInterval(timer); timer = null; } }
+
+function bar(p, color) {
+  return '<div class="bar" role="img" aria-label="Progreso ' + p + '%" style="--c:' + color + '"><i style="width:' + p + '%"></i></div>';
+}
+
+/* ---------- vistas ---------- */
+function go(v, extra) {
+  stopTimer();
+  V = Object.assign({ v: v }, extra || {});
+  render();
+  window.scrollTo(0, 0);
+  var h = document.getElementById('h'); if (h) h.focus();
+}
+
+function render() {
+  var f = { home: vHome, mod: vMod, review: vReview, play: vPlay, res: vRes }[V.v];
+  $app.innerHTML = f();
+  if (V.v === 'play' && P && P.mode === 'sim') startTimer();
+}
+
+function vHome() {
+  var mods = MODS.slice().sort(function (a, b) { return a.date < b.date ? -1 : 1; });
+  var all = 0, ok = 0, ans = 0;
+  mods.forEach(function (m) { var p = prog(m); all += p.t; ok += p.c; ans += p.a; });
+  var h = '<header class="hero"><p class="mut">Gestión de la Producción I · 10-1 B · II Semestre 2026</p>' +
+    '<h1 id="h" tabindex="-1">Taller de Producción</h1>' +
+    '<p>Práctica de examen para tus tres pruebas. Cada fallo te explica el error y repites hasta acertar; la nota cuenta solo el <b>primer intento</b>.</p>' +
+    bar(all ? Math.round(ans / all * 100) : 0, 'var(--amber)') +
+    '<p class="mut">' + ans + ' de ' + all + ' ítems contestados · ' + ok + ' acertados a la primera</p></header>';
+  mods.forEach(function (m) {
+    var p = prog(m), d = daysTo(m);
+    h += '<section class="card m" style="--c:' + m.color + '"><div class="row"><span class="chip hot" style="--c:' + m.color + '">' + cd(m) + '</span><span class="chip">' + fdate(m) + '</span></div>' +
+      '<h2>' + m.icon + ' ' + esc(m.name) + '</h2><p class="mut">' + esc(m.source) + '</p>' +
+      bar(p.t ? Math.round(p.a / p.t * 100) : 0, m.color) +
+      '<p class="mut">' + p.a + '/' + p.t + ' contestados · ' + p.c + ' a la primera' + (ms(m.id).sim ? ' · último simulacro ' + ms(m.id).sim.last + '%' : '') + '</p>' +
+      '<button class="pri" style="--c:' + m.color + '" data-act="mod" data-id="' + m.id + '">Entrar a ' + esc(m.short) + '</button></section>';
+  });
+  h += '<footer><button class="link" data-act="reset">Reiniciar todo el progreso</button><p class="mut">El progreso se guarda solo en este navegador.</p></footer>';
+  return h;
+}
+
+function vMod() {
+  var m = V.mod, c = m.color;
+  var h = '<div class="top"><button class="link" data-act="home">← Inicio</button><span class="chip hot" style="--c:' + c + '">' + cd(m) + '</span></div>' +
+    '<h1 id="h" tabindex="-1">' + m.icon + ' ' + esc(m.name) + '</h1><p class="mut">' + fdate(m) + ' · ' + esc(m.source) + '</p>';
+  if (m.note) h += '<div class="box"><b>Ojo:</b> ' + m.note + '</div>';
+  h += '<h3>Mundos de práctica (en el orden recomendado)</h3><div class="list">';
+  m.worlds.forEach(function (w) {
+    var p = prog(m, w);
+    h += '<button data-act="world" data-id="' + w.id + '"><span><b>' + w.n + '. ' + esc(w.name) + '</b><small>' + esc(w.pp || '') + ' · ' + p.t + ' ítems' + (w.items.length > p.t ? ' + desarrollo' : '') + '</small></span><span aria-label="' + p.c + ' de ' + p.t + ' a la primera">' + (p.a === p.t ? '✅' : '▫️') + ' ' + p.c + '/' + p.t + '</span></button>';
+  });
+  var s = ms(m.id).sim;
+  h += '</div><h3>Simulacro final</h3><div class="card"><p>Réplica del examen: ítems mezclados de todos los mundos, <b>sin reintento ni pistas</b>, con cronómetro. Al final ves nota, desglose por tema y repasas lo que fallaste.</p>' +
+    (s ? '<p class="mut">Último: ' + s.last + '% · Mejor: ' + s.best + '%</p>' : '') +
+    '<button class="pri" style="--c:' + c + '" data-act="sim">Iniciar simulacro (' + Math.min(m.simN, modItems(m).length) + ' ítems)</button></div>';
+  return h;
+}
+
+function vReview() {
+  var m = V.mod, w = V.world, c = m.color;
+  var h = '<div class="top"><button class="link" data-act="mod" data-id="' + m.id + '">← ' + esc(m.short) + '</button><span class="chip">Mundo ' + w.n + '</span></div>' +
+    '<h1 id="h" tabindex="-1">' + esc(w.name) + '</h1><p class="mut">' + esc(w.pp || '') + '</p>' +
+    '<h3>📖 Repaso rápido</h3><div class="card"><ul>';
+  w.review.forEach(function (r) { h += '<li>' + r + '</li>'; });
+  h += '</ul></div>';
+  if (w.ex) h += '<div class="box ex"><b>Ejemplo resuelto</b>' + w.ex + '</div>';
+  h += '<div class="bottom"><div><button class="pri" style="--c:' + c + '" data-act="start">Empezar ' + w.items.length + ' ítems</button></div></div>';
+  return h;
+}
+
+/* ---------- práctica ---------- */
+function startQueue(q, mode, title, back, extra) {
+  P = Object.assign({ q: q, i: 0, mode: mode, title: title, back: back, tries: 0, solved: false, sel: null, sol: false, ans: [], fails: 0, t0: Date.now(), firstOk: 0, firstN: 0 }, extra || {});
+  go('play');
+}
+function cur() { return P.q[P.i]; }
+function opts(it) { if (!shuf[it.id]) shuf[it.id] = shuffle(it.o); return shuf[it.id]; }
+
+function vPlay() {
+  var it = cur(), m = it.mod, c = m.color, n = P.q.length;
+  var h = '<div class="top"><button class="link" data-act="quit">✕ Salir</button><span class="chip">' + (P.mode === 'sim' ? 'Simulacro · <span id="tm">00:00</span>' : esc(P.title)) + '</span></div>' +
+    bar(Math.round(P.i / n * 100), c) +
+    '<p class="lvl" id="h" tabindex="-1">Ítem ' + (P.i + 1) + ' de ' + n + (it.l ? ' · Nivel ' + it.l + ' (' + ['', 'conocimiento', 'aplicación', 'análisis'][it.l] + ')' : '') + (P.mode === 'redo' ? ' · repaso' : '') + '</p>' +
+    '<p class="q">' + it.q + '</p>';
+  var bot = '';
+  if (it.k === 'mc') {
+    var os = opts(it), sim = P.mode === 'sim';
+    os.forEach(function (o, i) {
+      var cls = 'opt', pre = '', dis = '';
+      if (P.tried && P.tried[i]) { cls += o.ok ? ' good' : ' bad'; pre = o.ok ? '✅ ' : '❌ '; dis = ' disabled'; }
+      if (P.solved) dis = ' disabled';
+      if (sim && P.sel === i) cls += ' sel';
+      h += '<button class="' + cls + '" data-act="pick" data-i="' + i + '"' + dis + '><b>' + 'ABCD'.charAt(i) + '.</b> ' + pre + o.t + '</button>';
+      if (!sim && P.tried && P.tried[i]) h += '<div class="fb ' + (o.ok ? 'good' : 'bad') + '">' + (o.ok ? '<b>Correcto.</b> ' : '<b>No es.</b> ') + o.f + '</div>';
     });
+    if (!sim && P.solved) {
+      var rest = os.filter(function (o, i) { return !P.tried[i]; });
+      if (rest.length) {
+        h += '<details><summary>¿Por qué las otras no?</summary>';
+        rest.forEach(function (o) { h += '<div class="box"><b>' + o.t + '</b><br>' + o.f + '</div>'; });
+        h += '</details>';
+      }
+    }
+    if (sim) bot = '<button class="pri" style="--c:' + c + '" data-act="confirm"' + (P.sel === null ? ' disabled' : '') + '>Confirmar y seguir</button>';
+    else if (P.solved) bot = nextBtn(c);
+    else bot = '<p class="mut" style="width:100%;text-align:center">Elige una opción. Si fallas, la explicación te guía.</p>';
+  } else if (it.k === 'num') {
+    var sim2 = P.mode === 'sim';
+    h += '<label class="mut" for="ans">Tu respuesta' + (it.unit ? ' (' + esc(it.unit) + ')' : '') + ':</label>' +
+      '<input id="ans" type="text" inputmode="decimal" autocomplete="off" value="' + esc(P.val || '') + '"' + (P.solved || P.sol ? ' disabled' : '') + '>';
+    if (!sim2 && P.msg) h += '<div class="fb ' + (P.solved ? 'good' : 'bad') + '" style="border-radius:12px;margin-top:10px">' + P.msg + '</div>';
+    if (!sim2 && (P.solved || P.sol)) h += '<div class="box ex"><b>Solución paso a paso</b><br>' + it.sol + '</div>';
+    if (sim2) bot = '<button class="pri" style="--c:' + c + '" data-act="confirm">Confirmar y seguir</button>';
+    else if (P.solved || P.sol) bot = nextBtn(c);
+    else {
+      bot = '<button class="pri" style="--c:' + c + '" data-act="check">Comprobar</button>';
+      if (P.tries >= 2) bot += '<button class="sec" data-act="showsol" style="width:auto;flex:none">Ver solución</button>';
+    }
+  } else { // dev
+    h += '<div class="box">Ítem de <b>desarrollo</b>: no puntúa. Escribe tu respuesta en papel o mentalmente y luego compárala.</div>';
+    if (!P.sol) bot = '<button class="pri" style="--c:' + c + '" data-act="showdev">Mostrar respuesta modelo</button>';
+    else {
+      h += '<div class="box ex"><b>Respuesta modelo</b><br>' + it.model + '</div><h3>Lista de cotejo</h3>';
+      it.check.forEach(function (x) { h += '<label class="ck"><input type="checkbox"><span>' + x + '</span></label>'; });
+      bot = nextBtn(c);
+    }
+  }
+  h += '<div class="bottom"><div>' + bot + '</div></div>';
+  return h;
+}
+function nextBtn(c) { return '<button class="pri" style="--c:' + c + '" data-act="next">' + (P.i + 1 >= P.q.length ? 'Terminar' : 'Siguiente →') + '</button>'; }
 
-    function evaluateQuiz(event) {
-        event.preventDefault();
-        const cards = document.querySelectorAll('.question-card');
-        let score = 0;
-        let total = cards.length;
+function parseNum(s) {
+  s = String(s).trim().replace(/\s/g, '').replace(/[%$₡]/g, '');
+  var f = s.match(/^(-?\d+(?:[.,]\d+)?)\/(\d+(?:[.,]\d+)?)$/);
+  if (f) return parseFloat(f[1].replace(',', '.')) / parseFloat(f[2].replace(',', '.'));
+  if (/^-?\d{1,3}([.,]\d{3})+$/.test(s)) s = s.replace(/[.,]/g, '');
+  s = s.replace(',', '.');
+  return /^-?\d*\.?\d+$/.test(s) ? parseFloat(s) : NaN;
+}
 
-        cards.forEach((card) => {
-            const radioGroup = card.querySelector('input[type="radio"]');
-            if (radioGroup) {
-                const name = radioGroup.getAttribute('name');
-                const selected = card.querySelector(`input[name="${name}"]:checked`);
-                const correctAnswer = card.getAttribute('data-correct');
+function record(it, ok) {
+  if (P.mode === 'world') {
+    var st = ms(it.mod.id);
+    if (st.f[it.id] === undefined) { st.f[it.id] = ok ? 1 : 0; save(); }
+  }
+  if (P.mode !== 'redo' && P.mode !== 'sim' && !P.rec[it.id]) { P.rec[it.id] = 1; P.firstN++; if (ok) P.firstOk++; }
+}
 
-                card.classList.remove('correct', 'incorrect');
+function finish() {
+  if (P.mode === 'sim') {
+    var ok = P.ans.filter(function (a) { return a.ok; }).length, n = P.q.length, pct = Math.round(ok / n * 100);
+    var st = ms(P.mod.id);
+    st.sim = { last: pct, best: Math.max(pct, st.sim ? st.sim.best : 0), date: new Date().toISOString().slice(0, 10) };
+    save();
+    go('res', { kind: 'sim', ok: ok, n: n, pct: pct, secs: Math.round((Date.now() - P.t0) / 1000), ans: P.ans, q: P.q, mod: P.mod });
+  } else if (P.mode === 'redo') {
+    go('res', { kind: 'redo', mod: P.mod, back: P.back });
+  } else {
+    go('res', { kind: 'world', mod: P.mod, world: P.world, ok: P.firstOk, n: P.firstN, nt: scored(P.world).length });
+  }
+}
 
-                if (selected) {
-                    if (selected.value === correctAnswer) {
-                        card.classList.add('correct');
-                        score++;
-                    } else {
-                        card.classList.add('incorrect');
-                    }
-                } else {
-                    card.classList.add('incorrect');
-                }
-            }
-        });
-
-        const percentage = Math.round((score / total) * 100);
-        const scoreBoard = document.getElementById('score-board');
-        const scoreText = document.getElementById('score-text');
-        const statusText = document.getElementById('status-text');
-
-        scoreText.innerText = `Has obtenido ${score} de ${total} respuestas correctas (${percentage}%)`;
-        scoreBoard.style.display = 'block';
-        
-        if (percentage >= 70) {
-            statusText.innerText = "Aprobado";
-            statusText.style.color = "var(--emerald-accent)";
+function vRes() {
+  var m = V.mod, c = m.color, h = '';
+  if (V.kind === 'world') {
+    h = '<h1 id="h" tabindex="-1">Mundo completado 🎉</h1><div class="card"><p class="mut">' + esc(V.world.name) + '</p>' +
+      '<p class="big">' + V.ok + ' / ' + V.n + '</p><p>aciertos a la primera' + (V.n < V.nt ? ' (de los que contestaste esta vez)' : '') + '.</p>' +
+      '<p class="mut">' + (V.n && V.ok / V.n >= 0.8 ? 'Dominado. Pasa al siguiente mundo.' : 'Vuelve a leer el repaso y repite el mundo: lo que fallas hoy es lo que pierdes en el examen.') + '</p></div>' +
+      '<div class="bottom"><div><button class="sec" data-act="world" data-id="' + V.world.id + '">Repetir</button><button class="pri" style="--c:' + c + '" data-act="mod" data-id="' + m.id + '">Volver a mundos</button></div></div>';
+  } else if (V.kind === 'redo') {
+    h = '<h1 id="h" tabindex="-1">Repaso terminado ✅</h1><div class="card"><p>Ya corregiste cada ítem que fallaste en el simulacro. Haz otro simulacro para medirte.</p></div>' +
+      '<div class="bottom"><div><button class="pri" style="--c:' + c + '" data-act="mod" data-id="' + m.id + '">Volver</button></div></div>';
+  } else {
+    var mm = Math.floor(V.secs / 60), ss = ('0' + (V.secs % 60)).slice(-2), by = {}, bad = [];
+    V.q.forEach(function (it, i) { var k = it.world.n + '. ' + it.world.name; by[k] = by[k] || [0, 0]; by[k][1]++; if (V.ans[i].ok) by[k][0]++; else bad.push(i); });
+    h = '<h1 id="h" tabindex="-1">Resultado del simulacro</h1><div class="card"><p class="big ' + (V.pct >= 70 ? 'ok' : 'no') + '">' + V.pct + '%</p><p>' + V.ok + ' de ' + V.n + ' correctas · tiempo ' + mm + ':' + ss + '</p>' +
+      '<p class="mut">' + (V.pct >= 90 ? 'Excelente: estás listo.' : V.pct >= 70 ? 'Bien. Repasa lo que fallaste y repite.' : 'Falta repaso. Vuelve a los mundos con peor desglose.') + '</p></div>' +
+      '<h3>Desglose por tema</h3><div class="card scroll"><table><tr><th>Mundo</th><th>Aciertos</th></tr>';
+    Object.keys(by).forEach(function (k) { h += '<tr><td style="text-align:left">' + esc(k) + '</td><td>' + by[k][0] + '/' + by[k][1] + ' ' + (by[k][0] === by[k][1] ? '✅' : '⚠️') + '</td></tr>'; });
+    h += '</table></div>';
+    if (bad.length) {
+      h += '<h3>Lo que fallaste</h3>';
+      bad.forEach(function (i) {
+        var it = V.q[i], a = V.ans[i];
+        h += '<div class="card"><p class="q">' + it.q + '</p>';
+        if (it.k === 'mc') {
+          var okO = it.o.filter(function (o) { return o.ok; })[0];
+          h += '<p class="no">❌ Tu respuesta: ' + (a.t || '(sin responder)') + '</p><p class="mut">' + (a.f || '') + '</p><p class="ok">✅ Correcta: ' + okO.t + '</p><p class="mut">' + okO.f + '</p>';
         } else {
-            statusText.innerText = "Reprobado";
-            statusText.style.color = "#ef4444";
+          h += '<p class="no">❌ Tu respuesta: ' + esc(a.t || '(vacía)') + '</p><p class="ok">✅ Correcta: ' + it.ans + (it.unit ? ' ' + esc(it.unit) : '') + '</p><div class="box ex">' + it.sol + '</div>';
         }
-
-        scoreBoard.scrollIntoView({ behavior: 'smooth' });
+        h += '</div>';
+      });
     }
+    h += '<div class="bottom"><div>' + (bad.length ? '<button class="sec" data-act="redo">Repasar lo que fallé</button>' : '') +
+      '<button class="pri" style="--c:' + c + '" data-act="mod" data-id="' + m.id + '">Volver</button></div></div>';
+  }
+  announce('Resultados listos');
+  return h;
+}
 
-    function resetQuiz() {
-        form.reset();
-        document.querySelectorAll('.question-card').forEach(card => {
-            card.classList.remove('correct', 'incorrect');
-        });
-        document.getElementById('score-board').style.display = 'none';
-        document.getElementById('answered-count').innerText = "0";
-        const statusText = document.getElementById('status-text');
-        statusText.innerText = "En Progreso";
-        statusText.style.color = "var(--amber-accent)";
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+function startTimer() {
+  stopTimer();
+  var el = document.getElementById('tm');
+  function tick() { var e = document.getElementById('tm'); if (!e) return; var s = Math.round((Date.now() - P.t0) / 1000); e.textContent = ('0' + Math.floor(s / 60)).slice(-2) + ':' + ('0' + s % 60).slice(-2); }
+  tick(); timer = setInterval(tick, 1000);
+}
+
+function modById(id) { return MODS.filter(function (m) { return m.id === id; })[0]; }
+
+function pickSim(m) {
+  var pools = m.worlds.map(function (w) { return shuffle(scored(w)); }), out = [], n = Math.min(m.simN, modItems(m).length), k = 0;
+  while (out.length < n) {
+    var p = pools[k % pools.length]; if (p.length) out.push(p.pop());
+    k++; if (k > 5000) break;
+  }
+  return shuffle(out);
+}
+
+/* ---------- eventos ---------- */
+document.addEventListener('click', function (e) {
+  var b = e.target.closest('[data-act]'); if (!b || b.disabled) return;
+  var a = b.getAttribute('data-act'), id = b.getAttribute('data-id');
+  if (a === 'home') return go('home');
+  if (a === 'mod') return go('mod', { mod: modById(id) });
+  if (a === 'world') { var m = V.mod || P.mod; var w = m.worlds.filter(function (x) { return x.id === id; })[0]; return go('review', { mod: m, world: w }); }
+  if (a === 'start') { shuf = {}; return startQueue(V.world.items.slice(), 'world', 'Mundo ' + V.world.n, null, { mod: V.mod, world: V.world, rec: {} }); }
+  if (a === 'sim') { shuf = {}; return startQueue(pickSim(V.mod), 'sim', 'Simulacro', null, { mod: V.mod }); }
+  if (a === 'redo') {
+    var q = V.q.filter(function (it, i) { return !V.ans[i].ok; }); shuf = {};
+    return startQueue(q, 'redo', 'Repaso', null, { mod: V.mod, back: V.mod, rec: {} });
+  }
+  if (a === 'reset') { if (confirm('¿Borrar todo tu progreso y puntajes?')) { S = { m: {} }; save(); go('home'); } return; }
+  if (a === 'quit') { if (P && P.mode === 'sim' && !confirm('¿Salir del simulacro? Se pierde el intento.')) return; return go('mod', { mod: P.mod }); }
+  if (!P) return;
+  var it = cur();
+  if (a === 'pick') {
+    var i = +b.getAttribute('data-i'), o = opts(it)[i];
+    if (P.mode === 'sim') { P.sel = i; return render(); }
+    P.tried = P.tried || {}; P.tried[i] = 1;
+    if (!P.tries) record(it, o.ok);
+    P.tries++;
+    if (o.ok) P.solved = true;
+    render(); announce(o.ok ? 'Correcto' : 'Incorrecto');
+    var f = document.querySelector('.fb:last-of-type'); if (f && f.scrollIntoView) f.scrollIntoView({ block: 'nearest' });
+    return;
+  }
+  if (a === 'check') {
+    var inp = document.getElementById('ans'), v = parseNum(inp.value); P.val = inp.value;
+    if (isNaN(v)) { P.msg = 'Escribe un número (puedes usar coma o punto decimal).'; return render(); }
+    var ok = Math.abs(v - it.ans) <= it.tol;
+    if (!P.tries) record(it, ok);
+    P.tries++;
+    if (ok) { P.solved = true; P.msg = '<b>Correcto.</b> ' + it.ans + (it.unit ? ' ' + esc(it.unit) : ''); }
+    else P.msg = '<b>No coincide.</b> Pista: ' + it.h;
+    render(); announce(ok ? 'Correcto' : 'Incorrecto');
+    return;
+  }
+  if (a === 'showsol') { P.sol = true; P.msg = ''; return render(); }
+  if (a === 'showdev') { P.sol = true; return render(); }
+  if (a === 'confirm') {
+    var ans;
+    if (it.k === 'mc') { var oo = opts(it)[P.sel]; ans = { ok: oo.ok, t: oo.t, f: oo.ok ? '' : oo.f }; }
+    else { var vv = parseNum(document.getElementById('ans').value); ans = { ok: !isNaN(vv) && Math.abs(vv - it.ans) <= it.tol, t: document.getElementById('ans').value }; }
+    P.ans.push(ans);
+    return advance();
+  }
+  if (a === 'next') return advance();
+});
+
+function advance() {
+  if (P.i + 1 >= P.q.length) return finish();
+  P.i++; P.tries = 0; P.solved = false; P.sel = null; P.sol = false; P.tried = null; P.msg = ''; P.val = '';
+  render(); window.scrollTo(0, 0);
+  var h = document.getElementById('h'); if (h) h.focus();
+}
+
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Enter' && e.target.id === 'ans') {
+    e.preventDefault();
+    var b = document.querySelector('[data-act="check"],[data-act="confirm"],[data-act="next"]'); if (b) b.click();
+    return;
+  }
+  if (V.v === 'play' && P && cur().k === 'mc' && /^[1-4]$/.test(e.key) && e.target.tagName !== 'INPUT') {
+    var bs = document.querySelectorAll('[data-act="pick"]'); var x = bs[+e.key - 1]; if (x) x.click();
+  }
+});
+
+load();
+render();
+
 </script>
-
 </body>
 </html>
